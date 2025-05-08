@@ -1,0 +1,115 @@
+.account-content {
+    flex: 1;
+    min-width: 300px;
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+.account-section {
+    margin-bottom: 40px;
+}
+
+.account-section h2 {
+    color: #FF0000;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #00FFFF;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2D3436;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #00FFFF;
+    outline: none;
+}
+
+.btn-primary {
+    background-color: #FF0000;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #e60000;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.alert-success {
+    background-color: #e6f7e6;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.alert-danger {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 38px;
+    cursor: pointer;
+    user-select: none;
+}
+.usear{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-bottom: 0.6px solid rgb(235, 235, 235,0.3);
+}
+.usear .avata{
+    margin: 0 auto;
+    margin-bottom: 20px;
+    border-radius: 50px;
+    width: 100px;
+    height: 100px;
+    
+
+}
+.usear .avata img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.users h3{
+    border-radius: 5px;
+    color: #ffffff;
+    font-weight: 800;
+}

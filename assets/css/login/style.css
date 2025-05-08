@@ -1,0 +1,106 @@
+.login-container {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #00FFFF;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #00FFFF;
+    padding: 30px;
+    width: 400px;
+    margin: 100px auto;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to bottom right,
+        rgba(255, 244, 79, 0.1),
+        rgba(255, 0, 0, 0.1),
+        rgba(0, 255, 255, 0.1)
+    );
+    transform: rotate(45deg);
+    z-index: -1;
+}
+
+.login-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    color: #FFF44F;
+    text-shadow: 0 0 10px #FF0000;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #FFFFFF;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #2D3436;
+    border-radius: 5px;
+    background: rgba(45, 52, 54, 0.7);
+    color: white;
+    transition: all 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #00FFFF;
+    box-shadow: 0 0 10px #00FFFF;
+    outline: none;
+    background: rgba(45, 52, 54, 0.9);
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(to right, #FF0000, #FFF44F);
+    border: none;
+    border-radius: 5px;
+    color: #000000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.login-btn:hover {
+    background: linear-gradient(to right, #FFF44F, #FF0000);
+    box-shadow: 0 0 15px #FFF44F;
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 20px;
+    color: #CCCCCC;
+}
+
+.register-link a {
+    color: #00FFFF;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.register-link a:hover {
+    color: #FFF44F;
+    text-shadow: 0 0 5px #FF0000;
+}
+
+.error-message {
+    color: #FF0000;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: bold;
+}

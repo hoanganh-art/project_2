@@ -1,0 +1,169 @@
+:root {
+    --black: #000000;
+    --dark-gray: #1A1A1A;
+    --white: #FFFFFF;
+    --neon-yellow: #FFF44F;
+    --electric-red: #FF0000;
+    --cyan: #00FFFF;
+    --light-gray: #CCCCCC;
+}
+
+body {
+    font-family: 'Urbanist', sans-serif;
+    margin: 0;
+    background-color: #F5F5F5;
+}
+
+/* Phần Footer */
+.footer {
+    background-color: var(--black);
+    color: var(--white);
+    padding: 50px 30px 30px;
+    border-top: 3px solid var(--electric-red);
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 30px;
+}
+
+.footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--neon-yellow);
+    margin-bottom: 15px;
+    letter-spacing: 2px;
+}
+
+.footer-logo span {
+    color: var(--electric-red);
+}
+
+.footer-about p {
+    color: var(--light-gray);
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.footer-title {
+    color: var(--white);
+    font-size: 18px;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.footer-title:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 40px;
+    height: 2px;
+    background: var(--cyan);
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: var(--light-gray);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.footer-links a:hover {
+    color: var(--neon-yellow);
+    padding-left: 5px;
+}
+
+.footer-contact p {
+    color: var(--light-gray);
+    margin-bottom: 15px;
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.footer-contact i {
+    margin-right: 10px;
+    color: var(--cyan);
+}
+
+.social-media {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.social-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--dark-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    transition: all 0.3s ease;
+    font-size: 16px;
+}
+
+.social-icon:hover {
+    background-color: var(--electric-red);
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    background-color: var(--dark-gray);
+    padding: 15px 0;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.footer-bottom p {
+    color: var(--light-gray);
+    font-size: 12px;
+    margin: 0;
+}
+
+.payment-methods {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.payment-icon {
+    width: 40px;
+    filter: grayscale(100%) brightness(2);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.payment-icon:hover {
+    filter: none;
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-title {
+        margin-top: 20px;
+    }
+}
