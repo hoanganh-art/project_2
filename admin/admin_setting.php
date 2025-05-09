@@ -7,7 +7,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
 }
 
 //Truy Vấn cơ sở dữ liệu
-require_once('../includes/database.php'); 
+require_once('../includes/database.php');
 $sql = "SELECT * FROM contact_settings";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
@@ -20,7 +20,6 @@ require_once('../admin/header/admin-header.php');
 
 <head>
     <meta charset="UTF-8">
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../../assets/css/admin/manage_employees.css">
@@ -61,10 +60,16 @@ require_once('../admin/header/admin-header.php');
                     <span class="contact-info-label">Email 2:</span>
                     <span class="contact-info-value" id="displayEmail2"><?php echo htmlspecialchars($contact['email_2']); ?></span>
                 </div>
-                <div class="contact-info-item">
+                <div class="contact-info-item" style="display: flex; flex-direction: column; align-items: flex-start;">
                     <span class="contact-info-label">Bản đồ:</span>
                     <span class="contact-info-value">
-                        <a href="<?php echo htmlspecialchars($contact['map_url']); ?>" id="displayMapLink" target="_blank">Xem trên Google Maps</a>
+                        <iframe
+                            src="<?php echo htmlspecialchars($contact['map_url']); ?>"
+                            width="500"
+                            height="400"
+                            style="border:0; border-radius: 10px;"
+                            allowfullscreen=""
+                            loading="lazy"></iframe>
                     </span>
                 </div>
                 <div class="social-media-section">
@@ -116,7 +121,7 @@ require_once('../admin/header/admin-header.php');
 
                     <div class="form-group">
                         <label for="maps">Bản đồ (URL Google Maps):</label>
-                        <input type="text" name="maps" id="maps" placeholder="Dán link bản đồ Google Maps">
+                        <input type="url" name="maps" id="maps" placeholder="Dán link bản đồ Google Maps">
                     </div>
 
                     <div class="social-media-section">
@@ -181,7 +186,7 @@ require_once('../admin/header/admin-header.php');
                 },
                 {
                     id: 'facebook',
-                    icon: ' fa-facebook'
+                    icon: 'fa-facebook-f'
                 },
                 {
                     id: 'instagram',
