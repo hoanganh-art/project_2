@@ -116,7 +116,7 @@ require_once('../admin/header/admin-header.php');
 
                     <div class="form-group">
                         <label for="maps">Bản đồ (URL Google Maps):</label>
-                        <input type="url" name="maps" id="maps" placeholder="Dán link bản đồ Google Maps">
+                        <input type="text" name="maps" id="maps" placeholder="Dán link bản đồ Google Maps">
                     </div>
 
                     <div class="social-media-section">
