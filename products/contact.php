@@ -1,4 +1,27 @@
 <?php
+session_start();
+require_once '../includes/database.php';
+
+$sql = "SELECT * FROM contact_settings";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result();
+$contact_info = $result->fetch_assoc();
+if ($contact_info) {
+    $address = $contact_info['address'];
+    $phone_1 = $contact_info['phone_1'];
+    $phone_2 = $contact_info['phone_2'];
+    $email_1 = $contact_info['email_1'];
+    $email_2 = $contact_info['email_2'];
+    $map_url = $contact_info['map_url'];
+    $facebook_url = $contact_info['facebook_url'];
+    $instagram_url = $contact_info['instagram_url'];
+    $youtube_url = $contact_info['youtube_url'];
+    $tiktok_url = $contact_info['tiktok_url'];
+} else {
+    // Nếu không có thông tin liên hệ, có thể xử lý theo cách khác
+}
+
 require_once('../includes/header.php'); 
 ?>
 <!DOCTYPE html>
@@ -259,7 +282,7 @@ require_once('../includes/header.php');
                 <div class="info-icon">📍</div>
                 <div class="info-text">
                     <h3>Địa chỉ cửa hàng</h3>
-                    <p>Ngõ 81-trần Đại Nghĩa-Quận Hai Bà Trưng-Hà Nội</p>
+                    <p><?php echo $address; ?></p>
                 </div>
             </div>
 
@@ -267,8 +290,8 @@ require_once('../includes/header.php');
                 <div class="info-icon">📞</div>
                 <div class="info-text">
                     <h3>Điện thoại</h3>
-                    <p>+84 387 875 205</p>
-                    <p>+84 387 875 205</p>
+                    <p><?php echo $phone_1; ?></p>
+                    <p> <?php echo $phone_2; ?> </p>
                 </div>
             </div>
 
@@ -276,8 +299,8 @@ require_once('../includes/header.php');
                 <div class="info-icon">✉️</div>
                 <div class="info-text">
                     <h3>Email</h3>
-                    <p>lethanhhoanganh@gmail.com</p>
-                    <p>lethanhhoanganh@gmail.com</p>
+                    <p><?php echo $email_1; ?></p>
+                    <p><?php echo $email_2; ?></p>
                 </div>
             </div>
 
