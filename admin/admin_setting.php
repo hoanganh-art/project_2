@@ -46,33 +46,33 @@ require_once('../admin/header/admin-header.php');
                 </div>
                 <div class="contact-info-item">
                     <span class="contact-info-label">Điện thoại 1:</span>
-                    <span class="contact-info-value" id="displayPhone1">0901234567</span>
+                    <span class="contact-info-value" id="displayPhone1"><?php echo htmlspecialchars($contact['phone_1']); ?></span>
                 </div>
                 <div class="contact-info-item">
                     <span class="contact-info-label">Điện thoại 2:</span>
-                    <span class="contact-info-value" id="displayPhone2">0987654321</span>
+                    <span class="contact-info-value" id="displayPhone2"><?php echo htmlspecialchars($contact['phone_2']) ?></span>
                 </div>
                 <div class="contact-info-item">
                     <span class="contact-info-label">Email 1:</span>
-                    <span class="contact-info-value" id="displayEmail1">contact@example.com</span>
+                    <span class="contact-info-value" id="displayEmail1"><?php echo htmlspecialchars($contact['email_1']); ?></span>
                 </div>
                 <div class="contact-info-item">
                     <span class="contact-info-label">Email 2:</span>
-                    <span class="contact-info-value" id="displayEmail2">support@example.com</span>
+                    <span class="contact-info-value" id="displayEmail2"><?php echo htmlspecialchars($contact['email_2']); ?></span>
                 </div>
                 <div class="contact-info-item">
                     <span class="contact-info-label">Bản đồ:</span>
                     <span class="contact-info-value">
-                        <a href="#" id="displayMapLink" target="_blank">Xem trên Google Maps</a>
+                        <a href="<?php echo htmlspecialchars($contact['map_url']); ?>" id="displayMapLink" target="_blank">Xem trên Google Maps</a>
                     </span>
                 </div>
                 <div class="social-media-section">
                     <h3>Mạng xã hội</h3>
                     <div class="social-media-icons">
-                        <a href="#" id="displayFacebook" target="_blank"><i class="fab fa-facebook"></i></a>
-                        <a href="#" id="displayInstagram" target="_blank"><i class="fab fa-instagram"></i></a>
-                        <a href="#" id="displayYoutube" target="_blank"><i class="fab fa-youtube"></i></a>
-                        <a href="#" id="displayTiktok" target="_blank"><i class="fab fa-tiktok"></i></a>
+                        <a href="<?php echo htmlspecialchars($contact['facebook_url']); ?>" id="displayFacebook" target="_blank"><i class="fab fa-facebook"></i></a>
+                        <a href="<?php echo htmlspecialchars($contact['instagram_url']) ?>" id="displayInstagram" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="<?php echo htmlspecialchars($contact['youtube_url']) ?>" id="displayYoutube" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="<?php echo htmlspecialchars($contact['tiktok_url']) ?>" id="displayTiktok" target="_blank"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
             </div>
