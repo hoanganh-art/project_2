@@ -58,15 +58,18 @@ CREATE TABLE product (
 );
 
 -- Giỏ hàng
+-- Giỏ hàng
 CREATE TABLE cart (
     id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     customer_id INT NOT NULL,
+    product_id INT NOT NULL,
     status VARCHAR(255) NOT NULL DEFAULT 'active',
     color VARCHAR(255) NOT NULL,
     size VARCHAR(255) NOT NULL,
     quantity INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES customer (id)
+    FOREIGN KEY (customer_id) REFERENCES customer (id),
+    FOREIGN KEY (product_id) REFERENCES product (id)
 );
 
 

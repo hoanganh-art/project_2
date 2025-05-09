@@ -27,33 +27,7 @@ $employees = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến $
 
 <body>
     <div class="admin-container">
-        <div class="admin-sidebar">
-            <div class="sidebar-header">
-                <div class="admin-name"><?php echo isset($_SESSION['user']) ? htmlspecialchars($_SESSION['user']['name']) : 'Admin'; ?></div>
-                <div class="admin-role">Quản trị viên</div>
-            </div>
-
-            <ul class="sidebar-menu">
-                <li><a href="dashboard.php"><i>📊</i> Tổng quan</a></li>
-                <li><a href="#"><i>📦</i> Đơn hàng</a></li>
-                <li><a href="manage_products.php"><i>👕</i> Sản phẩm</a></li>
-                <li><a href="manege_customer.php"><i>👥</i> Khách hàng</a></li>
-                <li><a href="manage_employees.php" class="active"><i>👨‍💼</i> Nhân viên</a></li>
-                <li><a href="manage_roles.php"><i>🔐</i> Phân quyền</a></li>
-                <li><a href="#"><i>⚙️</i> Cài đặt</a></li>
-                <li>
-                    <?php
-                    if (isset($_SESSION['user'])) {
-                        // Hiển thị nút đăng xuất
-                        echo '<a href="logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>';
-                    } else {
-                        // Hiển thị nút đăng nhập
-                        echo '<a href="../login/index.php" class="login-btn"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>';
-                    }
-                    ?>
-                </li>
-            </ul>
-        </div>
+        <?php require_once('../admin/sidebar/admin_sidebar.php'); ?>
 
         <div class="admin-content">
             <div class="page-header">

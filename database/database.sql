@@ -87,11 +87,71 @@ UPDATE product SET status = 'active' WHERE status = '0';
 
 -- Bảng giỏ hàng
 CREATE TABLE cart (
-    cart_id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT NOT NULL, --ID khách khàng 
-    quantity INT NOT NULL DEFAULT 1,
-    status VARCHAR(255) NOT NULL DEFAULT 'active', //trạng thái
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    product_id INT,
+    quantity INT,
+    color VARCHAR(50),
+    size VARCHAR(10),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (customer_id) REFERENCES customer(id),
     FOREIGN KEY (product_id) REFERENCES product(id)
 );
+
+CREATE TABLE contact_settings (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `address` varchar(255) NOT NULL COMMENT 'Địa chỉ cửa hàng',
+  `phone_1` varchar(20) NOT NULL COMMENT 'Số điện thoại chính',
+  `phone_2` varchar(20) DEFAULT NULL COMMENT 'Số điện thoại phụ',
+  `email_1` varchar(100) NOT NULL COMMENT 'Email chính',
+  `email_2` varchar(100) DEFAULT NULL COMMENT 'Email phụ',
+  `map_url` text DEFAULT NULL COMMENT 'URL Google Maps',
+  `facebook_url` varchar(255) DEFAULT NULL COMMENT 'Link Facebook',
+  `instagram_url` varchar(255) DEFAULT NULL COMMENT 'Link Instagram',
+  `youtube_url` varchar(255) DEFAULT NULL COMMENT 'Link YouTube',
+  `tiktok_url` varchar(255) DEFAULT NULL COMMENT 'Link TikTok',
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Thời gian cập nhật',
+  `updated_by` int(11) DEFAULT NULL COMMENT 'ID người cập nhật',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+SELECT * FROM contact_settings;
+UPDATE contact_settings
+SET 
+    address = '123 Main Street, Hanoi, Vietnam',
+    phone_1 = '0123456789',
+    phone_2 = '0987654321',
+    email_1 = 'contact@cuahang.com',
+    email_2 = 'support@cuahang.com',
+    map_url = 'https://maps.google.com/example',
+    facebook_url = 'https://facebook.com/cuahang',
+    instagram_url = 'https://instagram.com/cuahang',
+    youtube_url = 'https://youtube.com/cuahang',
+    tiktok_url = 'https://tiktok.com/@cuahang',
+    updated_by = 1
+WHERE id = 1;
+
+-- Thêm dữ liệu ngẫu nhiên vào bảng customer
+INSERT INTO customer (name, email, password, phone, address, avatar, gender)
+VALUES
+('Nguyen Van A', 'nguyenvana@example.com', '$2y$10$abc123', '0123456789', '123 Main Street, Hanoi', 'avatar1.jpg', 1),
+('Tran Thi B', 'tranthib@example.com', '$2y$10$def456', '0987654321', '456 Second Street, Ho Chi Minh City', 'avatar2.jpg', 0),
+('Le Van C', 'levanc@example.com', '$2y$10$ghi789', '0912345678', '789 Third Street, Da Nang', 'avatar3.jpg', 1);
+
+-- Thêm dữ liệu ngẫu nhiên vào bảng employees
+INSERT INTO employees (name, email, phone, date_of_birth, address, password, position, avatar)
+VALUES
+('Pham Van D', 'phamvand@example.com', '0901234567', '1990-01-01', '123 Fourth Street, Hue', '$2y$10$jkl012', 'Manager', 'avatar4.jpg'),
+('Hoang Thi E', 'hoangthie@example.com', '0934567890', '1995-05-05', '456 Fifth Street, Can Tho', '$2y$10$mno345', 'Sales', 'avatar5.jpg');
+
+-- Thêm dữ liệu ngẫu nhiên vào bảng cart
+INSERT INTO cart (customer_id, product_id, quantity, color, size)
+VALUES
+(1, 1, 2, 'Black', 'M'),
+(2, 3, 1, 'White', 'L'),
+(3, 5, 3, 'Blue', 'S');
+
+-- Thêm dữ liệu ngẫu nhiên vào bảng contact_settings
+INSERT INTO contact_settings (address, phone_1, phone_2, email_1, email_2, map_url, facebook_url, instagram_url, youtube_url, tiktok_url, updated_by)
+VALUES
+('789 Sixth Street, Hai Phong', '0911111111', '0922222222', 'info@cuahang.vn', 'support@cuahang.vn', 'https://maps.google.com/example2', 'https://facebook.com/cuahang2', 'https://instagram.com/cuahang2', 'https://youtube.com/cuahang2', 'https://tiktok.com/@cuahang2', 2);

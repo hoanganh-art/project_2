@@ -22,39 +22,13 @@ $customer = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/css/admin/manege_customer.css">
+    <link rel="stylesheet" href="../../assets/css/admin/manege_customer.css">
     <title>Quản lý nhân viên - Admin Clothing Store</title>
 </head>
 
 <body>
     <div class="admin-container">
-        <div class="admin-sidebar">
-            <div class="sidebar-header">
-                <div class="admin-name"><?php echo isset($_SESSION['user']) ? htmlspecialchars($_SESSION['user']['name']) : 'Admin'; ?></div>
-                <div class="admin-role">Quản trị viên</div>
-            </div>
-
-            <ul class="sidebar-menu">
-                <li><a href="dashboard.php"><i>📊</i> Tổng quan</a></li>
-                <li><a href="#"><i>📦</i> Đơn hàng</a></li>
-                <li><a href="manage_products.php"><i>👕</i> Sản phẩm</a></li>
-                <li><a href="manege_customer.php" class="active"><i>👥</i> Khách hàng</a></li>
-                <li><a href="manage_employees.php"><i>👨‍💼</i> Nhân viên</a></li>
-                <li><a href="manage_roles.php"><i>🔐</i> Phân quyền</a></li>
-                <li><a href="#"><i>⚙️</i> Cài đặt</a></li>
-                <li>
-                    <?php
-                    if (isset($_SESSION['user'])) {
-                        // Hiển thị nút đăng xuất
-                        echo '<a href="logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>';
-                    } else {
-                        // Hiển thị nút đăng nhập
-                        echo '<a href="../login/index.php" class="login-btn"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>';
-                    }
-                    ?>
-                </li>
-            </ul>
-        </div>
+        <?php require_once('../admin/sidebar/admin_sidebar.php'); ?>
 
         <div class="admin-content">
             <div class="page-header">
@@ -104,7 +78,7 @@ $customer = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến
                         $statusText = $customer['status'] == 'active' ? 'Hoạt động' : 'Ngừng hoạt động';
                         ?>
                         <tr data-email="<?php echo htmlspecialchars($customer['email']); ?>"
-                            data-avatar="<?php echo htmlspecialchars($customer['avatar'] ?: '../assets/avatar/default-avatar.png'); ?>"
+                            data-avatar="<?php echo htmlspecialchars($customer['avatar'] ?: '../../assets/avatar/default-avatar.png'); ?>"
                             data-gender="<?php echo htmlspecialchars($customer['gender']) ? ($customer['gender'] == 1 ? 'Nam' : 'Nữ') : 'Không xác định'; ?>">
                             <td><?php echo htmlspecialchars($customer['name']); ?></td>
                             <td><?php echo htmlspecialchars($customer['phone']); ?></td>
@@ -243,7 +217,7 @@ $customer = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến
                 const customerGender = customerRow.getAttribute('data-gender');
 
                 // Cập nhật thông tin vào modal
-                document.querySelector('.customer-avatar-large').src = customerAvatar || '../assets/avatar/default-avatar.png';
+                document.querySelector('.customer-avatar-large').src = customerAvatar || '../../assets/avatar/default-avatar.png';
                 document.querySelector('.customer-name-large').textContent = customerName;
                 document.querySelector('.customer-join-date').textContent = `Thành viên từ: ${customerJoinDate}`;
                 document.querySelector('.detail-row:nth-child(2) .detail-value').textContent = customerEmail || 'Không có email';

@@ -4,11 +4,6 @@ session_start();
 require_once '../includes/header.php';
 require_once '../includes/database.php';
 
-
-// Lấy ID sản phẩm từ URL
-$product_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-
-
 // Lấy ID sản phẩm từ URL
 $product_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -25,6 +20,46 @@ if (!$product) {
     echo "<h1>Sản phẩm không tồn tại</h1>";
     exit;
 }
+
+// Xử lý thêm vào giỏ hàng
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
+    // Kiểm tra người dùng đã đăng nhập chưa
+    if (!isset($_SESSION['id'])) {
+        echo "<script>alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');</script>";
+        // Có thể chuyển hướng đến trang đăng nhập ở đây
+        // header("Location: login.php");
+        // exit;
+    } else {
+        $customer_id = $_SESSION['id'];
+        $color = $_POST['color'];
+        $size = $_POST['size'];
+        $quantity = $_POST['quantity'];
+        $product_id = $_POST['product_id'];
+
+        // Kiểm tra sản phẩm đã có trong giỏ hàng chưa
+        $check_sql = "SELECT * FROM cart WHERE customer_id = ? AND product_id = ? AND color = ? AND size = ?";
+        $check_stmt = $conn->prepare($check_sql);
+        $check_stmt->bind_param("iiss", $customer_id, $product_id, $color, $size);
+        $check_stmt->execute();
+        $check_result = $check_stmt->get_result();
+
+        if ($check_result->num_rows > 0) {
+            // Nếu đã có thì cập nhật số lượng
+            $update_sql = "UPDATE cart SET quantity = quantity + ? WHERE customer_id = ? AND product_id = ? AND color = ? AND size = ?";
+            $update_stmt = $conn->prepare($update_sql);
+            $update_stmt->bind_param("iisss", $quantity, $customer_id, $product_id, $color, $size);
+            $update_stmt->execute();
+        } else {
+            // Nếu chưa có thì thêm mới
+            $insert_sql = "INSERT INTO cart (customer_id, product_id, color, size, quantity) VALUES (?, ?, ?, ?, ?)";
+            $insert_stmt = $conn->prepare($insert_sql);
+            $insert_stmt->bind_param("iissi", $customer_id, $product_id, $color, $size, $quantity);
+            $insert_stmt->execute();
+        }
+
+        echo "<script>alert('Sản phẩm đã được thêm vào giỏ hàng');</script>";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -40,89 +75,93 @@ if (!$product) {
 
 <body>
     <!-- Product Detail -->
-    <form method="POST" action="">
-        <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
-        <div class="product-detail">
-            <div class="product-gallery">
-                <img src="../assets/image_products/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="main-image">
-                <div class="thumbnail-container">
-                    <img src="../assets/image/ao/hoodiemau.png" alt="Áo Hoodie 1" class="thumbnail" onclick="changeImage(this)">
-                    <img src="../assets/image/ao/hoodiemau.png" alt="Áo Hoodie 2" class="thumbnail" onclick="changeImage(this)">
-                    <img src="../assets/image/ao/hoodiemau.png" alt="Áo Hoodie 3" class="thumbnail" onclick="changeImage(this)">
-                    <img src="../assets/image/ao/hoodiemau.png" alt="Áo Hoodie 4" class="thumbnail" onclick="changeImage(this)">
-                </div>
-            </div>
 
-            <div class="product-info">
-                <h1 class="product-title"><?php echo htmlspecialchars($product['name']); ?></h1>
-                <div class="product-sku">Mã SP: <?php echo htmlspecialchars($product['code']); ?></div>
-                <div class="product-price">
-                    <?php echo number_format($product['price'], 0, ',', '.'); ?>đ
-                    <span class="old-price"><?php echo number_format($product['original_price'], 0, ',', '.'); ?>đ</span>
-                </div>
-
-                <div class="product-description">
-                    <p><?php echo htmlspecialchars($product['description']); ?></p>
-                </div>
-
-                <div class="product-meta">
-                    <div class="meta-item">
-                        <span class="meta-label">Danh mục:</span>
-                        <span>Áo, Hoodie</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="meta-label">Tình trạng:</span>
-                        <span style="color: <?php echo $product['status'] === 'active' ? 'green' : 'red'; ?>;">
-                            <?php echo $product['status'] === 'active' ? 'Còn hàng' : 'Hết hàng'; ?>
-                        </span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="meta-label">Đánh giá:</span>
-                        <span>
-                            <i class="fas fa-star" style="color: gold;"></i>
-                            <i class="fas fa-star" style="color: gold;"></i>
-                            <i class="fas fa-star" style="color: gold;"></i>
-                            <i class="fas fa-star" style="color: gold;"></i>
-                            <i class="fas fa-star-half-alt" style="color: gold;"></i>
-                            (42 đánh giá)
-                        </span>
-                    </div>
-                </div>
-
-
-
-                <div class="product-variants">
-                    <div class="variant-title">Màu sắc:</div>
-                    <div class="variant-options">
-                        <input type="hidden" name="color" id="selected-color" value="Đen">
-                        <div class="variant-btn active" onclick="selectColor('Đen', this)">Đen</div>
-                        <div class="variant-btn" onclick="selectColor('Xám', this)">Xám</div>
-                        <div class="variant-btn" onclick="selectColor('Trắng', this)">Trắng</div>
-                    </div>
-
-                    <div class="variant-title">Kích cỡ:</div>
-                    <div class="variant-options">
-                        <input type="hidden" name="size" id="selected-size" value="M">
-                        <div class="variant-btn" onclick="selectSize('S', this)">S</div>
-                        <div class="variant-btn active" onclick="selectSize('M', this)">M</div>
-                        <div class="variant-btn" onclick="selectSize('L', this)">L</div>
-                        <div class="variant-btn" onclick="selectSize('XL', this)">XL</div>
-                    </div>
-                </div>
-
-                <div class="quantity-selector">
-                    <button type="button" class="quantity-btn" onclick="changeQuantity(-1)">-</button>
-                    <input type="number" name="quantity" value="1" min="1" class="quantity-input" id="quantity-input">
-                    <button type="button" class="quantity-btn" onclick="changeQuantity(1)">+</button>
-                </div>
-
-                <div class="product-actions">
-                    <button type="submit" name="add_to_cart" class="btn btn-primary">THÊM VÀO GIỎ</button>
-                    <button type="button" class="btn btn-secondary">MUA NGAY</button>
-                </div>
+    <div class="product-detail">
+        <div class="product-gallery">
+            <img src="../assets/image_products/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="main-image">
+            <div class="thumbnail-container">
+                <img src="../assets/image/ao/hoodiemau.png" alt="Áo Hoodie 1" class="thumbnail" onclick="changeImage(this)">
+                <img src="../assets/image/ao/hoodiemau.png" alt="Áo Hoodie 2" class="thumbnail" onclick="changeImage(this)">
+                <img src="../assets/image/ao/hoodiemau.png" alt="Áo Hoodie 3" class="thumbnail" onclick="changeImage(this)">
+                <img src="../assets/image/ao/hoodiemau.png" alt="Áo Hoodie 4" class="thumbnail" onclick="changeImage(this)">
             </div>
         </div>
-    </form>
+
+        <div class="product-info">
+            <h1 class="product-title"><?php echo htmlspecialchars($product['name']); ?></h1>
+            <div class="product-sku">Mã SP: <?php echo htmlspecialchars($product['code']); ?></div>
+            <div class="product-price">
+                <?php echo number_format($product['price'], 0, ',', '.'); ?>đ
+                <span class="old-price"><?php echo number_format($product['original_price'], 0, ',', '.'); ?>đ</span>
+            </div>
+
+            <div class="product-description">
+                <p><?php echo htmlspecialchars($product['description']); ?></p>
+            </div>
+
+
+            <div class="product-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Danh mục:</span>
+                    <span>Áo, Hoodie</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Tình trạng:</span>
+                    <span style="color: <?php echo $product['status'] === 'active' ? 'green' : 'red'; ?>;">
+                        <?php echo $product['status'] === 'active' ? 'Còn hàng' : 'Hết hàng'; ?>
+                    </span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Đánh giá:</span>
+                    <span>
+                        <i class="fas fa-star" style="color: gold;"></i>
+                        <i class="fas fa-star" style="color: gold;"></i>
+                        <i class="fas fa-star" style="color: gold;"></i>
+                        <i class="fas fa-star" style="color: gold;"></i>
+                        <i class="fas fa-star-half-alt" style="color: gold;"></i>
+                        (42 đánh giá)
+                    </span>
+                </div>
+            </div>
+
+
+            <div class="product-variants">
+                <div class="variant-title">Màu sắc:</div>
+                <div class="variant-options">
+                    <input type="hidden" name="color" id="selected-color" value="Đen">
+                    <div class="variant-btn active" onclick="selectColor('Đen', this)">Đen</div>
+                    <div class="variant-btn" onclick="selectColor('Xám', this)">Xám</div>
+                    <div class="variant-btn" onclick="selectColor('Trắng', this)">Trắng</div>
+                </div>
+
+                <div class="variant-title">Kích cỡ:</div>
+                <div class="variant-options">
+                    <input type="hidden" name="size" id="selected-size" value="M">
+                    <div class="variant-btn" onclick="selectSize('S', this)">S</div>
+                    <div class="variant-btn active" onclick="selectSize('M', this)">M</div>
+                    <div class="variant-btn" onclick="selectSize('L', this)">L</div>
+                    <div class="variant-btn" onclick="selectSize('XL', this)">XL</div>
+                </div>
+            </div>
+
+            <div class="quantity-selector">
+                <button type="button" class="quantity-btn" onclick="changeQuantity(-1)">-</button>
+                <input type="number" name="quantity" value="1" min="1" class="quantity-input" id="quantity-input">
+                <button type="button" class="quantity-btn" onclick="changeQuantity(1)">+</button>
+            </div>
+
+            <div class="product-actions">
+                <form method="post" action="">
+                    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+                    <input type="hidden" name="color" id="form-selected-color" value="Đen">
+                    <input type="hidden" name="size" id="form-selected-size" value="M">
+                    <input type="hidden" name="quantity" id="form-quantity" value="1">
+                    <button type="submit" name="add_to_cart" class="btn btn-primary">THÊM VÀO GIỎ</button>
+                </form>
+                <button type="button" class="btn btn-secondary">MUA NGAY</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Product Tabs -->
     <div class="product-tabs">
@@ -264,9 +303,16 @@ if (!$product) {
         </div>
     </div>
     <script>
+        // Hàm thay đổi hình ảnh chính
+        function changeImage(thumbnail) {
+            const mainImage = document.querySelector('.main-image');
+            mainImage.src = thumbnail.src;
+            mainImage.alt = thumbnail.alt;
+        }
         // Hàm chọn màu sắc
         function selectColor(color, element) {
             document.getElementById('selected-color').value = color;
+            document.getElementById('form-selected-color').value = color;
             const buttons = element.parentElement.querySelectorAll('.variant-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
@@ -275,6 +321,7 @@ if (!$product) {
         // Hàm chọn kích cỡ
         function selectSize(size, element) {
             document.getElementById('selected-size').value = size;
+            document.getElementById('form-selected-size').value = size;
             const buttons = element.parentElement.querySelectorAll('.variant-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
@@ -283,21 +330,40 @@ if (!$product) {
         // Hàm thay đổi số lượng
         function changeQuantity(change) {
             const input = document.getElementById('quantity-input');
+            const formQuantity = document.getElementById('form-quantity');
             let value = parseInt(input.value) + change;
             if (value < 1) value = 1;
             input.value = value;
+            formQuantity.value = value;
         }
 
         // Hàm chuyển tab
         function openTab(tabName) {
             const tabContents = document.querySelectorAll('.tab-content');
             const tabButtons = document.querySelectorAll('.tab-btn');
-            
+
             tabContents.forEach(tab => tab.classList.remove('active'));
             tabButtons.forEach(btn => btn.classList.remove('active'));
-            
+
             document.getElementById(tabName).classList.add('active');
             event.currentTarget.classList.add('active');
+        }
+        // Hàm chọn màu sắc - cập nhật cả input ẩn trong form
+        function selectColor(color, element) {
+            document.getElementById('selected-color').value = color;
+            document.getElementById('form-selected-color').value = color;
+            const buttons = element.parentElement.querySelectorAll('.variant-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // Hàm chọn kích cỡ - cập nhật cả input ẩn trong form
+        function selectSize(size, element) {
+            document.getElementById('selected-size').value = size;
+            document.getElementById('form-selected-size').value = size;
+            const buttons = element.parentElement.querySelectorAll('.variant-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
         }
     </script>
 </body>

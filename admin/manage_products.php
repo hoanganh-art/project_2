@@ -1,4 +1,4 @@
-<?php require_once('../admin/header/admin-header.php'); ?>
+<?php require_once('../admin//header/admin-header.php'); ?>
 <?php
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
@@ -19,43 +19,12 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý sản phẩm - Admin Clothing Store</title>
-    <link rel="stylesheet" href="../assets/css/admin/manage_products.css">
+    <link rel="stylesheet" href="../../assets/css/admin/manage_products.css">
 </head>
 
 <body>
     <div class="admin-container">
-        <div class="admin-sidebar">
-            <div class="sidebar-header">
-                <div class="admin-name">
-                    <?php echo isset($_SESSION['user']) ? htmlspecialchars($_SESSION['user']['name']) : 'Admin'; ?>
-                </div>
-                <div class="admin-role">Quản trị viên</div>
-            </div>
-
-            <ul class="sidebar-menu">
-                <li><a href="dashboard.php"><i>📊</i> Tổng quan</a></li>
-                <li><a href="#"><i>📦</i> Đơn hàng</a></li>
-                <li><a href="manage_products.php" class="active"><i>👕</i> Sản phẩm</a></li>
-                <li><a href="manege_customer.php"><i>👥</i> Khách hàng</a></li>
-                <li><a href="manage_employees.php"><i>👨‍💼</i> Nhân viên</a></li>
-                <li><a href="manage_roles.php"><i>🔐</i> Phân quyền</a></li>
-                <li><a href="#"><i>⚙️</i> Cài đặt</a></li>
-                <li>
-                    <?php
-                    if (session_status() === PHP_SESSION_NONE) {
-                        session_start(); // Khởi động session nếu chưa được khởi động
-                    }
-                    if (isset($_SESSION['user'])) {
-                        // Hiển thị nút đăng xuất
-                        echo '<a href="logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>';
-                    } else {
-                        // Hiển thị nút đăng nhập
-                        echo '<a href="../login/index.php" class="login-btn"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>';
-                    }
-                    ?>
-                </li>
-            </ul>
-        </div>
+        <?php require_once('../admin/sidebar/admin_sidebar.php'); ?>
 
         <div class="admin-content">
             <div class="page-header">
@@ -113,7 +82,7 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
                             data-subcategory="<?php echo htmlspecialchars($product['subcategory']); ?>"
                             data-code="<?php echo htmlspecialchars($product['code']); ?>"
                             data-description="<?php echo htmlspecialchars($product['description']); ?>">
-                            <td><img src="<?php echo htmlspecialchars('../assets/image_products/' . $product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image"></td>
+                            <td><img src="<?php echo htmlspecialchars('../../assets/image_products/' . $product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image"></td>
                             <td><?php echo htmlspecialchars($product['name']); ?></td>
                             <td><?php echo number_format($product['price'], 0, ',', '.'); ?>đ</td>
                             <td><?php echo htmlspecialchars($product['stock']); ?></td>

@@ -34,7 +34,7 @@ $sql = "INSERT INTO product (name, code, price, original_price, category, subcat
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param(
-    "ssddsssiss",
+    "ssddssssss",
     $name,
     $code,
     $price,
@@ -46,9 +46,8 @@ $stmt->bind_param(
     $description,
     $image
 );
-
 if ($stmt->execute()) {
-    echo "Thêm sản phẩm thành công!";
+    echo "Thêm sản phẩm thành công! Trạng thái: " . $status;
     header("Location: manage_products.php");
     exit();
 } else {

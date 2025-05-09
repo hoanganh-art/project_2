@@ -8,47 +8,19 @@ require_once('../admin/header/admin-header.php');
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phân quyền - Admin Clothing Store</title>
     <link rel="stylesheet" href="../assets/css/admin/manage_roles.css">
 </head>
+
 <body>
 
-    
     <div class="admin-container">
-        <div class="admin-sidebar">
-            <div class="sidebar-header">
-            <div class="admin-name"><?php echo isset($_SESSION['user']) ? htmlspecialchars($_SESSION['user']['name']) : 'Admin'; ?></div>
-                <div class="admin-role">Quản trị viên</div>
-            </div>
-            
-            <ul class="sidebar-menu">
-                <li><a href="dashboard.php"><i>📊</i> Tổng quan</a></li>
-                <li><a href="#"><i>📦</i> Đơn hàng</a></li>
-                <li><a href="manage_products.php"><i>👕</i> Sản phẩm</a></li>
-                <li><a href="manege_customer.php"><i>👥</i> Khách hàng</a></li>
-                <li><a href="manage_employees.php"><i>👨‍💼</i> Nhân viên</a></li>
-                <li><a href="manage_roles.php" class="active"><i>🔐</i> Phân quyền</a></li>
-                <li><a href="#"><i>⚙️</i> Cài đặt</a></li>
-                <li>
-                    <?php
-                    if (session_status() === PHP_SESSION_NONE) {
-                        session_start(); // Khởi động session nếu chưa được khởi động
-                    }
-                    if (isset($_SESSION['user'])) {
-                        // Hiển thị nút đăng xuất
-                        echo '<a href="logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>';
-                    } else {
-                        // Hiển thị nút đăng nhập
-                        echo '<a href="../login/index.php" class="login-btn"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>';
-                    }
-                    ?>
-                </li>
-            </ul>
-        </div>
-        
+        <?php require_once('../admin/sidebar/admin_sidebar.php'); ?>
+
         <div class="admin-content">
             <div class="page-header">
                 <h1 class="page-title">Quản lý phân quyền</h1>
@@ -56,7 +28,7 @@ require_once('../admin/header/admin-header.php');
                     <span>+</span> Thêm vai trò
                 </button>
             </div>
-            
+
             <div class="role-management">
                 <div class="role-list">
                     <h3>Danh sách vai trò</h3>
@@ -66,13 +38,13 @@ require_once('../admin/header/admin-header.php');
                     <div class="role-item">Quản lý kho</div>
                     <div class="role-item">Nhân viên giao hàng</div>
                 </div>
-                
+
                 <div class="role-details">
                     <div class="role-header">
                         <div class="role-name">Quản trị viên</div>
                         <button class="btn-save">Lưu thay đổi</button>
                     </div>
-                    
+
                     <div class="permission-categories">
                         <div class="permission-category">
                             <h4>Quản lý hệ thống</h4>
@@ -89,7 +61,7 @@ require_once('../admin/header/admin-header.php');
                                 <label for="perm-roles">Quản lý phân quyền</label>
                             </div>
                         </div>
-                        
+
                         <div class="permission-category">
                             <h4>Quản lý sản phẩm</h4>
                             <div class="permission-item">
@@ -109,7 +81,7 @@ require_once('../admin/header/admin-header.php');
                                 <label for="perm-product-delete">Xóa sản phẩm</label>
                             </div>
                         </div>
-                        
+
                         <div class="permission-category">
                             <h4>Quản lý đơn hàng</h4>
                             <div class="permission-item">
@@ -125,7 +97,7 @@ require_once('../admin/header/admin-header.php');
                                 <label for="perm-order-cancel">Hủy đơn hàng</label>
                             </div>
                         </div>
-                        
+
                         <div class="permission-category">
                             <h4>Quản lý khách hàng</h4>
                             <div class="permission-item">
@@ -141,7 +113,7 @@ require_once('../admin/header/admin-header.php');
                                 <label for="perm-customer-delete">Xóa khách hàng</label>
                             </div>
                         </div>
-                        
+
                         <div class="permission-category">
                             <h4>Quản lý nhân viên</h4>
                             <div class="permission-item">
@@ -161,7 +133,7 @@ require_once('../admin/header/admin-header.php');
                                 <label for="perm-employee-delete">Xóa nhân viên</label>
                             </div>
                         </div>
-                        
+
                         <div class="permission-category">
                             <h4>Báo cáo & thống kê</h4>
                             <div class="permission-item">
@@ -174,7 +146,7 @@ require_once('../admin/header/admin-header.php');
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="user-assignment">
                         <h3>Nhân viên thuộc vai trò này</h3>
                         <div class="user-list">
@@ -200,7 +172,7 @@ require_once('../admin/header/admin-header.php');
             </div>
         </div>
     </div>
-    
+
     <!-- Modal Thêm vai trò mới -->
     <div class="modal" id="roleModal">
         <div class="modal-content">
@@ -233,21 +205,21 @@ require_once('../admin/header/admin-header.php');
         const closeBtn = document.getElementById('closeModal');
         const cancelBtn = document.getElementById('cancelBtn');
         const saveBtn = document.getElementById('saveBtn');
-        
+
         // Mở modal thêm vai trò
         addBtn.addEventListener('click', () => {
             roleModal.style.display = 'flex';
         });
-        
+
         // Đóng modal
         closeBtn.addEventListener('click', () => {
             roleModal.style.display = 'none';
         });
-        
+
         cancelBtn.addEventListener('click', () => {
             roleModal.style.display = 'none';
         });
-        
+
         // Lưu vai trò mới
         saveBtn.addEventListener('click', () => {
             const roleName = document.getElementById('role-name').value;
@@ -255,7 +227,7 @@ require_once('../admin/header/admin-header.php');
                 alert(`Đã thêm vai trò mới: ${roleName}`);
                 roleModal.style.display = 'none';
                 document.getElementById('roleForm').reset();
-                
+
                 // Giả lập thêm vai trò vào danh sách
                 const roleList = document.querySelector('.role-list');
                 const newRole = document.createElement('div');
@@ -264,14 +236,14 @@ require_once('../admin/header/admin-header.php');
                 roleList.appendChild(newRole);
             }
         });
-        
+
         // Đóng modal khi click bên ngoài
         window.addEventListener('click', (e) => {
             if (e.target === roleModal) {
                 roleModal.style.display = 'none';
             }
         });
-        
+
         // Xử lý chọn vai trò
         document.querySelectorAll('.role-item').forEach(item => {
             item.addEventListener('click', function() {
@@ -279,15 +251,15 @@ require_once('../admin/header/admin-header.php');
                     i.classList.remove('active');
                 });
                 this.classList.add('active');
-                
+
                 // Giả lập load quyền của vai trò được chọn
                 document.querySelector('.role-name').textContent = this.textContent;
-                
+
                 // Hiển thị thông báo
                 console.log(`Đã chọn vai trò: ${this.textContent}`);
             });
         });
-        
+
         // Xử lý gỡ bỏ nhân viên khỏi vai trò
         document.querySelectorAll('.btn-assign').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -300,5 +272,6 @@ require_once('../admin/header/admin-header.php');
         });
     </script>
 </body>
+
 </html>
-<?php require_once('../admin/footer/admin-footer.php');?>
+<?php require_once('../admin/footer/admin-footer.php'); ?>

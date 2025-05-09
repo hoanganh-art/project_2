@@ -35,4 +35,3 @@ if ($stmt->execute()) {
 } else {
     echo "Thêm nhân viên thất bại: " . $stmt->error;
 }
-?>
