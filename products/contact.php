@@ -22,7 +22,7 @@ if ($contact_info) {
     // Nếu không có thông tin liên hệ, có thể xử lý theo cách khác
 }
 
-require_once('../includes/header.php'); 
+require_once('../includes/header.php');
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -358,13 +358,12 @@ require_once('../includes/header.php');
     <!-- Google Map -->
     <div class="map-container">
         <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.696997219741!2d105.84338987730047!3d21.004779739599755!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ac71294bf0ab%3A0xc7e2d20e5e04a9da!2zxJDhuqFpIEjhu41jIELDoWNoIEtob2EgSMOgIE7hu5lp!5e0!3m2!1svi!2sus!4v1746147903777!5m2!1svi!2sus"
+            src="<?php echo $map_url; ?>"
             width="800"
-            height="500" 
-            style="border:0;" 
-            allowfullscreen="" 
-            loading="lazy"
-            ></iframe>
+            height="500"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"></iframe>
     </div>
 </body>
 
