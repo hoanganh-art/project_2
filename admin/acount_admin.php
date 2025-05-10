@@ -159,19 +159,19 @@ session_start();
         }
 
         // Hiển thị preview khi chọn ảnh avatar
-        document.getElementById('avatar').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                const preview = document.querySelector('.avatar-preview');
+        // document.getElementById('avatar').addEventListener('change', function(e) {
+        //     const file = e.target.files[0];
+        //     if (file) {
+        //         const reader = new FileReader();
+        //         const preview = document.querySelector('.avatar-preview');
                 
-                reader.onload = function(e) {
-                    preview.innerHTML = `<img src="${e.target.result}" alt="Avatar Preview">`;
-                }
+        //         reader.onload = function(e) {
+        //             preview.innerHTML = `<img src="${e.target.result}" alt="Avatar Preview">`;
+        //         }
                 
-                reader.readAsDataURL(file);
-            }
-        });
+        //         reader.readAsDataURL(file);
+        //     }
+        // });
 
         // Xử lý hiển thị thông báo sau khi submit form
         document.addEventListener('DOMContentLoaded', function() {
