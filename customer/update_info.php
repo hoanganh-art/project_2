@@ -1,13 +1,11 @@
 <?php
 session_start();
 require_once("../includes/database.php"); // Kết nối đến cơ sở dữ liệu
-
 // Kiểm tra phương thức POST
 if (!isset($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo "Phương thức không được phép!";
     exit();
 }
-
 // Lấy dữ liệu từ form
 $name = $_POST['name'] ?? '';
 $email = $_POST['email'] ?? '';

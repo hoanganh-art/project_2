@@ -37,11 +37,26 @@ CREATE TABLE admin (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
+    phone VARCHAR(20) NOT NULL,
+    gender TINYINT(1),
+    address TEXT NOT NULL,
+    avatar VARCHAR(255),
     password VARCHAR(255) NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
+SELECT * FROM admin;
+-- Cập nhật thông tin admin
+UPDATE admin
+SET name = 'Updated Name',
+    email = 'updated_email@example.com',
+    phone = '123456789',
+    gender = 1,
+    address = 'Updated Address',
+    avatar = 'updated_avatar.jpg',
+    password = 'new_password',
+    status = 'inactive'
+WHERE id = 1;
 -- Sản phẩm
 CREATE TABLE product (
     id INT PRIMARY KEY AUTO_INCREMENT,
