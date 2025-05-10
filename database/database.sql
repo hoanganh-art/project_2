@@ -77,7 +77,7 @@ VALUES
 INSERT INTO admin (name, email, password, status)
 VALUES
 ('Second Admin', 'secondadmin@example.com','$2y$10$LjeOEope0BsHsrEClUxTG.e3BkEJWzZffVKW0ySuMk4IJx8iaoEia', 'active');
-
+SELECT * FROM admin;
 SELECT id, name, status FROM product;
 -- Cập nhật tất cả sản phẩm có status = 0 thành "active"
 UPDATE product SET status = 'active' WHERE status = '0';

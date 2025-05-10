@@ -89,6 +89,8 @@ function checkAdmin($email, $password, $conn) {
                 'name' => $admin['name'],
                 'email' => $admin['email'],
                 'phone' => $admin['phone'],
+                'avatar' => $admin['avatar'],
+                'gender' => $admin['gender'],
                 'address' => $admin['address'],
                 'status' => $admin['status'],
                 'created_at' => $admin['created_at'],
