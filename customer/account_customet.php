@@ -7,7 +7,7 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nhân Viên | SOÁI PHONG</title>
+    <title>Tài Khoản | SOÁI PHONG</title>
     <link rel="shortcut icon" href="../assets/image/logo.ico"
         type="image/x-icon">
     <link rel="stylesheet" href="../assets/css/employee/dashboard.css">
