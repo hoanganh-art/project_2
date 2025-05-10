@@ -1,4 +1,7 @@
 <?php require_once('../admin/header/admin-header.php'); ?>
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 

@@ -17,6 +17,7 @@
         <li><a href="../admin/manege_customer.php" class="<?php echo $current_page == 'manege_customer.php' ? 'active' : ''; ?>"><i>👥</i> Khách hàng</a></li>
         <li><a href="../admin/manage_employees.php" class="<?php echo $current_page == 'manage_employees.php' ? 'active' : ''; ?>"><i>👨‍💼</i> Nhân viên</a></li>
         <li><a href="../admin/manage_roles.php" class="<?php echo $current_page == 'manage_roles.php' ? 'active' : ''; ?>"><i>🔐</i> Phân quyền</a></li>
+        <li><a href="../admin/acount_admin.php" class="<?php echo $current_page == 'acount_admin.php' ? 'active' : ''; ?>">Thông Tin tài Khoản</a></li>
         <li><a href="../admin/admin_setting.php" class="<?php echo $current_page == 'admin_setting.php' ? 'active' : ''; ?>"><i>⚙️</i> Cài đặt</a></li>
         <li>
             <?php
