@@ -46,19 +46,19 @@ require_once('../admin/header/admin-header.php');
                 </div>
                 <div class="contact-info-item">
                     <span class="contact-info-label">Điện thoại 1:</span>
-                    <span class="contact-info-value" id="displayPhone1"><?php echo htmlspecialchars($contact['phone_1']); ?></span>
+                    <span class="contact-info-value" id="displayPhone1"><?php echo isset($contact['phone_1']) ? htmlspecialchars($contact['phone_1']) : 'Chưa có thông tin'; ?></span>
                 </div>
                 <div class="contact-info-item">
                     <span class="contact-info-label">Điện thoại 2:</span>
-                    <span class="contact-info-value" id="displayPhone2"><?php echo htmlspecialchars($contact['phone_2']) ?></span>
+                    <span class="contact-info-value" id="displayPhone2"><?php  echo isset($contact['phone_2']) ? htmlspecialchars($contact['phone_2']) : 'Chưa có thông tin'; ?></span>
                 </div>
                 <div class="contact-info-item">
                     <span class="contact-info-label">Email 1:</span>
-                    <span class="contact-info-value" id="displayEmail1"><?php echo htmlspecialchars($contact['email_1']); ?></span>
+                    <span class="contact-info-value" id="displayEmail1"><?php echo isset($contact['email_1']) ? htmlspecialchars($contact['email_1']) : 'Chưa có thông tin'; ?></span>
                 </div>
                 <div class="contact-info-item">
                     <span class="contact-info-label">Email 2:</span>
-                    <span class="contact-info-value" id="displayEmail2"><?php echo htmlspecialchars($contact['email_2']); ?></span>
+                    <span class="contact-info-value" id="displayEmail2"><?php echo isset($contact['email_2']) ? htmlspecialchars($contact['email_2']) : 'Chưa có thông tin'; ?></span>
                 </div>
                 <div class="contact-info-item" style="display: flex; flex-direction: column; align-items: flex-start;">
                     <span class="contact-info-label">Bản đồ:</span>

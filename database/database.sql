@@ -1,5 +1,5 @@
 CREATE DATABASE cuahang;
-
+DROP DATABASE cuahang;
 USE cuahang;
 
 -- Bảng khách hàng
