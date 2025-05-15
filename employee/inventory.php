@@ -300,6 +300,104 @@ $products = $result->fetch_all(MYSQLI_ASSOC); ?>
                 modal.style.display = 'none';
             }
         });
+
+        // Xử lý tìm kiếm sản phẩm
+        const searchInput = document.querySelector('.search-box input');
+        searchInput.addEventListener('input', function() {
+            const keyword = this.value.toLowerCase();
+            rows.forEach(row => {
+            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const category = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            if (name.includes(keyword) || category.includes(keyword)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+            });
+            // Ẩn phân trang khi tìm kiếm
+            if (keyword) {
+            pagination.style.display = 'none';
+            } else {
+            pagination.style.display = '';
+            showPage(currentPage);
+            }
+        });
+        // Xử lý Xuất Excel
+        // Xử lý Xuất Excel
+        // Tìm đúng nút "Xuất Excel" (nút thứ 3 trong .action-buttons)
+        const actionButtons = document.querySelectorAll('.action-buttons .btn-secondary');
+        if (actionButtons.length > 1) {
+            const exportBtn = actionButtons[1];
+            exportBtn.addEventListener('click', () => {
+            window.location.href = 'export_inventory_excel.php';
+            });
+        }
+        // Xử lý phân trang
+        const rowsPerPage = 5;
+        const table = document.querySelector('.inventory-table table');
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const pagination = document.querySelector('.pagination');
+        let currentPage = 1;
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+        function showPage(page) {
+            // Ẩn tất cả các dòng
+            rows.forEach(row => row.style.display = 'none');
+            // Hiển thị các dòng cho trang hiện tại
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            rows.slice(start, end).forEach(row => row.style.display = '');
+            // Cập nhật phân trang
+            updatePagination(page);
+        }
+
+        function updatePagination(page) {
+            // Xóa các trang cũ (giữ lại mũi tên)
+            pagination.innerHTML = '';
+            // Nút prev
+            const prev = document.createElement('div');
+            prev.className = 'page-item';
+            prev.innerHTML = '<i class="fas fa-angle-left"></i>';
+            prev.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                showPage(currentPage);
+            }
+            };
+            pagination.appendChild(prev);
+
+            // Các số trang
+            for (let i = 1; i <= totalPages; i++) {
+            const pageItem = document.createElement('div');
+            pageItem.className = 'page-item' + (i === page ? ' active' : '');
+            pageItem.textContent = i;
+            pageItem.onclick = () => {
+                currentPage = i;
+                showPage(currentPage);
+            };
+            pagination.appendChild(pageItem);
+            }
+
+            // Nút next
+            const next = document.createElement('div');
+            next.className = 'page-item';
+            next.innerHTML = '<i class="fas fa-angle-right"></i>';
+            next.onclick = () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                showPage(currentPage);
+            }
+            };
+            pagination.appendChild(next);
+        }
+
+        // Khởi tạo trang đầu tiên
+        if (rows.length > 0) {
+            showPage(currentPage);
+        }
+
+
     </script>
 </body>
 
