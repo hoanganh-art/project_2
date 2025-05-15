@@ -15,6 +15,7 @@ CREATE TABLE customer (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(50) NOT NULL DEFAULT 'active'
 );
+SELECT * FROM customer;
 
 -- Nhân viên
 CREATE TABLE employees (

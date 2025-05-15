@@ -74,9 +74,6 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
                         $statusClass = ($product['status'] == 'active') ? 'status-active' : 'status-inactive';
                         $statusText = ($product['status'] == 'active') ? 'Đang Bán' : 'Ngừng Bán';
                         ?>
-                        <style>
-
-                        </style>
                         <tr data-id="<?php echo htmlspecialchars($product['id']); ?>"
                             data-original_price="<?php echo htmlspecialchars($product['original_price']); ?>"
                             data-subcategory="<?php echo htmlspecialchars($product['subcategory']); ?>"

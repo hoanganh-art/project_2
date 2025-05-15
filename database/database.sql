@@ -170,3 +170,4 @@ CREATE TABLE orders (
 
 select *FROM admin;
 SELECT * FROM employees;
+SELECT * FROM customer;

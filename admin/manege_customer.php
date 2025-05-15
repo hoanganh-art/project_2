@@ -74,8 +74,9 @@ $customer = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến
                 <tbody>
                     <?php foreach ($customer as $customer): ?>
                         <?php
-                        $statusClass = $customer['status'] == 'active' ? 'status-active' : 'status-inactive';
-                        $statusText = $customer['status'] == 'active' ? 'Hoạt động' : 'Ngừng hoạt động';
+                        $status = isset($customer['status']) ? $customer['status'] : 'unknown';
+                        $statusClass = ($status == 'active') ? 'status-active' : 'status-inactive';
+                        $statusText = ($status == 'active') ? 'Đang hoạt động' : 'Ngừng hoạt động';
                         ?>
                         <tr data-email="<?php echo htmlspecialchars($customer['email']); ?>"
                             data-avatar="<?php echo htmlspecialchars($customer['avatar'] ?: '../../assets/avatar/default-avatar.png'); ?>"
@@ -316,6 +317,13 @@ $customer = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến
             alert(`Đã chọn sắp xếp theo: ${e.target.value}`);
             // Trong thực tế sẽ có code sắp xếp dữ liệu
         });
+
+        // Xử lý xuất Excel và tải xuống
+        const exportBtn = document.querySelector('.btn-export');
+        exportBtn.addEventListener('click', () => {
+            window.location.href = 'export_customer_excel.php';
+        });
+
     </script>
 </body>
 
