@@ -324,6 +324,112 @@ $customer = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến
             window.location.href = 'export_customer_excel.php';
         });
 
+        // Xử lý phân trang động
+        const rowsPerPage = 10;
+        const table = document.querySelector('.customers-table tbody');
+        const allRows = Array.from(table.querySelectorAll('tr'));
+        const paginationContainer = document.querySelector('.pagination');
+        let currentPage = 1;
+
+        function renderTablePage(page) {
+            // Ẩn tất cả các dòng
+            allRows.forEach(row => row.style.display = 'none');
+            // Hiển thị các dòng thuộc trang hiện tại
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            allRows.slice(start, end).forEach(row => row.style.display = '');
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(allRows.length / rowsPerPage);
+            paginationContainer.innerHTML = '';
+
+            // Nút prev
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'pagination-btn';
+            prevBtn.textContent = '←';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updatePagination();
+                }
+            });
+            paginationContainer.appendChild(prevBtn);
+
+            // Các nút số trang
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'pagination-btn' + (i === currentPage ? ' active' : '');
+                btn.textContent = i;
+                btn.addEventListener('click', () => {
+                    currentPage = i;
+                    updatePagination();
+                });
+                paginationContainer.appendChild(btn);
+            }
+
+            // Nút next
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'pagination-btn';
+            nextBtn.textContent = '→';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updatePagination();
+                }
+            });
+            paginationContainer.appendChild(nextBtn);
+        }
+
+        function updatePagination() {
+            renderTablePage(currentPage);
+            renderPagination();
+        }
+
+        // Khởi tạo phân trang khi tải trang
+        updatePagination();
+
+        // Xử lý phần tìm kiếm theo tên
+        searchBox.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.customers-table tbody tr');
+
+            rows.forEach(row => {
+            const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+            if (name.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+            });
+        });
+        // Xử lý tìm kiếm theo trạng thái (kết hợp với tìm kiếm tên/số điện thoại/email)
+        function filterCustomers() {
+            const searchTerm = searchBox.value.toLowerCase();
+            const status = statusFilter.value;
+            const rows = document.querySelectorAll('.customers-table tbody tr');
+
+            rows.forEach(row => {
+            const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+            const phone = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const email = row.getAttribute('data-email') ? row.getAttribute('data-email').toLowerCase() : '';
+            const rowStatus = row.querySelector('td:nth-child(6)').textContent.trim() === 'Đang hoạt động' ? 'active' : 'inactive';
+
+            const matchesSearch = name.includes(searchTerm) || phone.includes(searchTerm) || email.includes(searchTerm);
+            const matchesStatus = (status === 'all' || status === rowStatus);
+
+            if (matchesSearch && matchesStatus) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+            });
+        }
+
+        searchBox.addEventListener('input', filterCustomers);
+        statusFilter.addEventListener('change', filterCustomers);
     </script>
 </body>
 

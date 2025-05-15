@@ -486,6 +486,40 @@ $employees = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến $
                 }
             });
         });
+        // Xử lý phân trang
+        const paginationBtns = document.querySelectorAll('.pagination-btn');
+        const rowsPerPage = 10;
+        const tableRows = document.querySelectorAll('.employees-table tbody tr');
+        let currentPage = 1;
+        const totalPages = Math.ceil(tableRows.length / rowsPerPage);
+
+        function showPage(page) {
+            // Ẩn tất cả các dòng
+            tableRows.forEach((row, idx) => {
+            row.style.display = (idx >= (page - 1) * rowsPerPage && idx < page * rowsPerPage) ? '' : 'none';
+            });
+            // Cập nhật nút active
+            paginationBtns.forEach(btn => btn.classList.remove('active'));
+            paginationBtns.forEach(btn => {
+            if (btn.textContent == page) btn.classList.add('active');
+            });
+        }
+
+        // Khởi tạo trang đầu tiên
+        showPage(currentPage);
+
+        paginationBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+            if (this.textContent === '←') {
+                if (currentPage > 1) currentPage--;
+            } else if (this.textContent === '→') {
+                if (currentPage < totalPages) currentPage++;
+            } else {
+                currentPage = parseInt(this.textContent);
+            }
+            showPage(currentPage);
+            });
+        });
     </script>
 </body>
 

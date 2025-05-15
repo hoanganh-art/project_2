@@ -174,7 +174,25 @@ VALUES
 INSERT INTO employees (name, email, phone, date_of_birth, address, password, position, avatar)
 VALUES
 ('Pham Van D', 'phamvand@example.com', '0901234567', '1990-01-01', '123 Fourth Street, Hue', '$2y$10$jkl012', 'Manager', 'avatar4.jpg'),
-('Hoang Thi E', 'hoangthie@example.com', '0934567890', '1995-05-05', '456 Fifth Street, Can Tho', '$2y$10$mno345', 'Sales', 'avatar5.jpg');
+('Hoang Thi E', 'hoangthie@example.com', '0934567890', '1995-05-05', '456 Fifth Street, Can Tho', '$2y$10$mno345', 'Sales', 'avatar5.jpg'),
+('Nguyen Van F', 'nguyenvanf@example.com', '0912345678', '1988-03-12', '789 Sixth Street, Da Nang', '$2y$10$pqr678', 'Accountant', 'avatar6.jpg'),
+('Tran Thi G', 'tranthig@example.com', '0923456789', '1992-07-21', '321 Seventh Street, Nha Trang', '$2y$10$stu901', 'Sales', 'avatar7.jpg'),
+('Le Van H', 'levanh@example.com', '0934567891', '1985-11-30', '654 Eighth Street, Vinh', '$2y$10$vwx234', 'Manager', 'avatar8.jpg'),
+('Pham Thi I', 'phamthii@example.com', '0945678912', '1993-09-15', '987 Ninth Street, Quang Ninh', '$2y$10$yzb567', 'Accountant', 'avatar9.jpg'),
+('Hoang Van J', 'hoangvanj@example.com', '0956789123', '1989-12-25', '111 Tenth Street, Lao Cai', '$2y$10$cde890', 'Sales', 'avatar10.jpg'),
+('Vu Thi K', 'vuthik@example.com', '0967891234', '1991-06-18', '222 Eleventh Street, Thanh Hoa', '$2y$10$fgh123', 'Manager', 'avatar11.jpg'),
+('Nguyen Van L', 'nguyenvanl@example.com', '0978912345', '1987-04-09', '333 Twelfth Street, Bac Ninh', '$2y$10$ijk456', 'Sales', 'avatar12.jpg'),
+('Tran Thi M', 'tranthim@example.com', '0989123456', '1994-08-22', '444 Thirteenth Street, Nam Dinh', '$2y$10$lmn789', 'Accountant', 'avatar13.jpg'),
+('Le Van N', 'levann@example.com', '0991234567', '1996-02-14', '555 Fourteenth Street, Ha Tinh', '$2y$10$pqr012', 'Sales', 'avatar14.jpg'),
+('Pham Thi O', 'phamthio@example.com', '0902345678', '1986-10-05', '666 Fifteenth Street, Quang Binh', '$2y$10$stu345', 'Manager', 'avatar15.jpg'),
+('Hoang Van P', 'hoangvanp@example.com', '0913456789', '1990-03-17', '777 Sixteenth Street, Quang Tri', '$2y$10$vwx678', 'Sales', 'avatar16.jpg'),
+('Vu Thi Q', 'vuthiq@example.com', '0924567890', '1992-12-29', '888 Seventeenth Street, Hue', '$2y$10$yzb901', 'Accountant', 'avatar17.jpg'),
+('Nguyen Van R', 'nguyenvanr@example.com', '0935678901', '1988-07-11', '999 Eighteenth Street, Da Lat', '$2y$10$cde234', 'Sales', 'avatar18.jpg'),
+('Tran Thi S', 'tranthis@example.com', '0946789012', '1993-05-23', '101 Ninth Street, Vung Tau', '$2y$10$fgh567', 'Manager', 'avatar19.jpg'),
+('Le Van T', 'levant@example.com', '0957890123', '1989-09-03', '102 Twentieth Street, Phan Thiet', '$2y$10$ijk890', 'Sales', 'avatar20.jpg'),
+('Pham Thi U', 'phamthiu@example.com', '0968901234', '1991-01-27', '103 Twenty-first Street, Bien Hoa', '$2y$10$lmn123', 'Accountant', 'avatar21.jpg'),
+('Hoang Van V', 'hoangvanv@example.com', '0979012345', '1987-06-16', '104 Twenty-second Street, Long An', '$2y$10$pqr456', 'Sales', 'avatar22.jpg'),
+('Vu Thi W', 'vuthiw@example.com', '0980123456', '1994-11-08', '105 Twenty-third Street, Tay Ninh', '$2y$10$stu789', 'Manager', 'avatar23.jpg');
 
 -- Thêm dữ liệu ngẫu nhiên vào bảng cart
 INSERT INTO cart (customer_id, product_id, quantity, color, size)
