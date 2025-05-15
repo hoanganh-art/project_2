@@ -256,6 +256,8 @@ require_once('../admin/header/admin-header.php');
                 editContactForm.style.display = 'none';
                 currentContactInfo.style.display = 'block';
             });
+
+            
         });
     </script>
 </body>
