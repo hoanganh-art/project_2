@@ -2,7 +2,7 @@
 include_once("../includes/database.php");
 
 // Lấy dữ liệu khách hàng
-$sql = "SELECT id, name, email, phone, address, created_at, status FROM customer";
+$sql = "SELECT id, name, email, phone, address, created_at, status FROM customer ORDER BY id ASC";
 $result = $conn->query($sql);
 
 // Tạo file Excel với định dạng UTF-8 và phân tách cột bằng dấu phẩy
