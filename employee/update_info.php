@@ -86,7 +86,6 @@ if ($stmt->execute()) {
         header('Location: account.php?success=1');
         exit();
 //     
-}
 } else {
     echo "Cập nhật thông tin thất bại!";
     exit();
