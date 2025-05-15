@@ -1,3 +1,10 @@
+<?php
+include('../includes/database.php');
+$sql = "SELECT * FROM product";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result(); // Lấy kết quả truy vấn
+$products = $result->fetch_all(MYSQLI_ASSOC); ?>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -82,7 +89,7 @@
         <div class="header">
             <h1>Quản Lý Kho Hàng</h1>
             <div class="user-profile">
-            <?php
+                <?php
                 $avatar = isset($_SESSION['user']['avatar']) ? $_SESSION['user']['avatar'] : 'https://randomuser.me/api/portraits/men/32.jpg';
                 // Kiểm tra nếu avatar đã là URL đầy đủ
                 $avatarSrc = (filter_var($avatar, FILTER_VALIDATE_URL)) ? $avatar : "../assets/avatar/" . htmlspecialchars($avatar);
@@ -118,19 +125,46 @@
         <div class="inventory-stats">
             <div class="stat-card">
                 <h3>Tổng sản phẩm</h3>
-                <p>128</p>
+                <p><?php
+                echo count($products);
+                ?>
+                </p>
             </div>
             <div class="stat-card">
                 <h3>Sản phẩm sắp hết</h3>
-                <p>15</p>
+                <?php
+                // Đếm số sản phẩm có số lượng tồn kho <= 10 và > 0 (sắp hết hàng)
+                $low_stock_count = 0;
+                foreach ($products as $product) {
+                    if ($product['stock'] > 0 && $product['stock'] <= 10) {
+                        $low_stock_count++;
+                    }
+                }
+                ?>
+                <p><?php echo $low_stock_count; ?></p>
             </div>
             <div class="stat-card">
                 <h3>Sản phẩm hết hàng</h3>
-                <p>8</p>
+                <?php
+                // Đếm số sản phẩm có số lượng tồn kho = 0 (hết hàng)
+                $out_of_stock_count = 0;
+                foreach ($products as $product) {
+                    if ($product['stock'] == 0) {
+                        $out_of_stock_count++;
+                    }
+                }
+                ?>
+                <p><?php echo $out_of_stock_count; ?></p>
             </div>
             <div class="stat-card">
                 <h3>Giá trị tồn kho</h3>
-                <p>285.000.000đ</p>
+                <?php
+                $total_inventory_value = 0;
+                foreach ($products as $product) {
+                    $total_inventory_value += $product['original_price'] * $product['stock'];
+                }
+                ?>
+                <p><?php echo number_format($total_inventory_value, 0, ',', '.') . 'đ'; ?></p>
             </div>
         </div>
 
@@ -150,91 +184,33 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>#SWP001</td>
-                            <td>
-                                <div class="product-info">
-                                    <img src="https://via.placeholder.com/50" alt="Áo Hoodie" class="product-image">
-                                    <span>Áo Hoodie Streetwear</span>
-                                </div>
-                            </td>
-                            <td>Áo</td>
-                            <td>450.000đ</td>
-                            <td>25</td>
-                            <td><span class="stock-status in-stock">Còn hàng</span></td>
-                            <td>
-                                <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+
+                        <?php foreach ($products as $product): ?>
+                            <?php
+
+                            $categoryName = ($product['category'] == 'men') ? 'Nam' : 'Nữ';
+                            $statusClass = ($product['status'] == 'active') ? 'status-active' : 'status-inactive';
+                            $statusText = ($product['status'] == 'active') ? 'Đang Bán' : 'Ngừng Bán';
+                            ?>
+                            <style>
+
+                            </style>
+                            <tr data-id="<?php echo htmlspecialchars($product['id']); ?>"
+                                data-original_price="<?php echo htmlspecialchars($product['original_price']); ?>"
+                                data-code="<?php echo htmlspecialchars($product['code']); ?>"
+                                data-description="<?php echo htmlspecialchars($product['description']); ?>">
+                                <td><img src="<?php echo htmlspecialchars('../../assets/image_products/' . $product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image"></td>
+                                <td><?php echo htmlspecialchars($product['name']); ?></td>
+                                <td><?php echo htmlspecialchars($product['subcategory']); ?></td>
+                                <td><?php echo number_format($product['original_price'], 0, ',', '.') . 'đ'; ?></td>
+                                <td><?php echo htmlspecialchars($product['stock']); ?></td>
+                                <td class="status <?php echo $statusClass; ?>"><?php echo $statusText; ?></td>
+                                <td>
+                                   <button class="action-btn edit"><i class="fas fa-edit"></i></button>
                                 <button class="action-btn restock"><i class="fas fa-warehouse"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#SWP005</td>
-                            <td>
-                                <div class="product-info">
-                                    <img src="https://via.placeholder.com/50" alt="Quần Jeans" class="product-image">
-                                    <span>Quần Jeans Rách</span>
-                                </div>
-                            </td>
-                            <td>Quần</td>
-                            <td>620.000đ</td>
-                            <td>3</td>
-                            <td><span class="stock-status low-stock">Sắp hết</span></td>
-                            <td>
-                                <button class="action-btn edit"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn restock"><i class="fas fa-warehouse"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#SWP012</td>
-                            <td>
-                                <div class="product-info">
-                                    <img src="https://via.placeholder.com/50" alt="Nón Snapback" class="product-image">
-                                    <span>Nón Snapback</span>
-                                </div>
-                            </td>
-                            <td>Phụ kiện</td>
-                            <td>280.000đ</td>
-                            <td>0</td>
-                            <td><span class="stock-status out-of-stock">Hết hàng</span></td>
-                            <td>
-                                <button class="action-btn edit"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn restock"><i class="fas fa-warehouse"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#SWP008</td>
-                            <td>
-                                <div class="product-info">
-                                    <img src="https://via.placeholder.com/50" alt="Áo Thun" class="product-image">
-                                    <span>Áo Thun Oversize</span>
-                                </div>
-                            </td>
-                            <td>Áo</td>
-                            <td>320.000đ</td>
-                            <td>42</td>
-                            <td><span class="stock-status in-stock">Còn hàng</span></td>
-                            <td>
-                                <button class="action-btn edit"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn restock"><i class="fas fa-warehouse"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#SWP015</td>
-                            <td>
-                                <div class="product-info">
-                                    <img src="https://via.placeholder.com/50" alt="Túi Đeo" class="product-image">
-                                    <span>Túi Đeo Chéo</span>
-                                </div>
-                            </td>
-                            <td>Phụ kiện</td>
-                            <td>380.000đ</td>
-                            <td>7</td>
-                            <td><span class="stock-status low-stock">Sắp hết</span></td>
-                            <td>
-                                <button class="action-btn edit"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn restock"><i class="fas fa-warehouse"></i></button>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>

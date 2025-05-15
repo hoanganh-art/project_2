@@ -263,3 +263,8 @@ VALUES
 -- Thêm dữ liệu quần áo với subcategory là "jeans" vào bảng product
 
 UPDATE product SET image ="6825ad74a4354_anh-gai-que-xinh-dep-01.jpg";
+
+
+SELECT COUNT(*) AS total_products FROM product;
+
+SELECT COUNT(*) AS low_stock_products FROM product WHERE stock < 10;
