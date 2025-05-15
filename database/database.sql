@@ -194,6 +194,32 @@ VALUES
 ('Hoang Van V', 'hoangvanv@example.com', '0979012345', '1987-06-16', '104 Twenty-second Street, Long An', '$2y$10$pqr456', 'Sales', 'avatar22.jpg'),
 ('Vu Thi W', 'vuthiw@example.com', '0980123456', '1994-11-08', '105 Twenty-third Street, Tay Ninh', '$2y$10$stu789', 'Manager', 'avatar23.jpg');
 
+-- Thêm sản phẩm quần áo vào bảng product
+INSERT INTO product (name, code, price, original_price, category, subcategory, stock, status, description, image)
+VALUES
+('Áo Thun Nam Basic', 'CLO001', 200.00, 150.00, 'Clothing', 'T-Shirt', 120, 'active', 'Áo thun nam chất liệu cotton thoáng mát.', 'ao_thun_nam_basic.jpg'),
+('Áo Sơ Mi Nữ Công Sở', 'CLO002', 350.00, 300.00, 'Clothing', 'Shirt', 80, 'active', 'Áo sơ mi nữ kiểu dáng thanh lịch, phù hợp công sở.', 'ao_so_mi_nu_cong_so.jpg'),
+('Quần Jean Nam Skinny', 'CLO003', 400.00, 350.00, 'Clothing', 'Jeans', 60, 'active', 'Quần jean nam skinny co giãn, trẻ trung.', 'quan_jean_nam_skinny.jpg'),
+('Váy Đầm Dạ Hội', 'CLO004', 900.00, 800.00, 'Clothing', 'Dress', 30, 'active', 'Váy đầm dạ hội sang trọng, phù hợp dự tiệc.', 'vay_dam_da_hoi.jpg'),
+('Áo Khoác Bomber Nam', 'CLO005', 600.00, 500.00, 'Clothing', 'Jacket', 45, 'active', 'Áo khoác bomber nam cá tính, giữ ấm tốt.', 'ao_khoac_bomber_nam.jpg'),
+('Quần Short Nữ Thể Thao', 'CLO006', 180.00, 140.00, 'Clothing', 'Shorts', 100, 'active', 'Quần short nữ thể thao năng động.', 'quan_short_nu_the_thao.jpg'),
+('Áo Hoodie Unisex', 'CLO007', 350.00, 300.00, 'Clothing', 'Hoodie', 70, 'active', 'Áo hoodie unisex trẻ trung, cá tính.', 'ao_hoodie_unisex.jpg'),
+('Chân Váy Xếp Ly', 'CLO008', 250.00, 200.00, 'Clothing', 'Skirt', 55, 'active', 'Chân váy xếp ly nữ tính, dễ phối đồ.', 'chan_vay_xep_ly.jpg'),
+('Áo Polo Nam', 'CLO009', 270.00, 220.00, 'Clothing', 'Polo', 90, 'active', 'Áo polo nam lịch sự, phù hợp đi làm.', 'ao_polo_nam.jpg'),
+('Quần Tây Nữ Công Sở', 'CLO010', 320.00, 270.00, 'Clothing', 'Trousers', 65, 'active', 'Quần tây nữ công sở thanh lịch.', 'quan_tay_nu_cong_so.jpg'),
+('Áo Khoác Gió Nữ', 'CLO011', 400.00, 350.00, 'Clothing', 'Jacket', 50, 'active', 'Áo khoác gió nữ nhẹ, chống nước.', 'ao_khoac_gio_nu.jpg'),
+('Váy Maxi Hoa Nhí', 'CLO012', 420.00, 370.00, 'Clothing', 'Dress', 40, 'active', 'Váy maxi hoa nhí dịu dàng, nữ tính.', 'vay_maxi_hoa_nhi.jpg'),
+('Áo Thun Trơn Unisex', 'CLO013', 160.00, 120.00, 'Clothing', 'T-Shirt', 110, 'active', 'Áo thun trơn unisex nhiều màu sắc.', 'ao_thun_tron_unisex.jpg'),
+('Quần Jogger Nam', 'CLO014', 300.00, 250.00, 'Clothing', 'Jogger', 75, 'active', 'Quần jogger nam thể thao, co giãn tốt.', 'quan_jogger_nam.jpg'),
+('Áo Len Nữ Dệt Kim', 'CLO015', 380.00, 330.00, 'Clothing', 'Sweater', 60, 'active', 'Áo len nữ dệt kim ấm áp, thời trang.', 'ao_len_nu_det_kim.jpg'),
+('Áo Khoác Dạ Nam', 'CLO016', 800.00, 700.00, 'Clothing', 'Coat', 35, 'active', 'Áo khoác dạ nam sang trọng, giữ ấm tốt.', 'ao_khoac_da_nam.jpg'),
+('Quần Legging Nữ', 'CLO017', 220.00, 180.00, 'Clothing', 'Leggings', 95, 'active', 'Quần legging nữ co giãn, thoải mái.', 'quan_legging_nu.jpg'),
+('Áo Sơ Mi Nam Caro', 'CLO018', 320.00, 270.00, 'Clothing', 'Shirt', 85, 'active', 'Áo sơ mi nam caro trẻ trung, năng động.', 'ao_so_mi_nam_caro.jpg'),
+('Váy Công Sở Nữ', 'CLO019', 350.00, 300.00, 'Clothing', 'Dress', 50, 'active', 'Váy công sở nữ thanh lịch, hiện đại.', 'vay_cong_so_nu.jpg'),
+('Áo Khoác Jean Nữ', 'CLO020', 500.00, 450.00, 'Clothing', 'Jacket', 40, 'active', 'Áo khoác jean nữ cá tính, dễ phối đồ.', 'ao_khoac_jean_nu.jpg');
+
+
+
 -- Thêm dữ liệu ngẫu nhiên vào bảng cart
 INSERT INTO cart (customer_id, product_id, quantity, color, size)
 VALUES
