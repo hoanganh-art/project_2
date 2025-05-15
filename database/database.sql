@@ -61,7 +61,7 @@ CREATE TABLE product(
     stock FLOAT NOT NULL, /*Số lượng sản phẩm */
     status VARCHAR(100) NOT NULL DEFAULT 'active', /*Trạng thái */
     description TEXT NOT NULL, /* Mô tả */
-    image VARCHAR(2555) /*Ảnh minh họa */
+    image VARCHAR(255) /*Ảnh minh họa */
 );
 SELECT * FROM product;
 DROP TABLE product;
@@ -197,53 +197,69 @@ VALUES
 -- Thêm sản phẩm quần áo vào bảng product
 INSERT INTO product (name, code, price, original_price, category, subcategory, stock, status, description, image)
 VALUES
-('Áo Thun Nam Basic', 'CLO001', 200.00, 150.00, 'Clothing', 'T-Shirt', 120, 'active', 'Áo thun nam chất liệu cotton thoáng mát.', 'ao_thun_nam_basic.jpg'),
-('Áo Sơ Mi Nữ Công Sở', 'CLO002', 350.00, 300.00, 'Clothing', 'Shirt', 80, 'active', 'Áo sơ mi nữ kiểu dáng thanh lịch, phù hợp công sở.', 'ao_so_mi_nu_cong_so.jpg'),
-('Quần Jean Nam Skinny', 'CLO003', 400.00, 350.00, 'Clothing', 'Jeans', 60, 'active', 'Quần jean nam skinny co giãn, trẻ trung.', 'quan_jean_nam_skinny.jpg'),
-('Váy Đầm Dạ Hội', 'CLO004', 900.00, 800.00, 'Clothing', 'Dress', 30, 'active', 'Váy đầm dạ hội sang trọng, phù hợp dự tiệc.', 'vay_dam_da_hoi.jpg'),
-('Áo Khoác Bomber Nam', 'CLO005', 600.00, 500.00, 'Clothing', 'Jacket', 45, 'active', 'Áo khoác bomber nam cá tính, giữ ấm tốt.', 'ao_khoac_bomber_nam.jpg'),
-('Quần Short Nữ Thể Thao', 'CLO006', 180.00, 140.00, 'Clothing', 'Shorts', 100, 'active', 'Quần short nữ thể thao năng động.', 'quan_short_nu_the_thao.jpg'),
-('Áo Hoodie Unisex', 'CLO007', 350.00, 300.00, 'Clothing', 'Hoodie', 70, 'active', 'Áo hoodie unisex trẻ trung, cá tính.', 'ao_hoodie_unisex.jpg'),
-('Chân Váy Xếp Ly', 'CLO008', 250.00, 200.00, 'Clothing', 'Skirt', 55, 'active', 'Chân váy xếp ly nữ tính, dễ phối đồ.', 'chan_vay_xep_ly.jpg'),
-('Áo Polo Nam', 'CLO009', 270.00, 220.00, 'Clothing', 'Polo', 90, 'active', 'Áo polo nam lịch sự, phù hợp đi làm.', 'ao_polo_nam.jpg'),
-('Quần Tây Nữ Công Sở', 'CLO010', 320.00, 270.00, 'Clothing', 'Trousers', 65, 'active', 'Quần tây nữ công sở thanh lịch.', 'quan_tay_nu_cong_so.jpg'),
-('Áo Khoác Gió Nữ', 'CLO011', 400.00, 350.00, 'Clothing', 'Jacket', 50, 'active', 'Áo khoác gió nữ nhẹ, chống nước.', 'ao_khoac_gio_nu.jpg'),
-('Váy Maxi Hoa Nhí', 'CLO012', 420.00, 370.00, 'Clothing', 'Dress', 40, 'active', 'Váy maxi hoa nhí dịu dàng, nữ tính.', 'vay_maxi_hoa_nhi.jpg'),
-('Áo Thun Trơn Unisex', 'CLO013', 160.00, 120.00, 'Clothing', 'T-Shirt', 110, 'active', 'Áo thun trơn unisex nhiều màu sắc.', 'ao_thun_tron_unisex.jpg'),
-('Quần Jogger Nam', 'CLO014', 300.00, 250.00, 'Clothing', 'Jogger', 75, 'active', 'Quần jogger nam thể thao, co giãn tốt.', 'quan_jogger_nam.jpg'),
-('Áo Len Nữ Dệt Kim', 'CLO015', 380.00, 330.00, 'Clothing', 'Sweater', 60, 'active', 'Áo len nữ dệt kim ấm áp, thời trang.', 'ao_len_nu_det_kim.jpg'),
-('Áo Khoác Dạ Nam', 'CLO016', 800.00, 700.00, 'Clothing', 'Coat', 35, 'active', 'Áo khoác dạ nam sang trọng, giữ ấm tốt.', 'ao_khoac_da_nam.jpg'),
-('Quần Legging Nữ', 'CLO017', 220.00, 180.00, 'Clothing', 'Leggings', 95, 'active', 'Quần legging nữ co giãn, thoải mái.', 'quan_legging_nu.jpg'),
-('Áo Sơ Mi Nam Caro', 'CLO018', 320.00, 270.00, 'Clothing', 'Shirt', 85, 'active', 'Áo sơ mi nam caro trẻ trung, năng động.', 'ao_so_mi_nam_caro.jpg'),
-('Váy Công Sở Nữ', 'CLO019', 350.00, 300.00, 'Clothing', 'Dress', 50, 'active', 'Váy công sở nữ thanh lịch, hiện đại.', 'vay_cong_so_nu.jpg'),
-('Áo Khoác Jean Nữ', 'CLO020', 500.00, 450.00, 'Clothing', 'Jacket', 40, 'active', 'Áo khoác jean nữ cá tính, dễ phối đồ.', 'ao_khoac_jean_nu.jpg');
+('Áo Thun Nam Basic', 'CL00001', 200.00, 150.00, 'Clothing', 'T-Shirt', 120, 'active', 'Áo thun nam chất liệu cotton thoáng mát.', 'ao_thun_nam_basic.jpg'),
+('Áo Sơ Mi Nữ Công Sở', 'CL00002', 350.00, 300.00, 'Clothing', 'Shirt', 80, 'active', 'Áo sơ mi nữ kiểu dáng thanh lịch, phù hợp công sở.', 'ao_so_mi_nu_cong_so.jpg'),
+('Quần Jean Nam Skinny', 'CL00003', 400.00, 350.00, 'Clothing', 'Jeans', 60, 'active', 'Quần jean nam skinny co giãn, trẻ trung.', 'quan_jean_nam_skinny.jpg'),
+('Váy Đầm Dạ Hội', 'CL00004', 900.00, 800.00, 'Clothing', 'Dress', 30, 'active', 'Váy đầm dạ hội sang trọng, phù hợp dự tiệc.', 'vay_dam_da_hoi.jpg'),
+('Áo Khoác Bomber Nam', 'CL00005', 600.00, 500.00, 'Clothing', 'Jacket', 45, 'active', 'Áo khoác bomber nam cá tính, giữ ấm tốt.', 'ao_khoac_bomber_nam.jpg'),
+('Quần Short Nữ Thể Thao', 'CL00006', 180.00, 140.00, 'Clothing', 'Shorts', 100, 'active', 'Quần short nữ thể thao năng động.', 'quan_short_nu_the_thao.jpg'),
+('Áo Hoodie Unisex', 'CL00007', 350.00, 300.00, 'Clothing', 'Hoodie', 70, 'active', 'Áo hoodie unisex trẻ trung, cá tính.', 'ao_hoodie_unisex.jpg'),
+('Chân Váy Xếp Ly', 'CL00008', 250.00, 200.00, 'Clothing', 'Skirt', 55, 'active', 'Chân váy xếp ly nữ tính, dễ phối đồ.', 'chan_vay_xep_ly.jpg'),
+('Áo Polo Nam', 'CL00009', 270.00, 220.00, 'Clothing', 'Polo', 90, 'active', 'Áo polo nam lịch sự, phù hợp đi làm.', 'ao_polo_nam.jpg'),
+('Quần Tây Nữ Công Sở', 'CL00010', 320.00, 270.00, 'Clothing', 'Trousers', 65, 'active', 'Quần tây nữ công sở thanh lịch.', 'quan_tay_nu_cong_so.jpg'),
+('Áo Khoác Gió Nữ', 'CL00011', 400.00, 350.00, 'Clothing', 'Jacket', 50, 'active', 'Áo khoác gió nữ nhẹ, chống nước.', 'ao_khoac_gio_nu.jpg'),
+('Váy Maxi Hoa Nhí', 'CL00012', 420.00, 370.00, 'Clothing', 'Dress', 40, 'active', 'Váy maxi hoa nhí dịu dàng, nữ tính.', 'vay_maxi_hoa_nhi.jpg'),
+('Áo Thun Trơn Unisex', 'CL00013', 160.00, 120.00, 'Clothing', 'T-Shirt', 110, 'active', 'Áo thun trơn unisex nhiều màu sắc.', 'ao_thun_tron_unisex.jpg'),
+('Quần Jogger Nam', 'CL00014', 300.00, 250.00, 'Clothing', 'Jogger', 75, 'active', 'Quần jogger nam thể thao, co giãn tốt.', 'quan_jogger_nam.jpg'),
+('Áo Len Nữ Dệt Kim', 'CL00015', 380.00, 330.00, 'Clothing', 'Sweater', 60, 'active', 'Áo len nữ dệt kim ấm áp, thời trang.', 'ao_len_nu_det_kim.jpg'),
+('Áo Khoác Dạ Nam', 'CL00016', 800.00, 700.00, 'Clothing', 'Coat', 35, 'active', 'Áo khoác dạ nam sang trọng, giữ ấm tốt.', 'ao_khoac_da_nam.jpg'),
+('Quần Legging Nữ', 'CL00017', 220.00, 180.00, 'Clothing', 'Leggings', 95, 'active', 'Quần legging nữ co giãn, thoải mái.', 'quan_legging_nu.jpg'),
+('Áo Sơ Mi Nam Caro', 'CL00018', 320.00, 270.00, 'Clothing', 'Shirt', 85, 'active', 'Áo sơ mi nam caro trẻ trung, năng động.', 'ao_so_mi_nam_caro.jpg'),
+('Váy Công Sở Nữ', 'CL00019', 350.00, 300.00, 'Clothing', 'Dress', 50, 'active', 'Váy công sở nữ thanh lịch, hiện đại.', 'vay_cong_so_nu.jpg'),
+('Áo Khoác Jean Nữ', 'CL00020', 500.00, 450.00, 'Clothing', 'Jacket', 40, 'active', 'Áo khoác jean nữ cá tính, dễ phối đồ.', 'ao_khoac_jean_nu.jpg');
 
+-- Thêm dữ liệu quần áo với subcategory là "jeans" vào bảng product
+INSERT INTO product (name, code, price, original_price, category, subcategory, stock, status, description, image) VALUES
+('Quần Jean Nữ Skinny', 'JCL2011', 420.00, 370.00, 'Clothing', 'jeans', 80, 'active', 'Quần jean nữ skinny co giãn, tôn dáng.', 'quan_jean_nu_skinny.jpg'),
+('Quần Jean Nam Rách Gối', 'JCL2012', 450.00, 400.00, 'Clothing', 'jeans', 60, 'active', 'Quần jean nam rách gối phong cách cá tính.', 'quan_jean_nam_rach_goi.jpg'),
+('Quần Jean Nữ Lưng Cao', 'JCL2013', 480.00, 420.00, 'Clothing', 'jeans', 70, 'active', 'Quần jean nữ lưng cao, dễ phối đồ.', 'quan_jean_nu_lung_cao.jpg'),
+('Quần Jean Nam Ống Đứng', 'JCL2014', 430.00, 380.00, 'Clothing', 'jeans', 65, 'active', 'Quần jean nam ống đứng cổ điển.', 'quan_jean_nam_ong_dung.jpg'),
+('Quần Jean Nữ Ống Rộng', 'JCL2015', 500.00, 450.00, 'Clothing', 'jeans', 55, 'active', 'Quần jean nữ ống rộng thời trang.', 'quan_jean_nu_ong_rong.jpg'),
+('Quần Jean Nam Xanh Đậm', 'JCL2016', 410.00, 360.00, 'Clothing', 'jeans', 75, 'active', 'Quần jean nam màu xanh đậm, trẻ trung.', 'quan_jean_nam_xanh_dam.jpg'),
+('Quần Jean Nữ Baggy', 'JCL2017', 470.00, 420.00, 'Clothing', 'jeans', 50, 'active', 'Quần jean nữ baggy năng động.', 'quan_jean_nu_baggy.jpg'),
+('Quần Jean Nam Slim Fit', 'JCL2018', 440.00, 390.00, 'Clothing', 'jeans', 60, 'active', 'Quần jean nam slim fit hiện đại.', 'quan_jean_nam_slim_fit.jpg'),
+('Quần Jean Nữ Rách Nhẹ', 'JCL2019', 460.00, 410.00, 'Clothing', 'jeans', 45, 'active', 'Quần jean nữ rách nhẹ cá tính.', 'quan_jean_nu_rach_nhe.jpg'),
+('Quần Jean Nam Lưng Thun', 'JEANS010', 420.00, 370.00, 'Clothing', 'jeans', 70, 'active', 'Quần jean nam lưng thun thoải mái.', 'quan_jean_nam_lung_thun.jpg'),
+('Quần Jean Nữ Ống Loe', 'JEANS011', 490.00, 440.00, 'Clothing', 'jeans', 40, 'active', 'Quần jean nữ ống loe phong cách retro.', 'quan_jean_nu_ong_loe.jpg'),
+('Quần Jean Nam Wash Sáng', 'JEANS012', 430.00, 380.00, 'Clothing', 'jeans', 55, 'active', 'Quần jean nam wash sáng trẻ trung.', 'quan_jean_nam_wash_sang.jpg'),
+('Quần Jean Nữ Lửng', 'JEANS013', 410.00, 360.00, 'Clothing', 'jeans', 65, 'active', 'Quần jean nữ lửng cá tính.', 'quan_jean_nu_lung.jpg'),
+('Quần Jean Nam Ống Suông', 'JEANS014', 460.00, 410.00, 'Clothing', 'jeans', 50, 'active', 'Quần jean nam ống suông thoải mái.', 'quan_jean_nam_ong_suong.jpg'),
+('Quần Jean Nữ Xanh Nhạt', 'JEANS015', 420.00, 370.00, 'Clothing', 'jeans', 60, 'active', 'Quần jean nữ màu xanh nhạt trẻ trung.', 'quan_jean_nu_xanh_nhat.jpg'),
+('Quần Jean Nam Đen', 'JEANS016', 440.00, 390.00, 'Clothing', 'jeans', 55, 'active', 'Quần jean nam màu đen lịch lãm.', 'quan_jean_nam_den.jpg'),
+('Quần Jean Nữ Lưng Thun', 'JEANS017', 430.00, 380.00, 'Clothing', 'jeans', 70, 'active', 'Quần jean nữ lưng thun thoải mái.', 'quan_jean_nu_lung_thun.jpg'),
+('Quần Jean Nam Ống Rộng', 'JEANS018', 470.00, 420.00, 'Clothing', 'jeans', 45, 'active', 'Quần jean nam ống rộng cá tính.', 'quan_jean_nam_ong_rong.jpg'),
+('Quần Jean Nữ Wash Sáng', 'JEANS019', 450.00, 400.00, 'Clothing', 'jeans', 60, 'active', 'Quần jean nữ wash sáng năng động.', 'quan_jean_nu_wash_sang.jpg'),
+('Quần Jean Nam Baggy', 'JEANS020', 480.00, 430.00, 'Clothing', 'jeans', 50, 'active', 'Quần jean nam baggy trẻ trung.', 'quan_jean_nam_baggy.jpg');
 
-
--- Thêm dữ liệu ngẫu nhiên vào bảng cart
-INSERT INTO cart (customer_id, product_id, quantity, color, size)
+-- Thêm dữ liệu quần áo với subcategory là "thun" vào bảng product
+INSERT INTO product (name, code, price, original_price, category, subcategory, stock, status, description, image)
 VALUES
-(1, 1, 2, 'Black', 'M'),
-(2, 3, 1, 'White', 'L'),
-(3, 5, 3, 'Blue', 'S');
+('Áo Thun Nữ Form Rộng', 'CL000021', 180.00, 140.00, 'Clothing', 'thun', 120, 'active', 'Áo thun nữ form rộng, chất liệu cotton thoáng mát.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Nam Tay Ngắn', 'CL00022', 200.00, 160.00, 'Clothing', 'thun', 100, 'active', 'Áo thun nam tay ngắn, trẻ trung, năng động.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Unisex In Hình', 'CL00023', 220.00, 170.00, 'Clothing', 'thun', 90, 'active', 'Áo thun unisex in hình cá tính, phù hợp mọi giới tính.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Nam Cổ Tròn', 'CL00024', 210.00, 150.00, 'Clothing', 'thun', 80, 'active', 'Áo thun nam cổ tròn, đơn giản, dễ phối đồ.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Nữ Tay Lỡ', 'CL00025', 190.00, 140.00, 'Clothing', 'thun', 110, 'active', 'Áo thun nữ tay lỡ, phong cách Hàn Quốc.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Nam In Chữ', 'CL00026', 230.00, 180.00, 'Clothing', 'thun', 95, 'active', 'Áo thun nam in chữ nổi bật, cá tính.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Nữ Croptop', 'CL00027', 250.00, 200.00, 'Clothing', 'thun', 70, 'active', 'Áo thun nữ croptop trẻ trung, năng động.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Nam Basic', 'CL00028', 170.00, 120.00, 'Clothing', 'thun', 130, 'active', 'Áo thun nam basic, phù hợp mặc hàng ngày.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Nữ In Hoa', 'CL00029', 240.00, 190.00, 'Clothing', 'thun', 85, 'active', 'Áo thun nữ in hoa nhẹ nhàng, nữ tính.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Nam Oversize', 'CL00030', 260.00, 210.00, 'Clothing', 'thun', 60, 'active', 'Áo thun nam oversize, phong cách streetwear.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Nữ Cổ Tim', 'CL00031', 200.00, 150.00, 'Clothing', 'thun', 75, 'active', 'Áo thun nữ cổ tim, tôn dáng, dễ thương.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Nam Thể Thao', 'CL00032', 280.00, 230.00, 'Clothing', 'thun', 90, 'active', 'Áo thun nam thể thao, thấm hút mồ hôi tốt.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Nữ Tay Dài', 'CL00033', 210.00, 160.00, 'Clothing', 'thun', 100, 'active', 'Áo thun nữ tay dài, phù hợp mùa thu đông.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Nam In Logo', 'CL00034', 220.00, 170.00, 'Clothing', 'thun', 80, 'active', 'Áo thun nam in logo thương hiệu nổi bật.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg'),
+('Áo Thun Nữ Form Ôm', 'CL00035', 230.00, 180.00, 'Clothing', 'thun', 60, 'active', 'Áo thun nữ form ôm, tôn dáng, quyến rũ.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg');
 
--- Thêm dữ liệu ngẫu nhiên vào bảng contact_settings
-INSERT INTO contact_settings (address, phone_1, phone_2, email_1, email_2, map_url, facebook_url, instagram_url, youtube_url, tiktok_url, updated_by)
-VALUES
-('789 Sixth Street, Hai Phong', '0911111111', '0922222222', 'info@cuahang.vn', 'support@cuahang.vn', 'https://maps.google.com/example2', 'https://facebook.com/cuahang2', 'https://instagram.com/cuahang2', 'https://youtube.com/cuahang2', 'https://tiktok.com/@cuahang2', 2);
+-- Thêm dữ liệu quần áo với subcategory là "jeans" vào bảng product
 
--- Bảng đơn hàng    
-CREATE TABLE orders (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT,
-    total_price FLOAT NOT NULL,
-    status VARCHAR(50) NOT NULL DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES customer(id)
-);  
-
-
-select *FROM admin;
-SELECT * FROM employees;
-SELECT * FROM customer;
-SELECT * from contact_settings;
+UPDATE product SET image ="6825ad74a4354_anh-gai-que-xinh-dep-01.jpg";
