@@ -75,9 +75,15 @@ if ($contact_info) {
 
             <div class="footer-contact">
                 <h3 class="footer-title">Liên hệ</h3>
-                <p><i class="fas fa-map-marker-alt"></i><?php echo $address; ?></p>
-                <p><i class="fas fa-phone-alt"></i> <?php echo $phone_1; ?></p>
-                <p><i class="fas fa-envelope"></i> <?php echo $email_1; ?></p>
+                <?php if (!empty($address)): ?>
+                    <p><i class="fas fa-map-marker-alt"></i> <?php echo $address; ?></p>
+                <?php endif; ?>
+                <?php if (!empty($phone_1)): ?>
+                    <p><i class="fas fa-phone-alt"></i> <?php echo $phone_1; ?></p>
+                <?php endif; ?>
+                <?php if (!empty($email_1)): ?>
+                    <p><i class="fas fa-envelope"></i> <?php echo $email_1; ?></p>
+                <?php endif; ?>
                 <p><i class="fas fa-clock"></i> Mở cửa: 8:00 - 22:00 (T2 - CN)</p>
             </div>
         </div>
