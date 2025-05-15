@@ -41,7 +41,7 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
                     <select id="category-filter">
                         <option value="all">Tất cả</option>
                         <option value="Nam">Nam</option>
-                        <option value="Nu">Nữ</option>
+                        <option value="Nữ">Nữ</option>
 
                     </select>
                 </div>
@@ -74,6 +74,9 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
                         $statusClass = ($product['status'] == 'active') ? 'status-active' : 'status-inactive';
                         $statusText = ($product['status'] == 'active') ? 'Đang Bán' : 'Ngừng Bán';
                         ?>
+                        <style>
+
+                        </style>
                         <tr data-id="<?php echo htmlspecialchars($product['id']); ?>"
                             data-original_price="<?php echo htmlspecialchars($product['original_price']); ?>"
                             data-subcategory="<?php echo htmlspecialchars($product['subcategory']); ?>"
@@ -539,56 +542,95 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
             }
         });
 
-        // Xử lý tìm kiếm sản phẩm
+        // Xử lý tìm kiếm sản phẩm theo tên
         const searchBox = document.querySelector('.search-box');
-        searchBox.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
+        searchBox.addEventListener('input', function() {
+            const keyword = this.value.trim().toLowerCase();
             const rows = document.querySelectorAll('.products-table tbody tr');
-
             rows.forEach(row => {
-                const name = row.querySelector('.product-name').textContent.toLowerCase();
-                const category = row.querySelector('.category').textContent.toLowerCase();
-
-                if (name.includes(searchTerm) || category.includes(searchTerm)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+            const productName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            if (productName.includes(keyword)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
             });
         });
-
         // Xử lý lọc theo danh mục
         const categoryFilter = document.getElementById('category-filter');
         categoryFilter.addEventListener('change', (e) => {
-            const category = e.target.value;
+            const selectedCategory = e.target.value.toLowerCase();
             const rows = document.querySelectorAll('.products-table tbody tr');
 
             rows.forEach(row => {
-                const rowCategory = row.cells[4].textContent.toLowerCase();
-
-                if (category === 'all' || rowCategory.includes(category)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+            const rowCategory = row.cells[4].textContent.toLowerCase();
+            if (selectedCategory === 'all' || rowCategory === selectedCategory) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
             });
         });
+       
 
         // Xử lý lọc theo trạng thái
-        const statusFilter = document.getElementById('status-filter');
-        statusFilter.addEventListener('change', (e) => {
+        const statusSelect = document.getElementById('status');
+        statusSelect.addEventListener('change', (e) => {
             const status = e.target.value;
             const rows = document.querySelectorAll('.products-table tbody tr');
 
             rows.forEach(row => {
-                const rowStatus = row.querySelector('.status').classList.contains('status-active') ?
-                    'active' : 'inactive';
+            const rowStatus = row.querySelector('.status').classList.contains('status-active') ?
+                'active' : 'inactive';
 
-                if (status === 'all' || status === rowStatus) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
+            if (status === 'all' || status === rowStatus) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+            });
+        });
+
+        // Xử lý phân trang 
+        const paginationBtns = document.querySelectorAll('.pagination-btn');
+        const rowsPerPage = 10;
+        const tableRows = Array.from(document.querySelectorAll('.products-table tbody tr'));
+        let currentPage = 1;
+        const totalPages = Math.ceil(tableRows.length / rowsPerPage);
+
+        function showPage(page) {
+            tableRows.forEach((row, idx) => {
+            if (idx >= (page - 1) * rowsPerPage && idx < page * rowsPerPage) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+            });
+            paginationBtns.forEach(btn => btn.classList.remove('active'));
+            if (paginationBtns[page]) {
+            paginationBtns[page].classList.add('active');
+            }
+        }
+
+        // Initial display
+        showPage(currentPage);
+
+        paginationBtns.forEach((btn, idx) => {
+            btn.addEventListener('click', function () {
+            if (btn.textContent === '←') {
+                if (currentPage > 1) {
+                currentPage--;
+                showPage(currentPage);
                 }
+            } else if (btn.textContent === '→') {
+                if (currentPage < totalPages) {
+                currentPage++;
+                showPage(currentPage);
+                }
+            } else {
+                currentPage = parseInt(btn.textContent);
+                showPage(currentPage);
+            }
             });
         });
     </script>
