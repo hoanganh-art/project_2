@@ -14,7 +14,7 @@ header("Expires: 0");
 
 echo "\xEF\xBB\xBF"; // Thêm BOM UTF-8 để Excel nhận diện đúng định dạng
 // Xuất tiêu đề cột
-echo "ID\t | Tên | \tEmail |\tSố điện thoại\n";
+echo "ID\t Tên \tEmail \tSố điện thoại\n";
 
 // Xuất dữ liệu
 if ($result->num_rows > 0) {
