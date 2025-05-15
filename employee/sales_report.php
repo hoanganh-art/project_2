@@ -91,9 +91,8 @@ if (!isset($_SESSION['user'])) {
             <?php
                 $avatar = isset($_SESSION['user']['avatar']) ? $_SESSION['user']['avatar'] : 'https://randomuser.me/api/portraits/men/32.jpg';
                 // Kiểm tra nếu avatar đã là URL đầy đủ
-                $avatarSrc = (filter_var($avatar, FILTER_VALIDATE_URL)) ? $avatar : "../assets/avatar/" . htmlspecialchars($avatar);
                 ?>
-                <img src="<?php echo $avatarSrc; ?>" alt="Avatar" class="account-avatar">
+                <img src="<?php echo $avatar; ?>" alt="Avatar" class="account-avatar">
                 <?php
                 $name = isset($_SESSION['user']['name']) ? $_SESSION['user']['name'] : 'Tên của bạn';
                 ?>
