@@ -256,9 +256,6 @@ require_once('../admin/header/admin-header.php');
                 editContactForm.style.display = 'none';
                 currentContactInfo.style.display = 'block';
             });
-
-            // Lưu ý: Trong thực tế, bạn cần lấy dữ liệu từ database để hiển thị
-            // Đây chỉ là ví dụ minh họa
         });
     </script>
 </body>

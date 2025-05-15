@@ -171,3 +171,4 @@ CREATE TABLE orders (
 select *FROM admin;
 SELECT * FROM employees;
 SELECT * FROM customer;
+SELECT * from contact_settings;
