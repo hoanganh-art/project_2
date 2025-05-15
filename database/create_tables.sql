@@ -150,3 +150,7 @@ CREATE TABLE contact_settings (
     `updated_by` int(11) DEFAULT NULL COMMENT 'ID người cập nhật',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+-- Thêm dữ liệu vào bảng contact_settings
+INSERT INTO contact_settings (address, phone_1, phone_2, email_1, email_2, map_url, facebook_url, instagram_url, youtube_url, tiktok_url, updated_by)
+VALUES
+('123 Main Street, Hanoi, Vietnam', '0123456789', '0987654321', 'contact@cuahang.com', 'support@cuahang.com', 'https://maps.google.com/example', 'https://facebook.com/cuahang', 'https://instagram.com/cuahang', 'https://youtube.com/cuahang', 'https://tiktok.com/@cuahang', 1);

@@ -99,23 +99,8 @@ CREATE TABLE cart (
     FOREIGN KEY (product_id) REFERENCES product(id)
 );
 
-CREATE TABLE contact_settings (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `address` varchar(255) NOT NULL COMMENT 'Địa chỉ cửa hàng',
-  `phone_1` varchar(20) NOT NULL COMMENT 'Số điện thoại chính',
-  `phone_2` varchar(20) DEFAULT NULL COMMENT 'Số điện thoại phụ',
-  `email_1` varchar(100) NOT NULL COMMENT 'Email chính',
-  `email_2` varchar(100) DEFAULT NULL COMMENT 'Email phụ',
-  `map_url` text DEFAULT NULL COMMENT 'URL Google Maps',
-  `facebook_url` varchar(255) DEFAULT NULL COMMENT 'Link Facebook',
-  `instagram_url` varchar(255) DEFAULT NULL COMMENT 'Link Instagram',
-  `youtube_url` varchar(255) DEFAULT NULL COMMENT 'Link YouTube',
-  `tiktok_url` varchar(255) DEFAULT NULL COMMENT 'Link TikTok',
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Thời gian cập nhật',
-  `updated_by` int(11) DEFAULT NULL COMMENT 'ID người cập nhật',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE contact_settings;
 SELECT * FROM contact_settings;
 UPDATE contact_settings
 SET 
