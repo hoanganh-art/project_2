@@ -1,3 +1,4 @@
+-- Active: 1746948069875@@127.0.0.1@3306@cuahang
 CREATE DATABASE cuahang;
 DROP DATABASE cuahang;
 USE cuahang;
