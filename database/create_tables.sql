@@ -45,10 +45,17 @@ CREATE TABLE admin (
     status VARCHAR(50) NOT NULL DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-SELECT * FROM admin;
+
+SELECT
+    *
+FROM
+    admin;
+
 -- Cập nhật thông tin admin
-UPDATE admin
-SET name = 'Updated Name',
+UPDATE
+    admin
+SET
+    name = 'Updated Name',
     email = 'updated_email@example.com',
     phone = '123456789',
     gender = 1,
@@ -56,20 +63,32 @@ SET name = 'Updated Name',
     avatar = 'updated_avatar.jpg',
     password = 'new_password',
     status = 'inactive'
-WHERE id = 1;
+WHERE
+    id = 1;
+
 -- Sản phẩm
 CREATE TABLE product (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(400) NOT NULL,  /*Tên sản phẩm */
-    code VARCHAR(200) NOT NULL UNIQUE, /* Mã Sản phẩm */
-    price FLOAT NOT NULL, /*Giá bán*/
-    original_price FLOAT NOT NULL, /*Giá gốc */
-    category VARCHAR(255) NOT NULL, /*Danh mục*/
-    subcategory VARCHAR(255) NOT NULL, /*loại sản phẩm*/
-    stock FLOAT NOT NULL, /*Số lượng sản phẩm */
-    status VARCHAR(100) NOT NULL DEFAULT 'active', /*Trạng thái */
-    description TEXT NOT NULL, /* Mô tả */
-    image VARCHAR(2555) /*Ảnh minh họa */
+    name VARCHAR(400) NOT NULL,
+    /*Tên sản phẩm */
+    code VARCHAR(200) NOT NULL UNIQUE,
+    /* Mã Sản phẩm */
+    price FLOAT NOT NULL,
+    /*Giá bán*/
+    original_price FLOAT NOT NULL,
+    /*Giá gốc */
+    category VARCHAR(255) NOT NULL,
+    /*Danh mục*/
+    subcategory VARCHAR(255) NOT NULL,
+    /*loại sản phẩm*/
+    stock FLOAT NOT NULL,
+    /*Số lượng sản phẩm */
+    status VARCHAR(100) NOT NULL DEFAULT 'active',
+    /*Trạng thái */
+    description TEXT NOT NULL,
+    /* Mô tả */
+    image VARCHAR(2555)
+    /*Ảnh minh họa */
 );
 
 -- Giỏ hàng
@@ -86,7 +105,6 @@ CREATE TABLE cart (
     FOREIGN KEY (customer_id) REFERENCES customer (id),
     FOREIGN KEY (product_id) REFERENCES product (id)
 );
-
 
 -- Đơn hàng
 CREATE TABLE orders (
@@ -114,5 +132,20 @@ CREATE TABLE order_detail (
     FOREIGN KEY (product_id) REFERENCES product (id)
 );
 
-
-
+-- Bảng cài đặt liên hệ
+CREATE TABLE contact_settings (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `address` varchar(255) NOT NULL COMMENT 'Địa chỉ cửa hàng',
+    `phone_1` varchar(20) NOT NULL COMMENT 'Số điện thoại chính',
+    `phone_2` varchar(20) DEFAULT NULL COMMENT 'Số điện thoại phụ',
+    `email_1` varchar(100) NOT NULL COMMENT 'Email chính',
+    `email_2` varchar(100) DEFAULT NULL COMMENT 'Email phụ',
+    `map_url` text DEFAULT NULL COMMENT 'URL Google Maps',
+    `facebook_url` varchar(255) DEFAULT NULL COMMENT 'Link Facebook',
+    `instagram_url` varchar(255) DEFAULT NULL COMMENT 'Link Instagram',
+    `youtube_url` varchar(255) DEFAULT NULL COMMENT 'Link YouTube',
+    `tiktok_url` varchar(255) DEFAULT NULL COMMENT 'Link TikTok',
+    `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Thời gian cập nhật',
+    `updated_by` int(11) DEFAULT NULL COMMENT 'ID người cập nhật',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
