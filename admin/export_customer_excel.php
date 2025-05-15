@@ -13,21 +13,18 @@ if ($conn->connect_error) {
 $sql = "SELECT id, name, email, phone FROM customer";
 $result = $conn->query($sql);
 
-if (!$result) {
-    die("Query failed: " . $conn->error);
-}
-
-// Sử dụng CSV với delimiter là dấu phẩy (Excel nhận diện tốt hơn)
-header("Content-Type: text/csv; charset=utf-8");
-header("Content-Disposition: attachment; filename=customers_export_" . date('Ymd_His') . ".csv");
+// Tạo file Excel
+header("Content-Type: application/vnd.ms-excel; charset=utf-8");
+header("Content-Disposition: attachment; filename=customers_export_" . date('Ymd_His') . ".xls");
 header("Pragma: no-cache");
 header("Expires: 0");
 
 // BOM UTF-8
 echo "\xEF\xBB\xBF";
 
-// Xuất tiêu đề cột (dùng dấu phẩy)
-echo "ID,Tên,Email,Số điện thoại\n";
+echo "\xEF\xBB\xBF"; // Thêm BOM UTF-8 để Excel nhận diện đúng định dạng
+// Xuất tiêu đề cột
+echo "ID\t | Tên | \tEmail |\tSố điện thoại\n";
 
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
