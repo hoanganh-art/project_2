@@ -1,15 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    die("Access denied");
-}
-
 include_once("../includes/database.php");
 
-if ($conn->connect_error) {
-    die("Database connection failed: " . $conn->connect_error);
-}
-
+// Lấy dữ liệu khách hàng
 $sql = "SELECT id, name, email, phone FROM customer";
 $result = $conn->query($sql);
 
@@ -19,25 +11,22 @@ header("Content-Disposition: attachment; filename=customers_export_" . date('Ymd
 header("Pragma: no-cache");
 header("Expires: 0");
 
-// BOM UTF-8
-echo "\xEF\xBB\xBF";
 
 echo "\xEF\xBB\xBF"; // Thêm BOM UTF-8 để Excel nhận diện đúng định dạng
 // Xuất tiêu đề cột
 echo "ID\t | Tên | \tEmail |\tSố điện thoại\n";
 
+// Xuất dữ liệu
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
-        // Bao quanh mỗi giá trị bằng dấu ngoặc kép và phân cách bằng dấu phẩy
-        $id = '"' . str_replace('"', '""', $row['id']) . '"';
-        $name = '"' . str_replace('"', '""', $row['name']) . '"';
-        $email = '"' . str_replace('"', '""', $row['email']) . '"';
-        $phone = '"' . str_replace('"', '""', $row['phone']) . '"';
-        
-        echo "$id,$name,$email,$phone\n";
+        // Đảm bảo không có tab hoặc xuống dòng trong dữ liệu
+        $id = str_replace(["\t", "\n", "\r"], ' ', $row['id']);
+        $name = str_replace(["\t", "\n", "\r"], ' ', $row['name']);
+        $email = str_replace(["\t", "\n", "\r"], ' ', $row['email']);
+        $phone = str_replace(["\t", "\n", "\r"], ' ', $row['phone']);
+        // Không cần dấu ngoặc kép
+        echo "$id \t$name\t$email\t$phone\n";
     }
-} else {
-    echo '"No records found","","",""'."\n";
 }
 
 $conn->close();
