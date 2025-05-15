@@ -156,3 +156,13 @@ VALUES
 INSERT INTO contact_settings (address, phone_1, phone_2, email_1, email_2, map_url, facebook_url, instagram_url, youtube_url, tiktok_url, updated_by)
 VALUES
 ('789 Sixth Street, Hai Phong', '0911111111', '0922222222', 'info@cuahang.vn', 'support@cuahang.vn', 'https://maps.google.com/example2', 'https://facebook.com/cuahang2', 'https://instagram.com/cuahang2', 'https://youtube.com/cuahang2', 'https://tiktok.com/@cuahang2', 2);
+
+-- Bảng đơn hàng    
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    total_price FLOAT NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customer(id)
+);  
