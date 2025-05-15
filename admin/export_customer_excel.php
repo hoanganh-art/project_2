@@ -7,7 +7,7 @@ $result = $conn->query($sql);
 
 // Tạo file Excel
 header("Content-Type: application/vnd.ms-excel; charset=utf-8");
-header("Content-Disposition: attachment; filename=customers_export_" . date('Ymd_His') . ".xls");
+header("Content-Disposition: attachment; filename=customers_export_" . date('Ymd_His') . ".xlsx");
 header("Pragma: no-cache");
 header("Expires: 0");
 
