@@ -166,3 +166,7 @@ CREATE TABLE orders (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (customer_id) REFERENCES customer(id)
 );  
+
+
+select *FROM admin;
+SELECT * FROM employees;
