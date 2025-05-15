@@ -58,8 +58,9 @@ if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
         } else {
             echo "Lỗi khi lưu file.";
             exit();
-        } else {
-        echo "Định dạng file không hợp lệ. Chỉ chấp nhận JPG, JPEG, PNG, GIF.";
+        }
+    } else {
+        echo "Định dạng file không hợp lệ!";
         exit();
     }
 }
