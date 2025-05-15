@@ -109,9 +109,6 @@ $products = $result->fetch_all(MYSQLI_ASSOC); ?>
                 <input type="text" placeholder="Tìm kiếm sản phẩm...">
             </div>
             <div class="action-buttons">
-                <button class="btn btn-secondary">
-                    <i class="fas fa-filter"></i> Lọc
-                </button>
                 <button class="btn btn-primary" id="add-product-btn">
                     <i class="fas fa-plus"></i> Thêm sản phẩm
                 </button>

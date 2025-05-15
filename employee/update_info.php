@@ -21,50 +21,59 @@ $date_of_birth = $_POST['date_of_birth'] ?? '';
 $address = $_POST['address'] ?? '';
 $avatar = isset($_SESSION['user']['avatar']) ? $_SESSION['user']['avatar'] : '';
 
-if (isset($_SESSION['user']['id'])) {
-    $userId = $_SESSION['user']['id'];
 
-    // Xử lý upload avatar
-    if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = '../assets/avatar/employees/'; // Thư mục lưu trữ avatar nhân viên
-        $fileTmpPath = $_FILES['avatar']['tmp_name'];
-        $filename = $_FILES['avatar']['name'];
 
-        $fileExtension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+if (!isset($_SESSION['user']['id'])) {
+    echo "Bạn cần đăng nhập để cập nhật thông tin!";
+    exit();
+}
+$userId = $_SESSION['user']['id'];
 
-        // Kiểm tra định dạng file
-        if (in_array($fileExtension, $allowedExtensions)) {
-            // Đặt tên file mới để tránh trùng lặp
-            $newFileName = uniqid('avatar_employees', true) . '.' . $fileExtension;
-            $destPath = $uploadDir . $newFileName;
+$avatar = $_SESSION['user']['avatar'] ?? ''; // Avatar mặc định
 
-            // Tạo thư mục nếu chưa tồn tại
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-                chmod($uploadDir, 0755);
-            }
+if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+    $uploadDir = '../assets/avatar/employees/';
+    $fileTmpPath = $_FILES['avatar']['tmp_name'];
+    $fileName = $_FILES['avatar']['name'];
 
-            // Di chuyển file vào thư mục đích
-            if (move_uploaded_file($fileTmpPath, $destPath)) {
-                $avatar = $newFileName; // Lưu tên file vào cơ sở dữ liệu
-            } else {
-                echo "Lỗi khi lưu file.";
-                exit();
-            }
-        } else {
-            echo "Định dạng file không hợp lệ. Chỉ chấp nhận JPG, JPEG, PNG, GIF.";
-            exit();
+    $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+
+      // Kiểm tra định dạng file
+
+      if (in_array($fileExtension, $allowedExtensions)) {
+        // Đặt tên file mới để tránh trùng lặp
+        $newFileName = uniqid('avatar_employess', true) . '.' . $fileExtension;
+        $destPath = $uploadDir . $newFileName;
+
+        // Tạo thư mục nếu chưa tồn tại
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+            chmod($uploadDir, 0755);
         }
-    }
-    // Cập nhật thông tin người dùng trong cơ sở dữ liệu
-    $sql = "UPDATE employees 
-            SET name = ?, email = ?, phone = ?, date_of_birth = ?, address = ?, avatar = ?
-            WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('ssssssi', $name, $email, $phone, $date_of_birth, $address, $avatar, $userId);
 
-    if ($stmt->execute()) {
+        // Di chuyển file vào thư mục đích
+        if (move_uploaded_file($fileTmpPath, $destPath)) {
+            $avatar = $destPath;
+        } else {
+            echo "Lỗi khi lưu file.";
+            exit();
+        } else {
+        echo "Định dạng file không hợp lệ. Chỉ chấp nhận JPG, JPEG, PNG, GIF.";
+        exit();
+    }
+}
+
+// Cập nhật thông tin người dùng
+
+ $sql = "UPDATE employees 
+           SET name = ?, email = ?, phone = ?, date_of_birth = ?, address = ?, avatar = ?
+WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('ssssssi', $name, $email, $phone, $date_of_birth, $address, $avatar, $userId);
+
+
+if ($stmt->execute()) {
         // Cập nhật session với thông tin mới
         $_SESSION['user']['name'] = $name;
         $_SESSION['user']['email'] = $email;
@@ -72,13 +81,13 @@ if (isset($_SESSION['user']['id'])) {
         $_SESSION['user']['date_of_birth'] = $date_of_birth;
         $_SESSION['user']['address'] = $address;
         $_SESSION['user']['avatar'] = $avatar;
-
         // Chuyển hướng hoặc hiển thị thông báo thành công
         header('Location: account.php?success=1');
         exit();
-    } else {
-        echo "Cập nhật thông tin thất bại!";
-    }
-} else {
-    echo "Bạn cần đăng nhập để cập nhật thông tin!";
+//     
 }
+} else {
+    echo "Cập nhật thông tin thất bại!";
+    exit();
+}
+
