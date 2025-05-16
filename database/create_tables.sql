@@ -1,156 +1,74 @@
+-- Tạo database (giữ nguyên)
 CREATE DATABASE cuahang;
-
 USE cuahang;
 
--- Khách hàng
-CREATE TABLE customer (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    address TEXT NOT NULL,
-    avatar VARCHAR(255),
-    gender TINYINT(1),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status VARCHAR(50) NOT NULL DEFAULT 'active'
-);
-SELECT * FROM customer;
-
--- Nhân viên
-CREATE TABLE employees (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    phone VARCHAR(20) NOT NULL,
-    date_of_birth DATE NOT NULL,
-    address TEXT NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    position VARCHAR(50) NOT NULL,
-    status VARCHAR(50) NOT NULL DEFAULT 'active',
-    role ENUM('staff', 'manager') NOT NULL DEFAULT 'staff',
-    avatar VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Admin
-CREATE TABLE admin (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    phone VARCHAR(20) NOT NULL,
-    gender TINYINT(1),
-    address TEXT NOT NULL,
-    avatar VARCHAR(255),
-    password VARCHAR(255) NOT NULL,
-    status VARCHAR(50) NOT NULL DEFAULT 'active',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-SELECT
-    *
-FROM
-    admin;
-
--- Cập nhật thông tin admin
-UPDATE
-    admin
-SET
-    name = 'Updated Name',
-    email = 'updated_email@example.com',
-    phone = '123456789',
-    gender = 1,
-    address = 'Updated Address',
-    avatar = 'updated_avatar.jpg',
-    password = 'new_password',
-    status = 'inactive'
-WHERE
-    id = 1;
-
--- Sản phẩm
-CREATE TABLE product (
+-- 1. Sửa bảng contact: sửa 'phon' thành 'phone'
+CREATE TABLE contact (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(400) NOT NULL,
-    /*Tên sản phẩm */
-    code VARCHAR(200) NOT NULL UNIQUE,
-    /* Mã Sản phẩm */
-    price FLOAT NOT NULL,
-    /*Giá bán*/
-    original_price FLOAT NOT NULL,
-    /*Giá gốc */
-    category VARCHAR(255) NOT NULL,
-    /*Danh mục*/
-    subcategory VARCHAR(255) NOT NULL,
-    /*loại sản phẩm*/
-    stock FLOAT NOT NULL,
-    /*Số lượng sản phẩm */
-    status VARCHAR(100) NOT NULL DEFAULT 'active',
-    /*Trạng thái */
-    description TEXT NOT NULL,
-    /* Mô tả */
-    image VARCHAR(2555)
-    /*Ảnh minh họa */
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) NOT NULL,  -- Đã sửa từ 'phon'
+    subject VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,       -- Đổi từ VARCHAR(25555555) sang TEXT
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Thêm trường này
+    status VARCHAR(50) DEFAULT 'unread'  -- Thêm trạng thái
 );
 
--- Giỏ hàng
--- Giỏ hàng
-CREATE TABLE cart (
-    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    customer_id INT NOT NULL,
-    product_id INT NOT NULL,
-    status VARCHAR(255) NOT NULL DEFAULT 'active',
-    color VARCHAR(255) NOT NULL,
-    size VARCHAR(255) NOT NULL,
-    quantity INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES customer (id),
-    FOREIGN KEY (product_id) REFERENCES product (id)
-);
-
--- Đơn hàng
+-- 2. Thêm bảng orders còn thiếu
 CREATE TABLE orders (
     id INT PRIMARY KEY AUTO_INCREMENT,
     customer_id INT NOT NULL,
-    employee_id INT NULL,
+    employee_id INT,
     total_amount FLOAT NOT NULL,
-    status VARCHAR(50) NOT NULL DEFAULT 'pending',
-    payment_method VARCHAR(50),
+    payment_method VARCHAR(50) NOT NULL,
     shipping_address TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (customer_id) REFERENCES customer (id),
-    FOREIGN KEY (employee_id) REFERENCES employees (id)
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) NOT NULL DEFAULT 'pending',
+    notes TEXT,
+    FOREIGN KEY (customer_id) REFERENCES customer(id),
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
 );
 
--- Chi tiết đơn hàng
+-- 3. Sửa bảng order_detail để đảm bảo tham chiếu đúng
 CREATE TABLE order_detail (
     id INT PRIMARY KEY AUTO_INCREMENT,
     order_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL,
     price FLOAT NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders (id),
-    FOREIGN KEY (product_id) REFERENCES product (id)
+    color VARCHAR(50),           -- Thêm thông tin màu sắc
+    size VARCHAR(50),            -- Thêm thông tin kích thước
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES product(id)
 );
 
--- Bảng cài đặt liên hệ
-CREATE TABLE contact_settings (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `address` varchar(255) NOT NULL COMMENT 'Địa chỉ cửa hàng',
-    `phone_1` varchar(20) NOT NULL COMMENT 'Số điện thoại chính',
-    `phone_2` varchar(20) DEFAULT NULL COMMENT 'Số điện thoại phụ',
-    `email_1` varchar(100) NOT NULL COMMENT 'Email chính',
-    `email_2` varchar(100) DEFAULT NULL COMMENT 'Email phụ',
-    `map_url` text DEFAULT NULL COMMENT 'URL Google Maps',
-    `facebook_url` varchar(255) DEFAULT NULL COMMENT 'Link Facebook',
-    `instagram_url` varchar(255) DEFAULT NULL COMMENT 'Link Instagram',
-    `youtube_url` varchar(255) DEFAULT NULL COMMENT 'Link YouTube',
-    `tiktok_url` varchar(255) DEFAULT NULL COMMENT 'Link TikTok',
-    `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Thời gian cập nhật',
-    `updated_by` int(11) DEFAULT NULL COMMENT 'ID người cập nhật',
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
--- Thêm dữ liệu vào bảng contact_settings
-INSERT INTO contact_settings (address, phone_1, phone_2, email_1, email_2, map_url, facebook_url, instagram_url, youtube_url, tiktok_url, updated_by)
-VALUES
-('123 Main Street, Hanoi, Vietnam', '0123456789', '0987654321', 'contact@cuahang.com', 'support@cuahang.com', 'https://maps.google.com/example', 'https://facebook.com/cuahang', 'https://instagram.com/cuahang', 'https://youtube.com/cuahang', 'https://tiktok.com/@cuahang', 1);
+-- 4. Thêm ràng buộc khóa ngoại cho contact_settings
+ALTER TABLE contact_settings
+ADD CONSTRAINT fk_updated_by
+FOREIGN KEY (updated_by) REFERENCES admin(id);
+
+-- 5. Cải thiện bảng product (thêm các trường quan trọng)
+ALTER TABLE product
+ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ADD COLUMN created_by INT,
+ADD COLUMN weight FLOAT,
+ADD COLUMN brand VARCHAR(100),
+ADD CONSTRAINT fk_created_by FOREIGN KEY (created_by) REFERENCES admin(id);
+
+-- 6. Thêm bảng categories để quản lý danh mục tốt hơn
+CREATE TABLE categories (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL,
+    parent_id INT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (parent_id) REFERENCES categories(id)
+);
+
+-- Sau đó cập nhật bảng product để sử dụng khóa ngoại
+ALTER TABLE product
+MODIFY COLUMN category INT,
+MODIFY COLUMN subcategory INT,
+ADD CONSTRAINT fk_product_category FOREIGN KEY (category) REFERENCES categories(id),
+ADD CONSTRAINT fk_product_subcategory FOREIGN KEY (subcategory) REFERENCES categories(id);

@@ -1,5 +1,8 @@
 <?php
 session_start();
+include_once('../includes/database.php');
+
+
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -107,6 +110,20 @@ session_start();
         </div>
 
         <!-- Ticket List -->
+        <?php foreach($contacts as $contact): ?>
+         <div class="ticket-card">
+            <div class="ticket-header">
+                <div class="ticket-info">
+                    <div class="ticket-avatar"><img src="<?php ?>" alt=""></div>
+                    <div class="ticket-meta">
+                        <h3>Trần Văn B - #SW20230015</h3>
+                        <p>Vấn đề: Đổi trả sản phẩm</p>
+                    </div>
+                </div>
+                <span class="ticket-status status-new">Mới</span>
+            </div>
+        <?php endforeach; ?>
+
         <div class="ticket-card">
             <div class="ticket-header">
                 <div class="ticket-info">

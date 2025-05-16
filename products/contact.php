@@ -100,7 +100,7 @@ require_once('../includes/header.php');
             <form action="add_contact.php" method="POST" >
                 <div class="form-group">
                     <label for="name">Họ và tên</label>
-                    <input type="text" id="name" class="form-control" required>
+                    <input type="text" id="name" name="name" class="form-control" required>
                 </div>
 
                 <div class="form-group">

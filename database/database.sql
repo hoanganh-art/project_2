@@ -281,5 +281,9 @@ CREATE TABLE contact (
     email VARCHAR(255),
     phon VARCHAR(255),
     subject VARCHAR(25555),
-    message VARCHAR(25555555)
+    message VARCHAR(25555555),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+SELECT * FROM contact;
+DROP TABLE contact;
+SELECT * FROM customer;
