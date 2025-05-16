@@ -31,7 +31,7 @@ session_start();
                 if (isset($_SESSION['user']['avatar']) && !empty($_SESSION['user']['avatar'])) {
                     echo '<img src="' . htmlspecialchars($_SESSION['user']['avatar']) . '" alt="Avatar">';
                 } else {
-                    echo '<img src="../assets/avatar/avatarmd.jpg" alt="Default Avatar">';
+                    echo '<img src="../assets/avatar/default-avatar.png" alt="Default Avatar">';
                 }
                 ?> </div>
             <div class="users">
@@ -223,20 +223,6 @@ session_start();
     </div>
 </body>
 <script>
-    // Hiển thị/ẩn mật khẩu
-    function togglePassword(id) {
-        const input = document.getElementById(id);
-        const icon = input.nextElementSibling;
-
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.textContent = '👁️‍🗨️';
-        } else {
-            input.type = 'password';
-            icon.textContent = '👁️';
-        }
-    }
-
     document.querySelectorAll('.quantity-btn').forEach(button => {
         button.addEventListener('click', function() {
             const input = this.parentElement.querySelector('.quantity-input');

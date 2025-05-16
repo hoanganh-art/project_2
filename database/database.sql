@@ -261,8 +261,8 @@ VALUES
 ('Áo Thun Nữ Form Ôm', 'CL00035', 230.00, 180.00, 'Clothing', 'thun', 60, 'active', 'Áo thun nữ form ôm, tôn dáng, quyến rũ.', '6825ad74a4354_anh-gai-que-xinh-dep-01.jpg');
 
 -- Thêm dữ liệu quần áo với subcategory là "jeans" vào bảng product
-
-UPDATE product SET image ="6825ad74a4354_anh-gai-que-xinh-dep-01.jpg";
+SELECT * from employees;
+UPDATE employees SET address ="Thanh Hóa";;
 
 
 SELECT COUNT(*) AS total_products FROM product;

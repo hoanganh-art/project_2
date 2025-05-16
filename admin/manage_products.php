@@ -591,12 +591,42 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
             });
         });
 
-        // Xử lý phân trang 
+        // Xử lý phân trang động
         const paginationBtns = document.querySelectorAll('.pagination-btn');
         const rowsPerPage = 10;
         const tableRows = Array.from(document.querySelectorAll('.products-table tbody tr'));
         let currentPage = 1;
         const totalPages = Math.ceil(tableRows.length / rowsPerPage);
+
+        // Số lượng nút số trang hiển thị cùng lúc
+        const maxVisiblePages = 3;
+
+        function renderPagination() {
+            const pagination = document.querySelector('.pagination');
+            // Xóa các nút số cũ (giữ lại ← và →)
+            pagination.querySelectorAll('.pagination-btn:not(:first-child):not(:last-child)').forEach(btn => btn.remove());
+
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = startPage + maxVisiblePages - 1;
+            if (endPage > totalPages) {
+            endPage = totalPages;
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+
+            // Thêm các nút số trang mới
+            for (let i = startPage; i <= endPage; i++) {
+            const btn = document.createElement('button');
+            btn.className = 'pagination-btn' + (i === currentPage ? ' active' : '');
+            btn.textContent = i;
+            if (i === currentPage) btn.classList.add('active');
+            pagination.insertBefore(btn, pagination.querySelector('.pagination-btn:last-child'));
+            btn.addEventListener('click', function () {
+                currentPage = i;
+                showPage(currentPage);
+                renderPagination();
+            });
+            }
+        }
 
         function showPage(page) {
             tableRows.forEach((row, idx) => {
@@ -606,11 +636,27 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
                 row.style.display = 'none';
             }
             });
-            paginationBtns.forEach(btn => btn.classList.remove('active'));
-            if (paginationBtns[page]) {
-            paginationBtns[page].classList.add('active');
-            }
         }
+
+        // Sự kiện cho nút ← và →
+        document.querySelector('.pagination-btn:first-child').addEventListener('click', function () {
+            if (currentPage > 1) {
+            currentPage--;
+            showPage(currentPage);
+            renderPagination();
+            }
+        });
+        document.querySelector('.pagination-btn:last-child').addEventListener('click', function () {
+            if (currentPage < totalPages) {
+            currentPage++;
+            showPage(currentPage);
+            renderPagination();
+            }
+        });
+
+        // Khởi tạo
+        showPage(currentPage);
+        renderPagination();
 
         // Initial display
         showPage(currentPage);
