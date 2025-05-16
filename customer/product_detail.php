@@ -283,7 +283,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
         <div class="product-grid">
             <!-- Product 1 -->
             <?php
-            $sql_related = "SELECT * FROM product WHERE id != ? ORDER BY RAND() LIMIT 4";
+            $sql_related = "SELECT * FROM product WHERE id != ? ORDER BY RAND() LIMIT 4";  
             $stmt_related = $conn->prepare($sql_related);
             $stmt_related->bind_param("i", $product_id);
             $stmt_related->execute();

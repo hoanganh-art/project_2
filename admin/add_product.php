@@ -24,9 +24,21 @@ if (empty($name) || empty($code) || empty($price) || empty($category) || empty($
 
 // Xử lý upload hình ảnh
 if (!empty($image)) {
+    $allowed_types = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    $file_ext = strtolower(pathinfo($image, PATHINFO_EXTENSION));
+    if (!in_array($file_ext, $allowed_types)) {
+        die("Định dạng hình ảnh không hợp lệ!");
+    }
+    if ($_FILES['image']['size'] > 2 * 1024 * 1024) { // 2MB
+        die("Kích thước hình ảnh vượt quá giới hạn cho phép!");
+    }
+    $new_image_name = uniqid('img_', true) . '.' . $file_ext;
     $target_dir = "../assets/image_products/";
-    $target_file = $target_dir . basename($image);
-    move_uploaded_file($_FILES['image']['tmp_name'], $target_file);
+    $target_file = $target_dir . $new_image_name;
+    if (!move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+        die("Lỗi khi tải lên hình ảnh!");
+    }
+    $image = $new_image_name;
 }
 
 // Thêm dữ liệu vào database

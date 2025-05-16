@@ -269,3 +269,5 @@ SELECT COUNT(*) AS total_products FROM product;
 
 SELECT COUNT(*) AS low_stock_products FROM product WHERE stock < 10;
 select * from product;
+
+UPDATE product SET price ='500000';
