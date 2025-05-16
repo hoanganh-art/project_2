@@ -96,7 +96,8 @@ require_once('../includes/header.php');
         <!-- Contact Form -->
         <div class="contact-form">
             <h2>Gửi tin nhắn cho chúng tôi</h2>
-            <form>
+            <form ></form>
+            <form action="add_contact.php" method="POST" >
                 <div class="form-group">
                     <label for="name">Họ và tên</label>
                     <input type="text" id="name" class="form-control" required>
@@ -104,22 +105,22 @@ require_once('../includes/header.php');
 
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" class="form-control" required>
+                    <input type="email" id="email" name="email" class="form-control" required>
                 </div>
 
                 <div class="form-group">
                     <label for="phone">Số điện thoại</label>
-                    <input type="tel" id="phone" class="form-control">
+                    <input type="tel" id="phone" name="phone" class="form-control">
                 </div>
 
                 <div class="form-group">
                     <label for="subject">Chủ đề</label>
-                    <input type="text" id="subject" class="form-control">
+                    <input type="text" id="subject" name="subject" class="form-control">
                 </div>
 
                 <div class="form-group">
                     <label for="message">Nội dung</label>
-                    <textarea id="message" class="form-control" required></textarea>
+                    <textarea id="message" class="form-control" name="message" required></textarea>
                 </div>
 
                 <button type="submit" class="submit-btn">Gửi tin nhắn</button>

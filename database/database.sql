@@ -271,3 +271,15 @@ SELECT COUNT(*) AS low_stock_products FROM product WHERE stock < 10;
 select * from product;
 
 UPDATE product SET price ='500000';
+
+
+--Bảng Contact
+
+CREATE TABLE contact (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255),
+    email VARCHAR(255),
+    phon VARCHAR(255),
+    subject VARCHAR(25555),
+    message VARCHAR(25555555)
+);
