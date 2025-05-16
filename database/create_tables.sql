@@ -1,20 +1,65 @@
 -- Tạo database (giữ nguyên)
-CREATE DATABASE cuahang;
-USE cuahang;
+CREATE DATABASE cuahangs;
+USE cuahangs;
 
--- 1. Sửa bảng contact: sửa 'phon' thành 'phone'
+-- Bảng khách hàng
+CREATE TABLE customer (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    address TEXT NOT NULL,
+    avatar VARCHAR(255),
+    gender TINYINT(1),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Bảng nhân viên
+CREATE TABLE employees (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    phone VARCHAR(20) NOT NULL,
+    date_of_birth DATE NOT NULL,
+    address TEXT NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    position VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'active',
+    role ENUM('staff') NOT NULL DEFAULT 'staff',
+    avatar VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+-- Bảng admin
+CREATE TABLE admin (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    phone varchar(20),
+    gender tinyint(1),
+    address TEXT,
+    avatar varchar(255),
+    password VARCHAR(255) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+SELECT * from admin;
+
+
+-- 1. Sửa bảng contact:
 CREATE TABLE contact (
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    phone VARCHAR(20) NOT NULL,  -- Đã sửa từ 'phon'
+    phone VARCHAR(20) NOT NULL, 
     subject VARCHAR(255) NOT NULL,
-    message TEXT NOT NULL,       -- Đổi từ VARCHAR(25555555) sang TEXT
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Thêm trường này
-    status VARCHAR(50) DEFAULT 'unread'  -- Thêm trạng thái
+    message TEXT NOT NULL,       
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  
+    status VARCHAR(50) DEFAULT 'unread'  
 );
 
--- 2. Thêm bảng orders còn thiếu
+-- 2. Thêm bảng orders
 CREATE TABLE orders (
     id INT PRIMARY KEY AUTO_INCREMENT,
     customer_id INT NOT NULL,
@@ -29,15 +74,15 @@ CREATE TABLE orders (
     FOREIGN KEY (employee_id) REFERENCES employees(id)
 );
 
--- 3. Sửa bảng order_detail để đảm bảo tham chiếu đúng
+-- 3. Thêm bảng order_detail 
 CREATE TABLE order_detail (
     id INT PRIMARY KEY AUTO_INCREMENT,
     order_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL,
     price FLOAT NOT NULL,
-    color VARCHAR(50),           -- Thêm thông tin màu sắc
-    size VARCHAR(50),            -- Thêm thông tin kích thước
+    color VARCHAR(50),           
+    size VARCHAR(50),            
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES product(id)
 );
@@ -66,7 +111,6 @@ CREATE TABLE categories (
     FOREIGN KEY (parent_id) REFERENCES categories(id)
 );
 
--- Sau đó cập nhật bảng product để sử dụng khóa ngoại
 ALTER TABLE product
 MODIFY COLUMN category INT,
 MODIFY COLUMN subcategory INT,
