@@ -1,11 +1,14 @@
 <?php
 session_start();
-
 require_once '../includes/header.php';
 require_once '../includes/database.php';
 
-// Lấy ID sản phẩm từ URL
+// Kiểm tra và lấy ID sản phẩm từ URL
 $product_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+if ($product_id <= 0) {
+    echo "<h1>ID sản phẩm không hợp lệ</h1>";
+    exit;
+}
 
 // Truy vấn thông tin sản phẩm
 $sql = "SELECT * FROM product WHERE id = ?";
@@ -15,7 +18,6 @@ $stmt->execute();
 $result = $stmt->get_result();
 $product = $result->fetch_assoc();
 
-// Kiểm tra nếu sản phẩm không tồn tại
 if (!$product) {
     echo "<h1>Sản phẩm không tồn tại</h1>";
     exit;
@@ -23,67 +25,92 @@ if (!$product) {
 
 // Xử lý thêm vào giỏ hàng
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
-    // Kiểm tra người dùng đã đăng nhập chưa
-    if (!isset($_SESSION['id'])) {
+    // Kiểm tra đăng nhập
+    if (!isset($_SESSION['user'])) {
         echo "<script>alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');</script>";
-        // Có thể chuyển hướng đến trang đăng nhập ở đây
-        // header("Location: login.php");
-        // exit;
-    } else {
-        $customer_id = $_SESSION['id'];
-        $color = $_POST['color'];
-        $size = $_POST['size'];
-        $quantity = $_POST['quantity'];
-        $product_id = $_POST['product_id'];
+        echo "<script>setTimeout(function(){ window.location.href = '../login/index.php'; }, 1500);</script>";
+        exit;
+    }
 
-        // Kiểm tra sản phẩm đã có trong giỏ hàng chưa
-        $check_sql = "SELECT * FROM cart WHERE customer_id = ? AND product_id = ? AND color = ? AND size = ?";
-        $check_stmt = $conn->prepare($check_sql);
-        $check_stmt->bind_param("iiss", $customer_id, $product_id, $color, $size);
-        $check_stmt->execute();
-        $check_result = $check_stmt->get_result();
+    // Validate dữ liệu
+    if (empty($_POST['color']) || empty($_POST['size']) || empty($_POST['quantity'])) {
+        echo "<script>alert('Vui lòng chọn đầy đủ thông tin sản phẩm');</script>";
+        exit;
+    }
 
-        if ($check_result->num_rows > 0) {
-            // Nếu đã có thì cập nhật số lượng
-            $update_sql = "UPDATE cart SET quantity = quantity + ? WHERE customer_id = ? AND product_id = ? AND color = ? AND size = ?";
-            $update_stmt = $conn->prepare($update_sql);
-            $update_stmt->bind_param("iisss", $quantity, $customer_id, $product_id, $color, $size);
-            $update_stmt->execute();
+    $customer_id = $_SESSION['user'];
+    $color = htmlspecialchars(trim($_POST['color']));
+    $size = htmlspecialchars(trim($_POST['size']));
+    $quantity = intval($_POST['quantity']);
+    $product_id = intval($_POST['product_id']);
+
+    // Kiểm tra số lượng hợp lệ
+    if ($quantity <= 0) $quantity = 1;
+    if ($quantity > $product['stock']) {
+        echo "<script>alert('Số lượng vượt quá tồn kho. Chỉ còn {$product['stock']} sản phẩm');</script>";
+        exit;
+    }
+
+    // Kiểm tra sản phẩm đã có trong giỏ chưa
+    $check_sql = "SELECT id, quantity FROM cart WHERE customer_id = ? AND product_id = ? AND color = ? AND size = ?";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param("iiss", $customer_id, $product_id, $color, $size);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+
+    if ($check_result->num_rows > 0) {
+        // Cập nhật số lượng nếu đã có
+        $cart_item = $check_result->fetch_assoc();
+        $new_quantity = $cart_item['quantity'] + $quantity;
+
+        if ($new_quantity > $product['stock']) {
+            echo "<script>alert('Tổng số lượng trong giỏ vượt quá tồn kho');</script>";
         } else {
-            // Nếu chưa có thì thêm mới
-            $insert_sql = "INSERT INTO cart (customer_id, product_id, color, size, quantity) VALUES (?, ?, ?, ?, ?)";
-            $insert_stmt = $conn->prepare($insert_sql);
-            $insert_stmt->bind_param("iissi", $customer_id, $product_id, $color, $size, $quantity);
-            $insert_stmt->execute();
+            $update_sql = "UPDATE cart SET quantity = ? WHERE id = ?";
+            $update_stmt = $conn->prepare($update_sql);
+            $update_stmt->bind_param("ii", $new_quantity, $cart_item['id']);
+            $update_stmt->execute();
+            echo "<script>alert('Đã cập nhật số lượng sản phẩm trong giỏ hàng');</script>";
         }
+    } else {
+        // Thêm mới vào giỏ hàng
+        $insert_sql = "INSERT INTO cart (customer_id, product_id, color, size, quantity) VALUES (?, ?, ?, ?, ?)";
+        $insert_stmt = $conn->prepare($insert_sql);
+        $insert_stmt->bind_param("iissi", $customer_id, $product_id, $color, $size, $quantity);
 
-        echo "<script>alert('Sản phẩm đã được thêm vào giỏ hàng');</script>";
+        if ($insert_stmt->execute()) {
+            echo "<script>alert('Sản phẩm đã được thêm vào giỏ hàng');</script>";
+        } else {
+            echo "<script>alert('Có lỗi xảy ra khi thêm vào giỏ hàng');</script>";
+        }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($product['name']); ?> | Streetwear Shop</title>
     <link rel="stylesheet" href="../assets/css/Custome/product_detail.css">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
     <!-- Product Detail -->
-
     <div class="product-detail">
         <div class="product-gallery">
-            <img src="../assets/image_products/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="main-image">
+            <img src="../assets/image_products/<?php echo htmlspecialchars($product['image']); ?>"
+                alt="<?php echo htmlspecialchars($product['name']); ?>"
+                class="main-image">
             <div class="thumbnail-container">
-                <img src="../assets/image/ao/hoodiemau.png" alt="Áo Hoodie 1" class="thumbnail" onclick="changeImage(this)">
-                <img src="../assets/image/ao/hoodiemau.png" alt="Áo Hoodie 2" class="thumbnail" onclick="changeImage(this)">
-                <img src="../assets/image/ao/hoodiemau.png" alt="Áo Hoodie 3" class="thumbnail" onclick="changeImage(this)">
-                <img src="../assets/image/ao/hoodiemau.png" alt="Áo Hoodie 4" class="thumbnail" onclick="changeImage(this)">
+                <!-- Thay thế bằng hình ảnh thực tế từ database -->
+                <img src="../assets/image_products/<?php echo htmlspecialchars($product['image']); ?>"
+                    alt="<?php echo htmlspecialchars($product['name']); ?>"
+                    class="thumbnail"
+                    onclick="changeImage(this)">
+                <!-- Có thể thêm nhiều hình ảnh khác nếu có -->
             </div>
         </div>
 
@@ -92,74 +119,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
             <div class="product-sku">Mã SP: <?php echo htmlspecialchars($product['code']); ?></div>
             <div class="product-price">
                 <?php echo number_format($product['price'], 0, ',', '.'); ?>đ
-                <span class="old-price"><?php echo number_format($product['original_price'], 0, ',', '.'); ?>đ</span>
+                <?php if ($product['original_price'] > $product['price']): ?>
+                    <span class="old-price"><?php echo number_format($product['original_price'], 0, ',', '.'); ?>đ</span>
+                <?php endif; ?>
             </div>
 
             <div class="product-description">
-                <p><?php echo htmlspecialchars($product['description']); ?></p>
+                <p><?php echo nl2br(htmlspecialchars($product['description'])); ?></p>
             </div>
 
-
             <div class="product-meta">
-                <div class="meta-item">
-                    <span class="meta-label">Danh mục:</span>
-                    <span>Áo, Hoodie</span>
-                </div>
                 <div class="meta-item">
                     <span class="meta-label">Tình trạng:</span>
                     <span style="color: <?php echo $product['status'] === 'active' ? 'green' : 'red'; ?>;">
                         <?php echo $product['status'] === 'active' ? 'Còn hàng' : 'Hết hàng'; ?>
                     </span>
                 </div>
-                <div class="meta-item">
-                    <span class="meta-label">Đánh giá:</span>
-                    <span>
-                        <i class="fas fa-star" style="color: gold;"></i>
-                        <i class="fas fa-star" style="color: gold;"></i>
-                        <i class="fas fa-star" style="color: gold;"></i>
-                        <i class="fas fa-star" style="color: gold;"></i>
-                        <i class="fas fa-star-half-alt" style="color: gold;"></i>
-                        (42 đánh giá)
-                    </span>
+            </div>
+
+            <form method="post" action="">
+                <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+
+                <div class="product-variants">
+                    <div class="variant-title">Màu sắc:</div>
+                    <div class="variant-options">
+                        <input type="hidden" name="color" id="selected-color" value="Đen" required>
+                        <div class="variant-btn active" onclick="selectVariant('color', 'Đen', this)">Đen</div>
+                        <div class="variant-btn" onclick="selectVariant('color', 'Xám', this)">Xám</div>
+                        <div class="variant-btn" onclick="selectVariant('color', 'Trắng', this)">Trắng</div>
+                    </div>
+
+                    <div class="variant-title">Kích cỡ:</div>
+                    <div class="variant-options">
+                        <input type="hidden" name="size" id="selected-size" value="M" required>
+                        <div class="variant-btn" onclick="selectVariant('size', 'S', this)">S</div>
+                        <div class="variant-btn active" onclick="selectVariant('size', 'M', this)">M</div>
+                        <div class="variant-btn" onclick="selectVariant('size', 'L', this)">L</div>
+                        <div class="variant-btn" onclick="selectVariant('size', 'XL', this)">XL</div>
+                    </div>
                 </div>
-            </div>
 
-
-            <div class="product-variants">
-                <div class="variant-title">Màu sắc:</div>
-                <div class="variant-options">
-                    <input type="hidden" name="color" id="selected-color" value="Đen">
-                    <div class="variant-btn active" onclick="selectColor('Đen', this)">Đen</div>
-                    <div class="variant-btn" onclick="selectColor('Xám', this)">Xám</div>
-                    <div class="variant-btn" onclick="selectColor('Trắng', this)">Trắng</div>
+                <div class="quantity-selector">
+                    <button type="button" class="quantity-btn" onclick="changeQuantity(-1)">-</button>
+                    <input type="number" name="quantity" value="1" min="1" max="<?php echo $product['stock']; ?>"
+                        class="quantity-input" id="quantity-input" readonly>
+                    <button type="button" class="quantity-btn" onclick="changeQuantity(1)">+</button>
                 </div>
 
-                <div class="variant-title">Kích cỡ:</div>
-                <div class="variant-options">
-                    <input type="hidden" name="size" id="selected-size" value="M">
-                    <div class="variant-btn" onclick="selectSize('S', this)">S</div>
-                    <div class="variant-btn active" onclick="selectSize('M', this)">M</div>
-                    <div class="variant-btn" onclick="selectSize('L', this)">L</div>
-                    <div class="variant-btn" onclick="selectSize('XL', this)">XL</div>
+                <div class="product-actions">
+                    <button type="submit" name="add_to_cart" class="btn btn-primary"
+                        <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>>
+                        <?php echo $product['stock'] > 0 ? 'THÊM VÀO GIỎ' : 'HẾT HÀNG'; ?>
+                    </button>
+                    <button type="button" class="btn btn-secondary"
+                        <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>>
+                        MUA NGAY
+                    </button>
                 </div>
-            </div>
-
-            <div class="quantity-selector">
-                <button type="button" class="quantity-btn" onclick="changeQuantity(-1)">-</button>
-                <input type="number" name="quantity" value="1" min="1" class="quantity-input" id="quantity-input">
-                <button type="button" class="quantity-btn" onclick="changeQuantity(1)">+</button>
-            </div>
-
-            <div class="product-actions">
-                <form method="post" action="">
-                    <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-                    <input type="hidden" name="color" id="form-selected-color" value="Đen">
-                    <input type="hidden" name="size" id="form-selected-size" value="M">
-                    <input type="hidden" name="quantity" id="form-quantity" value="1">
-                    <button type="submit" name="add_to_cart" class="btn btn-primary">THÊM VÀO GIỎ</button>
-                </form>
-                <button type="button" class="btn btn-secondary">MUA NGAY</button>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -173,107 +190,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
 
         <div id="description" class="tab-content active">
             <h3>Chi tiết sản phẩm</h3>
-            <p>Áo hoodie streetwear phiên bản giới hạn với nhiều ưu điểm vượt trội:</p>
-            <ul>
-                <li>Chất liệu: Cotton 100% dày dặn, co giãn nhẹ</li>
-                <li>Form áo: Oversize rộng rãi thoải mái</li>
-                <li>Họa tiết: In kỹ thuật số không bong tróc</li>
-                <li>Màu sắc: Đen/Xám/Trắng</li>
-                <li>Kiểu dáng: Có mũ trùm, túi kangaroo phía trước</li>
-                <li>Phù hợp: Đi chơi, đi học, dạo phố</li>
-            </ul>
-            <p>Hướng dẫn bảo quản: Giặt ở nhiệt độ thường, không sử dụng chất tẩy mạnh.</p>
+            <?php echo nl2br(htmlspecialchars($product['description'])); ?>
         </div>
 
         <div id="specs" class="tab-content">
             <h3>Thông số kỹ thuật</h3>
-            <table style="width: 100%; border-collapse: collapse;">
+            <table>
                 <tr>
-                    <td style="padding: 10px; border-bottom: 1px solid #EEE; width: 30%;">Chất liệu</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #EEE;">Cotton 100%</td>
+                    <td>Chất liệu</td>
+                    <td>Cotton 100%</td>
                 </tr>
                 <tr>
-                    <td style="padding: 10px; border-bottom: 1px solid #EEE;">Xuất xứ</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #EEE;">Việt Nam</td>
+                    <td>Xuất xứ</td>
+                    <td>Việt Nam</td>
                 </tr>
-                <tr>
-                    <td style="padding: 10px; border-bottom: 1px solid #EEE;">Kích thước</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #EEE;">S/M/L/XL</td>
-                </tr>
-                <tr>
-                    <td style="padding: 10px; border-bottom: 1px solid #EEE;">Màu sắc</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #EEE;">Đen, Xám, Trắng</td>
-                </tr>
-                <tr>
-                    <td style="padding: 10px; border-bottom: 1px solid #EEE;">Trọng lượng</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #EEE;">450g</td>
-                </tr>
+                <!-- Thêm các thông số khác -->
             </table>
         </div>
 
         <div id="reviews" class="tab-content">
             <h3>Đánh giá sản phẩm</h3>
-            <div style="display: flex; align-items: center; margin-bottom: 20px;">
-                <div style="font-size: 24px; margin-right: 10px;">4.5/5</div>
-                <div>
-                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
-                        <div style="width: 100px; margin-right: 10px;">5 sao</div>
-                        <progress value="30" max="42" style="width: 200px; height: 10px;"></progress>
-                        <span style="margin-left: 10px;">30</span>
-                    </div>
-                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
-                        <div style="width: 100px; margin-right: 10px;">4 sao</div>
-                        <progress value="8" max="42" style="width: 200px; height: 10px;"></progress>
-                        <span style="margin-left: 10px;">8</span>
-                    </div>
-                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
-                        <div style="width: 100px; margin-right: 10px;">3 sao</div>
-                        <progress value="3" max="42" style="width: 200px; height: 10px;"></progress>
-                        <span style="margin-left: 10px;">3</span>
-                    </div>
-                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
-                        <div style="width: 100px; margin-right: 10px;">2 sao</div>
-                        <progress value="1" max="42" style="width: 200px; height: 10px;"></progress>
-                        <span style="margin-left: 10px;">1</span>
-                    </div>
-                    <div style="display: flex; align-items: center;">
-                        <div style="width: 100px; margin-right: 10px;">1 sao</div>
-                        <progress value="0" max="42" style="width: 200px; height: 10px;"></progress>
-                        <span style="margin-left: 10px;">0</span>
-                    </div>
-                </div>
-            </div>
-
-            <div style="background-color: #F9F9F9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                <h4>Viết đánh giá của bạn</h4>
-                <div style="margin-bottom: 15px;">
-                    <span>Đánh giá của bạn:</span>
-                    <div style="font-size: 24px; color: #DDD; cursor: pointer;">
-                        <i class="far fa-star" onmouseover="rateProduct(1)" onclick="setRating(1)"></i>
-                        <i class="far fa-star" onmouseover="rateProduct(2)" onclick="setRating(2)"></i>
-                        <i class="far fa-star" onmouseover="rateProduct(3)" onclick="setRating(3)"></i>
-                        <i class="far fa-star" onmouseover="rateProduct(4)" onclick="setRating(4)"></i>
-                        <i class="far fa-star" onmouseover="rateProduct(5)" onclick="setRating(5)"></i>
-                    </div>
-                </div>
-                <textarea style="width: 100%; padding: 10px; border: 1px solid #DDD; border-radius: 4px; margin-bottom: 10px;" rows="4" placeholder="Nhận xét của bạn về sản phẩm..."></textarea>
-                <button style="padding: 10px 20px; background-color: var(--red); color: white; border: none; border-radius: 4px; cursor: pointer;">GỬI ĐÁNH GIÁ</button>
-            </div>
-
-            <div class="review">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <strong>Nguyễn Văn A</strong>
-                    <div>
-                        <i class="fas fa-star" style="color: gold;"></i>
-                        <i class="fas fa-star" style="color: gold;"></i>
-                        <i class="fas fa-star" style="color: gold;"></i>
-                        <i class="fas fa-star" style="color: gold;"></i>
-                        <i class="fas fa-star" style="color: gold;"></i>
-                    </div>
-                </div>
-                <div style="color: #666; font-size: 14px; margin-bottom: 10px;">Đã mua tại STREETWEAR | 15/05/2023</div>
-                <p>Áo đẹp, chất lượng tốt, mặc rất thoải mái. Họa tiết in sắc nét, không bong tróc sau nhiều lần giặt.</p>
-            </div>
+            <!-- Phần đánh giá -->
         </div>
     </div>
 
@@ -281,9 +218,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     <div class="related-products">
         <h2 class="section-title">SẢN PHẨM TƯƠNG TỰ</h2>
         <div class="product-grid">
-            <!-- Product 1 -->
             <?php
-            $sql_related = "SELECT * FROM product WHERE id != ? ORDER BY RAND() LIMIT 4";  
+            $sql_related = "SELECT * FROM product WHERE id != ? AND status = 'active' ORDER BY RAND() LIMIT 4";
             $stmt_related = $conn->prepare($sql_related);
             $stmt_related->bind_param("i", $product_id);
             $stmt_related->execute();
@@ -291,37 +227,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
 
             while ($related_product = $result_related->fetch_assoc()): ?>
                 <div class="product-card">
-                    <a href="../customer/product_detail.php?id=<?php echo $related_product['id']; ?>" class="product-link">
-                        <img src="../assets/image_products/<?php echo htmlspecialchars($related_product['image']); ?>" alt="<?php echo htmlspecialchars($related_product['name']); ?>" class="product-image">
+                    <a href="product_detail.php?id=<?php echo $related_product['id']; ?>" class="product-link">
+                        <img src="../assets/image_products/<?php echo htmlspecialchars($related_product['image']); ?>"
+                            alt="<?php echo htmlspecialchars($related_product['name']); ?>"
+                            class="product-image">
                     </a>
                     <div class="product-info-small">
                         <h3 class="product-name"><?php echo htmlspecialchars($related_product['name']); ?></h3>
-                        <div class="product-price-small"><?php echo number_format($related_product['price'], 0, ',', '.'); ?>đ</div>
+                        <div class="product-price-small">
+                            <?php echo number_format($related_product['price'], 0, ',', '.'); ?>đ
+                        </div>
                     </div>
                 </div>
             <?php endwhile; ?>
         </div>
     </div>
+
     <script>
         // Hàm thay đổi hình ảnh chính
         function changeImage(thumbnail) {
-            const mainImage = document.querySelector('.main-image');
-            mainImage.src = thumbnail.src;
-            mainImage.alt = thumbnail.alt;
-        }
-        // Hàm chọn màu sắc
-        function selectColor(color, element) {
-            document.getElementById('selected-color').value = color;
-            document.getElementById('form-selected-color').value = color;
-            const buttons = element.parentElement.querySelectorAll('.variant-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
+            document.querySelector('.main-image').src = thumbnail.src;
         }
 
-        // Hàm chọn kích cỡ
-        function selectSize(size, element) {
-            document.getElementById('selected-size').value = size;
-            document.getElementById('form-selected-size').value = size;
+        // Hàm chọn biến thể (màu/kích cỡ)
+        function selectVariant(type, value, element) {
+            // Cập nhật giá trị input ẩn
+            document.getElementById(`selected-${type}`).value = value;
+
+            // Cập nhật giao diện
             const buttons = element.parentElement.querySelectorAll('.variant-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
@@ -330,45 +263,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
         // Hàm thay đổi số lượng
         function changeQuantity(change) {
             const input = document.getElementById('quantity-input');
-            const formQuantity = document.getElementById('form-quantity');
-            let value = parseInt(input.value) + change;
-            if (value < 1) value = 1;
-            input.value = value;
-            formQuantity.value = value;
+            let newValue = parseInt(input.value) + change;
+            const max = parseInt(input.max);
+
+            // Giới hạn số lượng trong khoảng 1 đến max
+            newValue = Math.max(1, Math.min(newValue, max));
+            input.value = newValue;
         }
 
         // Hàm chuyển tab
         function openTab(tabName) {
-            const tabContents = document.querySelectorAll('.tab-content');
-            const tabButtons = document.querySelectorAll('.tab-btn');
+            // Ẩn tất cả tab content
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
 
-            tabContents.forEach(tab => tab.classList.remove('active'));
-            tabButtons.forEach(btn => btn.classList.remove('active'));
+            // Xóa active tất cả tab button
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
 
+            // Hiển thị tab được chọn
             document.getElementById(tabName).classList.add('active');
             event.currentTarget.classList.add('active');
         }
-        // Hàm chọn màu sắc - cập nhật cả input ẩn trong form
-        function selectColor(color, element) {
-            document.getElementById('selected-color').value = color;
-            document.getElementById('form-selected-color').value = color;
-            const buttons = element.parentElement.querySelectorAll('.variant-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-        }
-
-        // Hàm chọn kích cỡ - cập nhật cả input ẩn trong form
-        function selectSize(size, element) {
-            document.getElementById('selected-size').value = size;
-            document.getElementById('form-selected-size').value = size;
-            const buttons = element.parentElement.querySelectorAll('.variant-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-        }
     </script>
+
+    <?php
+    require_once '../includes/footer.php';
+    $conn->close();
+    ?>
 </body>
-<?php
-require_once '../includes/footer.php';
-?>
 
 </html>

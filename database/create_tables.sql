@@ -133,3 +133,16 @@ CREATE TABLE order_detail (
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES product(id)
 );
+
+-- Bảng cart
+CREATE TABLE `cart` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `customer_id` INT NOT NULL,
+    `product_id` INT NOT NULL,
+    `color` VARCHAR(50) NOT NULL,
+    `size` VARCHAR(50) NOT NULL,
+    `quantity` INT NOT NULL DEFAULT 1,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customer(id),
+    FOREIGN KEY (product_id) REFERENCES product(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
