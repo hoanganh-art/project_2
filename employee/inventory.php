@@ -5,6 +5,14 @@ $stmt = $conn->prepare($sql);
 $stmt->execute();
 $result = $stmt->get_result(); // Lấy kết quả truy vấn
 $products = $result->fetch_all(MYSQLI_ASSOC); ?>
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start(); // Khởi động session nếu chưa được khởi động
+}
+if (!isset($_SESSION['user'])) {
+    header('Location: ../login/index.php');
+    exit();
+} ?>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -65,13 +73,7 @@ $products = $result->fetch_all(MYSQLI_ASSOC); ?>
             </div>
             <div class="nav-item" style="margin-top: 30px;">
                 <?php
-                if (session_status() === PHP_SESSION_NONE) {
-                    session_start(); // Khởi động session nếu chưa được khởi động
-                }
-                if (!isset($_SESSION['user'])) {
-                    header('Location: ../login/index.php');
-                    exit();
-                }
+
                 if (isset($_SESSION['user'])) {
                     // Hiển thị nút đăng xuất
                     echo '<a href="logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>';
@@ -122,8 +124,8 @@ $products = $result->fetch_all(MYSQLI_ASSOC); ?>
             <div class="stat-card">
                 <h3>Tổng sản phẩm</h3>
                 <p><?php
-                echo count($products);
-                ?>
+                    echo count($products);
+                    ?>
                 </p>
             </div>
             <div class="stat-card">
@@ -202,8 +204,8 @@ $products = $result->fetch_all(MYSQLI_ASSOC); ?>
                                 <td><?php echo htmlspecialchars($product['stock']); ?></td>
                                 <td class="status <?php echo $statusClass; ?>"><?php echo $statusText; ?></td>
                                 <td>
-                                   <button class="action-btn edit"><i class="fas fa-edit"></i></button>
-                                <button class="action-btn restock"><i class="fas fa-warehouse"></i></button>
+                                    <button class="action-btn edit"><i class="fas fa-edit"></i></button>
+                                    <button class="action-btn restock"><i class="fas fa-warehouse"></i></button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -302,30 +304,27 @@ $products = $result->fetch_all(MYSQLI_ASSOC); ?>
         searchInput.addEventListener('input', function() {
             const keyword = this.value.toLowerCase();
             rows.forEach(row => {
-            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-            const category = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-            if (name.includes(keyword) || category.includes(keyword)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+                const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const category = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                if (name.includes(keyword) || category.includes(keyword)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
             });
             // Ẩn phân trang khi tìm kiếm
             if (keyword) {
-            pagination.style.display = 'none';
+                pagination.style.display = 'none';
             } else {
-            pagination.style.display = '';
-            showPage(currentPage);
+                pagination.style.display = '';
+                showPage(currentPage);
             }
         });
         // Xử lý Xuất Excel
-        // Xử lý Xuất Excel
-        // Tìm đúng nút "Xuất Excel" (nút thứ 3 trong .action-buttons)
-        const actionButtons = document.querySelectorAll('.action-buttons .btn-secondary');
-        if (actionButtons.length > 1) {
-            const exportBtn = actionButtons[1];
+        const exportBtn = document.querySelector('.action-buttons .btn-secondary');
+        if (exportBtn) {
             exportBtn.addEventListener('click', () => {
-            window.location.href = 'export_inventory_excel.php';
+                window.location.href = 'export_inventory_excel.php';
             });
         }
         // Xử lý phân trang
@@ -356,23 +355,23 @@ $products = $result->fetch_all(MYSQLI_ASSOC); ?>
             prev.className = 'page-item';
             prev.innerHTML = '<i class="fas fa-angle-left"></i>';
             prev.onclick = () => {
-            if (currentPage > 1) {
-                currentPage--;
-                showPage(currentPage);
-            }
+                if (currentPage > 1) {
+                    currentPage--;
+                    showPage(currentPage);
+                }
             };
             pagination.appendChild(prev);
 
             // Các số trang
             for (let i = 1; i <= totalPages; i++) {
-            const pageItem = document.createElement('div');
-            pageItem.className = 'page-item' + (i === page ? ' active' : '');
-            pageItem.textContent = i;
-            pageItem.onclick = () => {
-                currentPage = i;
-                showPage(currentPage);
-            };
-            pagination.appendChild(pageItem);
+                const pageItem = document.createElement('div');
+                pageItem.className = 'page-item' + (i === page ? ' active' : '');
+                pageItem.textContent = i;
+                pageItem.onclick = () => {
+                    currentPage = i;
+                    showPage(currentPage);
+                };
+                pagination.appendChild(pageItem);
             }
 
             // Nút next
@@ -380,10 +379,10 @@ $products = $result->fetch_all(MYSQLI_ASSOC); ?>
             next.className = 'page-item';
             next.innerHTML = '<i class="fas fa-angle-right"></i>';
             next.onclick = () => {
-            if (currentPage < totalPages) {
-                currentPage++;
-                showPage(currentPage);
-            }
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    showPage(currentPage);
+                }
             };
             pagination.appendChild(next);
         }
@@ -392,8 +391,6 @@ $products = $result->fetch_all(MYSQLI_ASSOC); ?>
         if (rows.length > 0) {
             showPage(currentPage);
         }
-
-
     </script>
 </body>
 

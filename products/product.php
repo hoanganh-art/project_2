@@ -1,7 +1,7 @@
 <?php
+session_start();
 // ==================== PHẦN XỬ LÝ PHP ====================
 require_once('../includes/header.php');
-session_start();
 include_once('../includes/database.php');
 
 // Xác định subcategory từ URL (nếu có)

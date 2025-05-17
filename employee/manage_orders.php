@@ -1,3 +1,12 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start(); // Khởi động session nếu chưa được khởi động
+}
+if (!isset($_SESSION['user'])) {
+    header('Location: ../login/index.php');
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -59,13 +68,6 @@
             </div>
             <div class="nav-item" style="margin-top: 30px;">
                 <?php
-                if (session_status() === PHP_SESSION_NONE) {
-                    session_start(); // Khởi động session nếu chưa được khởi động
-                }
-                if (!isset($_SESSION['user'])) {
-                    header('Location: ../login/index.php');
-                    exit();
-                }
                 if (isset($_SESSION['user'])) {
                     // Hiển thị nút đăng xuất
                     echo '<a href="logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>';

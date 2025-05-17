@@ -1,7 +1,7 @@
 <?php
 session_start();
 include_once('../includes/database.php');
-
+$sql_1 = "SELECT * FROM ";
 
 ?>
 <!DOCTYPE html>
@@ -81,7 +81,7 @@ include_once('../includes/database.php');
         <div class="header">
             <h1>Hỗ Trợ Khách Hàng</h1>
             <div class="user-profile">
-            <?php
+                <?php
                 $avatar = isset($_SESSION['user']['avatar']) ? $_SESSION['user']['avatar'] : 'https://randomuser.me/api/portraits/men/32.jpg';
                 // Kiểm tra nếu avatar đã là URL đầy đủ
                 ?>
@@ -110,150 +110,150 @@ include_once('../includes/database.php');
         </div>
 
         <!-- Ticket List -->
-        <?php foreach($contacts as $contact): ?>
-         <div class="ticket-card">
-            <div class="ticket-header">
-                <div class="ticket-info">
-                    <div class="ticket-avatar"><img src="<?php ?>" alt=""></div>
-                    <div class="ticket-meta">
-                        <h3>Trần Văn B - #SW20230015</h3>
-                        <p>Vấn đề: Đổi trả sản phẩm</p>
+        <?php foreach ($contacts as $contact): ?>
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <div class="ticket-info">
+                        <div class="ticket-avatar"><img src="<?php ?>" alt=""></div>
+                        <div class="ticket-meta">
+                            <h3>Trần Văn B - #SW20230015</h3>
+                            <p>Vấn đề: Đổi trả sản phẩm</p>
+                        </div>
                     </div>
+                    <span class="ticket-status status-new">Mới</span>
                 </div>
-                <span class="ticket-status status-new">Mới</span>
-            </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
 
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <div class="ticket-info">
-                    <div class="ticket-avatar">TV</div>
-                    <div class="ticket-meta">
-                        <h3>Trần Văn B - #SW20230015</h3>
-                        <p>Vấn đề: Đổi trả sản phẩm</p>
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <div class="ticket-info">
+                        <div class="ticket-avatar">TV</div>
+                        <div class="ticket-meta">
+                            <h3>Trần Văn B - #SW20230015</h3>
+                            <p>Vấn đề: Đổi trả sản phẩm</p>
+                        </div>
                     </div>
+                    <span class="ticket-status status-new">Mới</span>
                 </div>
-                <span class="ticket-status status-new">Mới</span>
+
+                <div class="ticket-content">
+                    <p><strong>Nội dung:</strong></p>
+                    <p>Xin chào, tôi đã nhận được áo hoodie đặt hàng nhưng bị
+                        lỗi đường may. Tôi muốn đổi sang sản phẩm khác hoặc hoàn
+                        tiền. Đơn hàng của tôi là #SW20230015.</p>
+                </div>
+
+                <div class="ticket-actions">
+                    <span class="ticket-date">Gửi lúc: 15/05/2023 14:30</span>
+                    <button class="btn btn-primary">Phản hồi</button>
+                </div>
             </div>
 
-            <div class="ticket-content">
-                <p><strong>Nội dung:</strong></p>
-                <p>Xin chào, tôi đã nhận được áo hoodie đặt hàng nhưng bị
-                    lỗi đường may. Tôi muốn đổi sang sản phẩm khác hoặc hoàn
-                    tiền. Đơn hàng của tôi là #SW20230015.</p>
-            </div>
-
-            <div class="ticket-actions">
-                <span class="ticket-date">Gửi lúc: 15/05/2023 14:30</span>
-                <button class="btn btn-primary">Phản hồi</button>
-            </div>
-        </div>
-
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <div class="ticket-info">
-                    <div class="ticket-avatar">LC</div>
-                    <div class="ticket-meta">
-                        <h3>Lê Thị C - #SW20230014</h3>
-                        <p>Vấn đề: Theo dõi đơn hàng</p>
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <div class="ticket-info">
+                        <div class="ticket-avatar">LC</div>
+                        <div class="ticket-meta">
+                            <h3>Lê Thị C - #SW20230014</h3>
+                            <p>Vấn đề: Theo dõi đơn hàng</p>
+                        </div>
                     </div>
+                    <span class="ticket-status status-pending">Đang xử lý</span>
                 </div>
-                <span class="ticket-status status-pending">Đang xử lý</span>
+
+                <div class="ticket-content">
+                    <p><strong>Nội dung:</strong></p>
+                    <p>Tôi đã đặt hàng từ 3 ngày trước nhưng chưa thấy cập nhật
+                        tình trạng vận chuyển. Shop có thể kiểm tra giúp đơn
+                        hàng #SW20230014 được không?</p>
+
+                    <p
+                        style="margin-top: 15px; padding: 10px; background-color: #F8F9FA; border-radius: 4px;">
+                        <strong>Phản hồi của bạn:</strong> (15/05/2023
+                        10:15)<br>
+                        Chào chị, đơn hàng đã được đóng gói và sẽ được bên vận
+                        chuyển lấy hàng trong ngày hôm nay ạ.
+                    </p>
+                </div>
+
+                <div class="ticket-actions">
+                    <span class="ticket-date">Cập nhật lần cuối: 15/05/2023
+                        10:15</span>
+                    <button class="btn btn-primary">Tiếp tục phản hồi</button>
+                </div>
             </div>
 
-            <div class="ticket-content">
-                <p><strong>Nội dung:</strong></p>
-                <p>Tôi đã đặt hàng từ 3 ngày trước nhưng chưa thấy cập nhật
-                    tình trạng vận chuyển. Shop có thể kiểm tra giúp đơn
-                    hàng #SW20230014 được không?</p>
-
-                <p
-                    style="margin-top: 15px; padding: 10px; background-color: #F8F9FA; border-radius: 4px;">
-                    <strong>Phản hồi của bạn:</strong> (15/05/2023
-                    10:15)<br>
-                    Chào chị, đơn hàng đã được đóng gói và sẽ được bên vận
-                    chuyển lấy hàng trong ngày hôm nay ạ.
-                </p>
-            </div>
-
-            <div class="ticket-actions">
-                <span class="ticket-date">Cập nhật lần cuối: 15/05/2023
-                    10:15</span>
-                <button class="btn btn-primary">Tiếp tục phản hồi</button>
-            </div>
-        </div>
-
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <div class="ticket-info">
-                    <div class="ticket-avatar">ND</div>
-                    <div class="ticket-meta">
-                        <h3>Nguyễn Văn D - #SW20230010</h3>
-                        <p>Vấn đề: Hỏi về size đồ</p>
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <div class="ticket-info">
+                        <div class="ticket-avatar">ND</div>
+                        <div class="ticket-meta">
+                            <h3>Nguyễn Văn D - #SW20230010</h3>
+                            <p>Vấn đề: Hỏi về size đồ</p>
+                        </div>
                     </div>
+                    <span class="ticket-status status-resolved">Đã giải
+                        quyết</span>
                 </div>
-                <span class="ticket-status status-resolved">Đã giải
-                    quyết</span>
+
+                <div class="ticket-content">
+                    <p><strong>Nội dung:</strong></p>
+                    <p>Tôi cao 1m75, nặng 68kg thì nên mua size nào với áo
+                        hoodie của shop?</p>
+
+                    <p
+                        style="margin-top: 15px; padding: 10px; background-color: #F8F9FA; border-radius: 4px;">
+                        <strong>Phản hồi của bạn:</strong> (14/05/2023
+                        16:45)<br>
+                        Chào anh, với chiều cao và cân nặng của anh thì nên chọn
+                        size L là vừa đẹp ạ. Size này sẽ ôm vừa người nhưng
+                        không quá chật.
+                    </p>
+
+                    <p
+                        style="margin-top: 10px; padding: 10px; background-color: #E8F4FD; border-radius: 4px;">
+                        <strong>Khách hàng:</strong> (14/05/2023 17:30)<br>
+                        Cảm ơn shop đã tư vấn, tôi sẽ đặt size L.
+                    </p>
+                </div>
+
+                <div class="ticket-actions">
+                    <span class="ticket-date">Đóng lúc: 14/05/2023 17:45</span>
+                    <button class="btn btn-secondary">Mở lại</button>
+                </div>
             </div>
 
-            <div class="ticket-content">
-                <p><strong>Nội dung:</strong></p>
-                <p>Tôi cao 1m75, nặng 68kg thì nên mua size nào với áo
-                    hoodie của shop?</p>
-
-                <p
-                    style="margin-top: 15px; padding: 10px; background-color: #F8F9FA; border-radius: 4px;">
-                    <strong>Phản hồi của bạn:</strong> (14/05/2023
-                    16:45)<br>
-                    Chào anh, với chiều cao và cân nặng của anh thì nên chọn
-                    size L là vừa đẹp ạ. Size này sẽ ôm vừa người nhưng
-                    không quá chật.
-                </p>
-
-                <p
-                    style="margin-top: 10px; padding: 10px; background-color: #E8F4FD; border-radius: 4px;">
-                    <strong>Khách hàng:</strong> (14/05/2023 17:30)<br>
-                    Cảm ơn shop đã tư vấn, tôi sẽ đặt size L.
-                </p>
+            <!-- Response Form (hidden by default, shows when clicking "Phản hồi") -->
+            <div class="response-form" style="display: none;">
+                <h2>Phản hồi yêu cầu #12345</h2>
+                <div class="form-group">
+                    <label>Nội dung phản hồi</label>
+                    <textarea
+                        placeholder="Nhập nội dung phản hồi cho khách hàng..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-secondary">Hủy</button>
+                    <button class="btn btn-primary">Gửi phản hồi</button>
+                </div>
+            </div>
             </div>
 
-            <div class="ticket-actions">
-                <span class="ticket-date">Đóng lúc: 14/05/2023 17:45</span>
-                <button class="btn btn-secondary">Mở lại</button>
-            </div>
-        </div>
-
-        <!-- Response Form (hidden by default, shows when clicking "Phản hồi") -->
-        <div class="response-form" style="display: none;">
-            <h2>Phản hồi yêu cầu #12345</h2>
-            <div class="form-group">
-                <label>Nội dung phản hồi</label>
-                <textarea
-                    placeholder="Nhập nội dung phản hồi cho khách hàng..."></textarea>
-            </div>
-            <div class="form-actions">
-                <button class="btn btn-secondary">Hủy</button>
-                <button class="btn btn-primary">Gửi phản hồi</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Simple JavaScript to show/hide response form
-        document.querySelectorAll('.btn-primary').forEach(button => {
-            button.addEventListener('click', function() {
-                document.querySelector('.response-form').style.display = 'block';
-                window.scrollTo({
-                    top: document.body.scrollHeight,
-                    behavior: 'smooth'
+            <script>
+                // Simple JavaScript to show/hide response form
+                document.querySelectorAll('.btn-primary').forEach(button => {
+                    button.addEventListener('click', function() {
+                        document.querySelector('.response-form').style.display = 'block';
+                        window.scrollTo({
+                            top: document.body.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    });
                 });
-            });
-        });
 
-        document.querySelector('.btn-secondary').addEventListener('click', function() {
-            document.querySelector('.response-form').style.display = 'none';
-        });
-    </script>
+                document.querySelector('.btn-secondary').addEventListener('click', function() {
+                    document.querySelector('.response-form').style.display = 'none';
+                });
+            </script>
 </body>
 
 </html>

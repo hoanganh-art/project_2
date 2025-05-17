@@ -1,63 +1,110 @@
 -- Tạo database (giữ nguyên)
 CREATE DATABASE cuahangs;
+
 USE cuahangs;
 
 -- Bảng khách hàng
-CREATE TABLE customer (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    address TEXT NOT NULL,
-    avatar VARCHAR(255),
-    gender TINYINT(1),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+CREATE TABLE `customer` (
+    `id` int(11) NOT NULL,
+    `name` varchar(255) NOT NULL,
+    `email` varchar(255) NOT NULL,
+    `password` varchar(255) NOT NULL,
+    `phone` varchar(20) NOT NULL,
+    `address` text NOT NULL,
+    `avatar` varchar(255) DEFAULT NULL,
+    `gender` tinyint(1) DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+    `status` varchar(50) NOT NULL DEFAULT 'active'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- Bảng nhân viên
-CREATE TABLE employees (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    phone VARCHAR(20) NOT NULL,
-    date_of_birth DATE NOT NULL,
-    address TEXT NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    position VARCHAR(50) NOT NULL,
-    status VARCHAR(50) NOT NULL DEFAULT 'active',
-    role ENUM('staff') NOT NULL DEFAULT 'staff',
-    avatar VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+CREATE TABLE `employees` (
+    `id` int(11) NOT NULL,
+    `name` varchar(255) NOT NULL,
+    `email` varchar(255) NOT NULL,
+    `phone` varchar(20) NOT NULL,
+    `date_of_birth` date NOT NULL,
+    `address` text NOT NULL,
+    `password` varchar(255) NOT NULL,
+    `position` varchar(50) NOT NULL,
+    `status` varchar(50) NOT NULL DEFAULT 'active',
+    `role` enum('staff') NOT NULL DEFAULT 'staff',
+    `avatar` varchar(255) DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
 -- Bảng admin
-CREATE TABLE admin (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    phone varchar(20),
-    gender tinyint(1),
-    address TEXT,
-    avatar varchar(255),
-    password VARCHAR(255) NOT NULL,
-    status VARCHAR(50) NOT NULL DEFAULT 'active',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+CREATE TABLE `admin` (
+    `id` int(11) NOT NULL,
+    `name` varchar(255) NOT NULL,
+    `email` varchar(255) NOT NULL,
+    `phone` varchar(20) NOT NULL,
+    `gender` tinyint(1) DEFAULT NULL,
+    `address` text NOT NULL,
+    `avatar` varchar(255) DEFAULT NULL,
+    `password` varchar(255) NOT NULL,
+    `status` varchar(50) NOT NULL DEFAULT 'active',
+    `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
-SELECT * from admin;
+INSERT INTO
+    admin (name, email, password, status)
+VALUES
+    (
+        'Second Admin',
+        'secondadmin@example.com',
+        '$2y$10$LjeOEope0BsHsrEClUxTG.e3BkEJWzZffVKW0ySuMk4IJx8iaoEia',
+        'active'
+    );
 
+SELECT
+    *
+FROM
+    admin;
+
+--Bảng sản phẩm
+CREATE TABLE `product` (
+    `id` int(11) NOT NULL,
+    `name` varchar(400) NOT NULL,
+    `code` varchar(200) NOT NULL,
+    `price` float NOT NULL,
+    `original_price` float NOT NULL,
+    `category` varchar(255) NOT NULL,
+    `subcategory` varchar(255) NOT NULL,
+    `stock` float NOT NULL,
+    `status` varchar(100) NOT NULL DEFAULT 'active',
+    `description` text NOT NULL,
+    `image` varchar(2555) DEFAULT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- 1. Sửa bảng contact:
-CREATE TABLE contact (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    phone VARCHAR(20) NOT NULL, 
-    subject VARCHAR(255) NOT NULL,
-    message TEXT NOT NULL,       
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  
-    status VARCHAR(50) DEFAULT 'unread'  
-);
+CREATE TABLE `contact` (
+    `id` int(11) NOT NULL,
+    `name` varchar(255) DEFAULT NULL,
+    `email` varchar(255) DEFAULT NULL,
+    `phon` varchar(255) DEFAULT NULL,
+    `subject` mediumtext DEFAULT NULL,
+    `message` longtext DEFAULT NULL,
+    `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
+
+
+CREATE TABLE `contact_settings` (
+    `id` int(11) NOT NULL,
+    `address` varchar(255) NOT NULL COMMENT 'Địa chỉ cửa hàng',
+    `phone_1` varchar(20) NOT NULL COMMENT 'Số điện thoại chính',
+    `phone_2` varchar(20) DEFAULT NULL COMMENT 'Số điện thoại phụ',
+    `email_1` varchar(100) NOT NULL COMMENT 'Email chính',
+    `email_2` varchar(100) DEFAULT NULL COMMENT 'Email phụ',
+    `map_url` text DEFAULT NULL COMMENT 'URL Google Maps',
+    `facebook_url` varchar(255) DEFAULT NULL COMMENT 'Link Facebook',
+    `instagram_url` varchar(255) DEFAULT NULL COMMENT 'Link Instagram',
+    `youtube_url` varchar(255) DEFAULT NULL COMMENT 'Link YouTube',
+    `tiktok_url` varchar(255) DEFAULT NULL COMMENT 'Link TikTok',
+    `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Thời gian cập nhật',
+    `updated_by` int(11) DEFAULT NULL COMMENT 'ID người cập nhật'
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 -- 2. Thêm bảng orders
 CREATE TABLE orders (
@@ -81,38 +128,8 @@ CREATE TABLE order_detail (
     product_id INT NOT NULL,
     quantity INT NOT NULL,
     price FLOAT NOT NULL,
-    color VARCHAR(50),           
-    size VARCHAR(50),            
+    color VARCHAR(50),
+    size VARCHAR(50),
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES product(id)
 );
-
--- 4. Thêm ràng buộc khóa ngoại cho contact_settings
-ALTER TABLE contact_settings
-ADD CONSTRAINT fk_updated_by
-FOREIGN KEY (updated_by) REFERENCES admin(id);
-
--- 5. Cải thiện bảng product (thêm các trường quan trọng)
-ALTER TABLE product
-ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-ADD COLUMN created_by INT,
-ADD COLUMN weight FLOAT,
-ADD COLUMN brand VARCHAR(100),
-ADD CONSTRAINT fk_created_by FOREIGN KEY (created_by) REFERENCES admin(id);
-
--- 6. Thêm bảng categories để quản lý danh mục tốt hơn
-CREATE TABLE categories (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    parent_id INT NULL,
-    description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (parent_id) REFERENCES categories(id)
-);
-
-ALTER TABLE product
-MODIFY COLUMN category INT,
-MODIFY COLUMN subcategory INT,
-ADD CONSTRAINT fk_product_category FOREIGN KEY (category) REFERENCES categories(id),
-ADD CONSTRAINT fk_product_subcategory FOREIGN KEY (subcategory) REFERENCES categories(id);
