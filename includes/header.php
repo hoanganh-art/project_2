@@ -4,18 +4,28 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once('database.php');
 
-// Replace 'cart' with your actual cart table name
-$sql = "SELECT COUNT(*) AS total_cart_items FROM cart";
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$result = $stmt->get_result();
-$carts = $result->fetch_all(MYSQLI_ASSOC);
-?>
+// Khởi tạo biến để lưu số lượng sản phẩm
+$cart_count = 0;
 
+// Kiểm tra nếu người dùng đã đăng nhập
+if (isset($_SESSION['user']['id'])) {
+    $customer_id = $_SESSION['user']['id'];
+    
+    // Truy vấn chỉ đếm sản phẩm của khách hàng hiện tại
+    $sql = "SELECT COUNT(*) AS total_cart_items FROM cart WHERE customer_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $customer_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result && $row = $result->fetch_assoc()) {
+        $cart_count = $row['total_cart_items'];
+    }
+}
+?>
 
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,14 +55,7 @@ $carts = $result->fetch_all(MYSQLI_ASSOC);
             <div class="cart-icon">
                 🛒
                 <span class="cart-count">
-                    <?php 
-                        // Hiển thị số lượng sản phẩm trong giỏ hàng
-                        if (!empty($carts) && isset($carts[0]['total_cart_items'])) {
-                            echo htmlspecialchars($carts[0]['total_cart_items']);
-                        } else {
-                            echo '0';
-                        }
-                    ?>
+                    <?php echo htmlspecialchars($cart_count); ?>
                 </span>
             </div>
 
@@ -71,5 +74,4 @@ $carts = $result->fetch_all(MYSQLI_ASSOC);
         });
     </script>
 </body>
-
 </html>

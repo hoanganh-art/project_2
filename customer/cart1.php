@@ -1,13 +1,38 @@
 <?php
+
 session_start();
 require_once('../includes/database.php');
 
-$sql = "SELECT cart.*, product.* FROM cart INNER JOIN product ON cart.id = product.id";
+// Kiểm tra đăng nhập
+if (!isset($_SESSION['user']['id'])) {
+    echo "<script>alert('Vui lòng đăng nhập để xem giỏ hàng!'); window.location.href='../login/index.php';</script>";
+    exit();
+}
 
-$stmt = $conn->prepare($sql);;
+$current_customer_id = $_SESSION['user']['id']; // ID khách hàng hiện tại
+
+// Lấy tất cả sản phẩm trong giỏ hàng
+$sql = "SELECT cart.id as cart_id, cart.*, product.* FROM cart 
+        INNER JOIN product ON cart.product_id = product.id
+        WHERE cart.customer_id = ?";  // Thêm điều kiện WHERE để lọc ngay từ CSDL
+
+// Chuẩn bị và thực thi câu truy vấn
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $current_customer_id);
 $stmt->execute();
 $result = $stmt->get_result();
-$carts = $result->fetch_all(MYSQLI_ASSOC);
+$carts = $result->fetch_all(MYSQLI_ASSOC); //
+
+// Lọc chỉ hiển thị sản phẩm có customer_id trùng với người dùng hiện tại
+$carts = array_filter($carts, function ($cart) use ($current_customer_id) {
+    return $cart['customer_id'] == $current_customer_id;
+});
+
+// Kiểm tra nếu có sản phẩm không thuộc về khách hàng này
+$has_foreign_items = count($carts) > count($carts);
+if ($has_foreign_items) {
+    echo "<script>alert('Có sản phẩm trong giỏ hàng không thuộc về bạn! Chúng tôi đã ẩn những sản phẩm đó.');</script>";
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -110,7 +135,7 @@ $carts = $result->fetch_all(MYSQLI_ASSOC);
                     <!-- Product 1 -->
 
                     <?php foreach ($carts as $cart): ?>
-                        <tr data-product-id="<?php echo htmlspecialchars($cart['id']); ?>">
+                        <tr data-product-id="<?php echo htmlspecialchars($cart['cart_id']); ?>">
                             <td data-label="Sản phẩm">
                                 <div class="product-cell">
                                     <img src="<?php echo htmlspecialchars($cart['image']); ?>" alt="<?php echo htmlspecialchars($cart['name']); ?>" class="product-image">
@@ -134,8 +159,8 @@ $carts = $result->fetch_all(MYSQLI_ASSOC);
                                     <i class="fas fa-times"></i>
                                 </button>
                             </td>
-                        </tr>
-                    <?php endforeach; ?>
+                            </data-product-id=>
+                        <?php endforeach; ?>
                 </tbody>
             </table>
 
@@ -303,20 +328,15 @@ $carts = $result->fetch_all(MYSQLI_ASSOC);
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        row.style.opacity = '0';
-                        setTimeout(() => {
-                            row.remove();
-                            // Update cart totals here
-                            if (document.querySelectorAll('.cart-table tbody tr').length === 0) {
-                                document.querySelector('.cart-items').style.display = 'none';
-                                document.querySelector('.cart-summary').style.display = 'none';
-                                // document.querySelector('.empty-cart').style.display = 'block'; // Nếu có
-                            }
-                            updateCartSummary();
-                        }, 300);
+                        // Tự động load lại trang sau khi xóa thành công
+                        window.location.reload();
                     } else {
                         alert('Xóa sản phẩm thất bại!');
                     }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi xóa sản phẩm');
                 });
         });
     });
