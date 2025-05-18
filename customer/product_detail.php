@@ -101,12 +101,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     <!-- Product Detail -->
     <div class="product-detail">
         <div class="product-gallery">
-            <img src="../assets/image_products/<?php echo htmlspecialchars($product['image']); ?>"
+            <img src="<?php echo htmlspecialchars($product['image']); ?>"
                 alt="<?php echo htmlspecialchars($product['name']); ?>"
                 class="main-image">
             <div class="thumbnail-container">
                 <!-- Thay thế bằng hình ảnh thực tế từ database -->
-                <img src="../assets/image_products/<?php echo htmlspecialchars($product['image']); ?>"
+                <img src="<?php echo htmlspecialchars($product['image']); ?>"
                     alt="<?php echo htmlspecialchars($product['name']); ?>"
                     class="thumbnail"
                     onclick="changeImage(this)">

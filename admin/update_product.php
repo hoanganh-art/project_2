@@ -25,19 +25,36 @@ try {
         // Xử lý upload ảnh mới
         $image = $current_image;
         if (!empty($_FILES['image']['name'])) {
-            $uploadDir = '../assets/image_products/';
-            $fileName = uniqid() . '_' . basename($_FILES['image']['name']);
-            $targetPath = $uploadDir . $fileName;
+            $uploadDir = '../assets/product/';
+            $fileTmpPath = $_FILES['image']['tmp_name'];
+            $fileName = $_FILES['image']['name'];
 
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
-                // Xóa ảnh cũ nếu có
-                if (!empty($current_image)) {
-                    $oldImagePath = $uploadDir . $current_image;
-                    if (file_exists($oldImagePath)) {
-                        unlink($oldImagePath);
-                    }
+            $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+
+            // Kiểm tra định dạng file
+
+            if (in_array($fileExtension, $allowedExtensions)) {
+                // Đặt tên file mới để tránh trùng lặp
+                $newFileName = uniqid('product', true) . '.' . $fileExtension;
+                $destPath = $uploadDir . $newFileName;
+
+                // Tạo thư mục nếu chưa tồn tại
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                    chmod($uploadDir, 0755);
                 }
-                $image = $fileName;
+
+                // Di chuyển file vào thư mục đích
+                if (move_uploaded_file($fileTmpPath, $destPath)) {
+                    $image = $destPath; // <-- Corrected line
+                } else {
+                    echo "Lỗi khi lưu file.";
+                    exit();
+                }
+            } else {
+                echo "Định dạng file không hợp lệ!";
+                exit();
             }
         }
 
@@ -70,4 +87,3 @@ try {
 
 header('Content-Type: application/json');
 echo json_encode($response);
-?>

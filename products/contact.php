@@ -54,7 +54,11 @@ require_once('../includes/header.php');
                 <div class="info-icon">📍</div>
                 <div class="info-text">
                     <h3>Địa chỉ cửa hàng</h3>
-                    <p><?php echo $address; ?></p>
+                    <?php if (!empty($address)): ?>
+                        <p><?php echo $address; ?></p>
+                    <?php else: ?>
+                        <p><em>Chưa cập nhật địa chỉ</em></p>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -62,8 +66,16 @@ require_once('../includes/header.php');
                 <div class="info-icon">📞</div>
                 <div class="info-text">
                     <h3>Điện thoại</h3>
-                    <p><?php echo $phone_1; ?></p>
-                    <p> <?php echo $phone_2; ?> </p>
+                    <?php if (!empty($phone_1)): ?>
+                        <p><?php echo $phone_1; ?></p>
+                    <?php else: ?>
+                        <p><em>Chưa cập nhật số điện thoại</em></p>
+                    <?php endif; ?>
+                    <?php if (!empty($phone_2)): ?>
+                        <p><?php echo $phone_2; ?></p>
+                    <?php else: ?>
+                        <p><em>Chưa cập nhật số điện thoại</em></p>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -71,8 +83,16 @@ require_once('../includes/header.php');
                 <div class="info-icon">✉️</div>
                 <div class="info-text">
                     <h3>Email</h3>
-                    <p><?php echo $email_1; ?></p>
-                    <p><?php echo $email_2; ?></p>
+                    <?php if (!empty($email_1)): ?>
+                        <p><?php echo $email_1; ?></p>
+                    <?php else: ?>
+                        <p><em>Chưa cập nhật email</em></p>
+                    <?php endif; ?>
+                    <?php if (!empty($email_2)): ?>
+                        <p><?php echo $email_2; ?></p>
+                    <?php else: ?>
+                        <p><em>Chưa cập nhật email</em></p>
+                    <?php endif; ?>
                 </div>
             </div>
 

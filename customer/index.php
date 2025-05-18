@@ -63,7 +63,7 @@ $category_names = [
             ?>
                 <div class="product-card">
                     <!-- Hiển thị thông tin sản phẩm ở đây -->
-                    <img src="../assets/image_products/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image" style="height:220px;object-fit:cover;width:100%;">
+                    <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image" style="height:220px;object-fit:cover;width:100%;">
                     <div class="product-info">
                         <div class="product-category">
                             <?php
@@ -122,7 +122,7 @@ $category_names = [
             ?>
                 <div class="product-card">
                     <!-- Hiển thị thông tin sản phẩm ở đây -->
-                    <img src="../assets/image_products/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image" style="height:220px;object-fit:cover;width:100%;">
+                    <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image" style="height:220px;object-fit:cover;width:100%;">
                     <div class="product-info">
                         <div class="product-category">
                             <?php

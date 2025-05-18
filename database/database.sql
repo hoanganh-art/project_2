@@ -270,7 +270,7 @@ SELECT COUNT(*) AS total_products FROM product;
 SELECT COUNT(*) AS low_stock_products FROM product WHERE stock < 10;
 select * from product;
 
-UPDATE product SET price ='500000';
+UPDATE customer SET avatar ='../assets/avatar/customes/avatar_customes6826d5ca29d129.92788014.jpg';
 
 
 --Bảng Contact
@@ -287,3 +287,7 @@ CREATE TABLE contact (
 SELECT * FROM contact;
 DROP TABLE contact;
 SELECT * FROM customer;
+
+
+
+SELECT cart.*, product.* FROM cart INNER JOIN product ON cart.id = product.id

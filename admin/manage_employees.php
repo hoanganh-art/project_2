@@ -81,7 +81,7 @@ $employees = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến $
                             data-posion="<?php echo htmlspecialchars($employee['position']); ?>"
                             data-address="<?php echo htmlspecialchars($employee['address']); ?>"
                             data-birthday="<?php echo htmlspecialchars($employee['date_of_birth']); ?>"
-                            data-avatar="<?php echo htmlspecialchars($employee['avatar'] ? '../assets/avatar/' . $employee['avatar'] : '../assets/avatar/default-avatar.png'); ?>">
+                            data-avatar="<?php echo htmlspecialchars($employee['avatar'] ? $employee['avatar'] : '../assets/avatar/default-avatar.png'); ?>">
                             <td><?php echo htmlspecialchars($employee['name']); ?></td>
                             <td><?php echo htmlspecialchars($employee['email']); ?></td>
                             <td><?php echo htmlspecialchars($employee['phone']); ?></td>

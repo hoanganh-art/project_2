@@ -82,7 +82,7 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
                             data-subcategory="<?php echo htmlspecialchars($product['subcategory']); ?>"
                             data-code="<?php echo htmlspecialchars($product['code']); ?>"
                             data-description="<?php echo htmlspecialchars($product['description']); ?>">
-                            <td><img src="<?php echo htmlspecialchars('../../assets/image_products/' . $product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image"></td>
+                            <td><img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image"></td>
                             <td><?php echo htmlspecialchars($product['name']); ?></td>
                             <td><?php echo number_format($product['price'], 0, ',', '.'); ?>đ</td>
                             <td><?php echo htmlspecialchars($product['stock']); ?></td>
@@ -593,7 +593,7 @@ $products = $result->fetch_all(MYSQLI_ASSOC);
 
         // Xử lý phân trang động
         const paginationBtns = document.querySelectorAll('.pagination-btn');
-        const rowsPerPage = 10;
+        const rowsPerPage = 5;
         const tableRows = Array.from(document.querySelectorAll('.products-table tbody tr'));
         let currentPage = 1;
         const totalPages = Math.ceil(tableRows.length / rowsPerPage);

@@ -68,8 +68,7 @@ $current_category_name = $category_names[$current_subcategory];
                     <?php endif; ?>
                     <a href="../customer/product_detail.php?id=<?php echo $product['id']; ?>" class="product-link">
                         <div class="product-image">
-                            <img src="../assets/image_products/<?php echo htmlspecialchars($product['image']); ?>"
-                                alt="<?php echo htmlspecialchars($product['name']); ?>">
+                            <img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
                         </div>
                     </a>
                     <div class="product-info">

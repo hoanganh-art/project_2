@@ -1,5 +1,14 @@
 <?php
 session_start();
+
+require_once('../includes/database.php');
+
+$sql = "SELECT cart.*, product.* FROM cart INNER JOIN product ON cart.id = product.id";
+
+$stmt = $conn->prepare($sql);;
+$stmt->execute();
+$result = $stmt->get_result();
+$carts = $result->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -100,90 +109,39 @@ session_start();
                 </thead>
                 <tbody>
                     <!-- Product 1 -->
-                    <tr>
-                        <td data-label="Sản phẩm">
-                            <div class="product-cell">
-                                <img src="../assets/image/ao/hoodie.png" alt="Áo Hoodie" class="product-image">
-                                <div class="product-info">
-                                    <h4>Áo Hoodie Streetwear Limited Edition</h4>
-                                    <p>Màu: Đen | Size: M</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td data-label="Giá">450.000đ</td>
-                        <td data-label="Số lượng">
-                            <div class="quantity-selector">
-                                <button class="quantity-btn">-</button>
-                                <input type="number" value="1" min="1" class="quantity-input">
-                                <button class="quantity-btn">+</button>
-                            </div>
-                        </td>
-                        <td data-label="Tổng">450.000đ</td>
-                        <td>
-                            <button class="remove-btn" title="Xóa sản phẩm">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </td>
-                    </tr>
 
-                    <!-- Product 2 -->
-                    <tr>
-                        <td data-label="Sản phẩm">
-                            <div class="product-cell">
-                                <img src="../assets/image/quan/quan_jeans.png" alt="Quần Jeans" class="product-image">
-                                <div class="product-info">
-                                    <h4>Quần Jeans Rách Phong Cách Streetwear</h4>
-                                    <p>Màu: Xanh | Size: L</p>
+                    <?php foreach ($carts as $cart): ?>
+                        <tr data-product-id="<?php echo htmlspecialchars($cart['id']); ?>">
+                            <td data-label="Sản phẩm">
+                                <div class="product-cell">
+                                    <img src="<?php echo htmlspecialchars($cart['image']); ?>" alt="<?php echo htmlspecialchars($cart['name']); ?>" class="product-image">
+                                    <div class="product-info">
+                                        <h4><?php echo htmlspecialchars($cart['name']); ?></h4>
+                                        <p>Màu: <?php echo htmlspecialchars($cart['color']) ?> | Size: <?php echo htmlspecialchars($cart['size']) ?></p>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td data-label="Giá">620.000đ</td>
-                        <td data-label="Số lượng">
-                            <div class="quantity-selector">
-                                <button class="quantity-btn">-</button>
-                                <input type="number" value="1" min="1" class="quantity-input">
-                                <button class="quantity-btn">+</button>
-                            </div>
-                        </td>
-                        <td data-label="Tổng">620.000đ</td>
-                        <td>
-                            <button class="remove-btn" title="Xóa sản phẩm">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </td>
-                    </tr>
-
-                    <!-- Product 3 -->
-                    <tr>
-                        <td data-label="Sản phẩm">
-                            <div class="product-cell">
-                                <img src="../assets/image//mu/mon.png" alt="Nón Snapback" class="product-image">
-                                <div class="product-info">
-                                    <h4>Nón Snapback Logo Streetwear</h4>
-                                    <p>Màu: Đen</p>
+                            </td>
+                            <td data-label="Giá"><?php echo htmlspecialchars($cart['price']) ?></td>
+                            <td data-label="Số lượng">
+                                <div class="quantity-selector">
+                                    <button class="quantity-btn">-</button>
+                                    <input type="number" value="<?php echo htmlspecialchars($cart['quantity']) ?>" min="1" class="quantity-input">
+                                    <button class="quantity-btn">+</button>
                                 </div>
-                            </div>
-                        </td>
-                        <td data-label="Giá">280.000đ</td>
-                        <td data-label="Số lượng">
-                            <div class="quantity-selector">
-                                <button class="quantity-btn">-</button>
-                                <input type="number" value="1" min="1" class="quantity-input">
-                                <button class="quantity-btn">+</button>
-                            </div>
-                        </td>
-                        <td data-label="Tổng">280.000đ</td>
-                        <td>
-                            <button class="remove-btn" title="Xóa sản phẩm">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </td>
-                    </tr>
+                            </td>
+                            <td data-label="Tổng">450.000đ</td>
+                            <td>
+                                <button class="remove-btn" title="Xóa sản phẩm">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
 
             <div class="continue-shopping">
-                <a href="#">
+                <a href="../products/product.php">
                     <i class="fas fa-arrow-left"></i>
                     Tiếp tục mua sắm
                 </a>
@@ -223,23 +181,6 @@ session_start();
     </div>
 </body>
 <script>
-    document.querySelectorAll('.quantity-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const input = this.parentElement.querySelector('.quantity-input');
-            let value = parseInt(input.value);
-
-            if (this.textContent === '+' || this.innerHTML.includes('+')) {
-                input.value = value + 1;
-            } else {
-                if (value > 1) {
-                    input.value = value - 1;
-                }
-            }
-
-            // Update cart totals here (would need more JS logic)
-        });
-    });
-
     // Remove product from cart
     document.querySelectorAll('.remove-btn').forEach(button => {
         button.addEventListener('click', function() {
@@ -263,6 +204,122 @@ session_start();
     document.querySelector('.btn-secondary').addEventListener('click', function() {
         alert('Giỏ hàng đã được cập nhật!');
         // Here you would normally send the updated quantities to your backend
+    });
+
+
+    //Số lượng sản phẩm
+    document.querySelectorAll('.quantity-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('.quantity-input');
+            let value = parseInt(input.value);
+            const row = this.closest('tr');
+            const productId = row.getAttribute('data-product-id'); // Thêm thuộc tính này ở HTML
+
+            if (this.textContent === '+' || this.innerHTML.includes('+')) {
+                input.value = value + 1;
+            } else {
+                if (value > 1) {
+                    input.value = value - 1;
+                }
+            }
+
+            // Gửi AJAX cập nhật quantity
+            fetch('update_cart.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `id=${productId}&quantity=${input.value}`
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (!data.success) alert('Cập nhật thất bại!');
+                });
+
+            updateRowTotal(input);
+            updateCartSummary();
+        });
+    });
+
+    function updateRowTotal(input) {
+        const row = input.closest('tr');
+        const priceCell = row.querySelector('td[data-label="Giá"]');
+        const totalCell = row.querySelector('td[data-label="Tổng"]');
+        let price = parseInt(priceCell.textContent.replace(/\D/g, ''));
+        let quantity = parseInt(input.value);
+        let total = price * quantity;
+        totalCell.textContent = total.toLocaleString('vi-VN') + 'đ';
+    }
+
+    function updateCartSummary() {
+        let subtotal = 0;
+        document.querySelectorAll('.cart-table tbody tr').forEach(row => {
+            const totalCell = row.querySelector('td[data-label="Tổng"]');
+            subtotal += parseInt(totalCell.textContent.replace(/\D/g, '')) || 0;
+        });
+
+        // Update summary rows
+        document.querySelectorAll('.summary-row span')[1].textContent = subtotal.toLocaleString('vi-VN') + 'đ';
+
+        // Example: discount and shipping
+        let discount = 50000;
+        let shipping = subtotal >= 500000 ? 0 : 30000;
+        document.querySelectorAll('.summary-row span')[3].textContent = '-' + discount.toLocaleString('vi-VN') + 'đ';
+        document.querySelectorAll('.summary-row span')[5].textContent = shipping.toLocaleString('vi-VN') + 'đ';
+
+        let total = subtotal - discount + shipping;
+        document.querySelector('.summary-total span:last-child').textContent = total.toLocaleString('vi-VN') + 'đ';
+    }
+
+    // Also update when clicking +/-
+    document.querySelectorAll('.quantity-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.parentElement.querySelector('.quantity-input');
+            updateRowTotal(input);
+            updateCartSummary();
+        });
+    });
+
+    // Initial calculation
+    document.querySelectorAll('.quantity-input').forEach(input => updateRowTotal(input));
+    updateCartSummary();
+
+
+
+    //Xóa sản phầm trong giỏ hàng 
+    // ...existing code...
+    document.querySelectorAll('.remove-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const row = this.closest('tr');
+            const productId = row.getAttribute('data-product-id');
+
+            // Gửi AJAX xóa sản phẩm khỏi cart
+            fetch('remove_cart.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `id=${productId}`
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        row.style.opacity = '0';
+                        setTimeout(() => {
+                            row.remove();
+                            // Update cart totals here
+                            if (document.querySelectorAll('.cart-table tbody tr').length === 0) {
+                                document.querySelector('.cart-items').style.display = 'none';
+                                document.querySelector('.cart-summary').style.display = 'none';
+                                // document.querySelector('.empty-cart').style.display = 'block'; // Nếu có
+                            }
+                            updateCartSummary();
+                        }, 300);
+                    } else {
+                        alert('Xóa sản phẩm thất bại!');
+                    }
+                });
+        });
     });
 </script>
 
