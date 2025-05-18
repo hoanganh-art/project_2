@@ -270,7 +270,7 @@ SELECT COUNT(*) AS total_products FROM product;
 SELECT COUNT(*) AS low_stock_products FROM product WHERE stock < 10;
 select * from product;
 
-UPDATE customer SET avatar ='../assets/avatar/customes/avatar_customes6826d5ca29d129.92788014.jpg';
+UPDATE customer SET password ='$2y$10$d31ZXYnqsNjHA6tx1887M.iUZkWk27QKpkWtgOScT02qK0/WknEtu';
 
 
 --Bảng Contact
@@ -288,6 +288,7 @@ SELECT * FROM contact;
 DROP TABLE contact;
 SELECT * FROM customer;
 
+SELECT * FROM product WHERE id = '118';
 
 
 SELECT cart.*, product.* FROM cart INNER JOIN product ON cart.id = product.id;
@@ -295,4 +296,7 @@ SELECT cart.*, product.* FROM cart INNER JOIN product ON cart.id = product.id;
 UPDATE product
 SET original_price = ROUND(original_price * (1 + (RAND() * 10)), 2);
 
-SELECT * FROM product;
+SELECT * FROM cart;
+
+SELECT COUNT(*) AS total_cart_items FROM cart;
+

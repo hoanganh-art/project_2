@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 require_once('../includes/database.php');
 
 $sql = "SELECT cart.*, product.* FROM cart INNER JOIN product ON cart.id = product.id";
@@ -319,6 +318,24 @@ $carts = $result->fetch_all(MYSQLI_ASSOC);
                         alert('Xóa sản phẩm thất bại!');
                     }
                 });
+        });
+    });
+
+    document.querySelector('.btn-primary').addEventListener('click', function() {
+        // Lưu giỏ hàng vào session (nếu cần)
+        fetch('save_cart_session.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                cart: Array.from(document.querySelectorAll('.cart-table tbody tr')).map(row => ({
+                    id: row.getAttribute('data-product-id'),
+                    quantity: row.querySelector('.quantity-input').value
+                }))
+            })
+        }).then(() => {
+            window.location.href = 'checkout.php';
         });
     });
 </script>

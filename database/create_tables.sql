@@ -129,6 +129,7 @@ CREATE TABLE `cart` (
     `size` varchar(50) NOT NULL,
     `quantity` int(11) NOT NULL DEFAULT 1,
     `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+     `status` varchar(50) NOT NULL DEFAULT 'active',
     PRIMARY KEY (`id`),
     FOREIGN KEY (`customer_id`) 
         REFERENCES `customer` (`id`)

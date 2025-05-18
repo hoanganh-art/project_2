@@ -1,3 +1,17 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once('database.php');
+
+// Replace 'cart' with your actual cart table name
+$sql = "SELECT COUNT(*) AS total_cart_items FROM cart";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result();
+$carts = $result->fetch_all(MYSQLI_ASSOC);
+?>
+
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -30,7 +44,16 @@
 
             <div class="cart-icon">
                 🛒
-                <span class="cart-count">3</span>
+                <span class="cart-count">
+                    <?php 
+                        // Hiển thị số lượng sản phẩm trong giỏ hàng
+                        if (!empty($carts) && isset($carts[0]['total_cart_items'])) {
+                            echo htmlspecialchars($carts[0]['total_cart_items']);
+                        } else {
+                            echo '0';
+                        }
+                    ?>
+                </span>
             </div>
 
             <div class="user-icon">
@@ -41,6 +64,10 @@
     <script>
         document.querySelector('.user-icon').addEventListener('click', function() {
             window.location.href = '../customer/account_customet.php';
+        });
+
+        document.querySelector('.cart-icon').addEventListener('click', function() {
+            window.location.href = '../customer/cart1.php';
         });
     </script>
 </body>
