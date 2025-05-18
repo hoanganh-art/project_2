@@ -24,7 +24,7 @@ if (!$product) {
     exit;
 }
 
-// Xử lý thêm vào giỏ hàng
+// // Xử lý thêm vào giỏ hàng
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
     // Kiểm tra đăng nhập
     if (!isset($_SESSION['user'])) {
@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
                 </div>
             </div>
 
-            <form method="post" action="">
+            <form method="post">
                 <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
 
                 <div class="product-variants">
