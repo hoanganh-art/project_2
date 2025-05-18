@@ -290,4 +290,9 @@ SELECT * FROM customer;
 
 
 
-SELECT cart.*, product.* FROM cart INNER JOIN product ON cart.id = product.id
+SELECT cart.*, product.* FROM cart INNER JOIN product ON cart.id = product.id;
+
+UPDATE product
+SET original_price = ROUND(original_price * (1 + (RAND() * 10)), 2);
+
+SELECT * FROM product;

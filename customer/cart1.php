@@ -121,7 +121,7 @@ $carts = $result->fetch_all(MYSQLI_ASSOC);
                                     </div>
                                 </div>
                             </td>
-                            <td data-label="Giá"><?php echo htmlspecialchars($cart['price']) ?></td>
+                            <td data-label="Giá"><?php echo number_format($cart['price'], 0, ',', '.'); ?>đ</td>
                             <td data-label="Số lượng">
                                 <div class="quantity-selector">
                                     <button class="quantity-btn">-</button>
@@ -129,7 +129,7 @@ $carts = $result->fetch_all(MYSQLI_ASSOC);
                                     <button class="quantity-btn">+</button>
                                 </div>
                             </td>
-                            <td data-label="Tổng">450.000đ</td>
+                            <td data-label="Tổng"></td>
                             <td>
                                 <button class="remove-btn" title="Xóa sản phẩm">
                                     <i class="fas fa-times"></i>
@@ -262,7 +262,7 @@ $carts = $result->fetch_all(MYSQLI_ASSOC);
         document.querySelectorAll('.summary-row span')[1].textContent = subtotal.toLocaleString('vi-VN') + 'đ';
 
         // Example: discount and shipping
-        let discount = 50000;
+        let discount = 130000;
         let shipping = subtotal >= 500000 ? 0 : 30000;
         document.querySelectorAll('.summary-row span')[3].textContent = '-' + discount.toLocaleString('vi-VN') + 'đ';
         document.querySelectorAll('.summary-row span')[5].textContent = shipping.toLocaleString('vi-VN') + 'đ';
