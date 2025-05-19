@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_now'])) {
                             </tr>
                             <tr>
                                 <td colspan="3">Phí vận chuyển:</td>
-                                <td id="ship">0đ </td>
+                                <td id="ship">-30.000đ </td>
                             </tr>
                             <tr>
                                 <td colspan="3">Tổng cộng:</td>
