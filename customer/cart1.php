@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 require_once('../includes/database.php');
 
@@ -11,28 +10,46 @@ if (!isset($_SESSION['user']['id'])) {
 
 $current_customer_id = $_SESSION['user']['id']; // ID khách hàng hiện tại
 
+// Khởi tạo biến $carts với mảng rỗng
+$carts = [];
+
 // Lấy tất cả sản phẩm trong giỏ hàng
 $sql = "SELECT cart.id as cart_id, cart.*, product.* FROM cart 
         INNER JOIN product ON cart.product_id = product.id
-        WHERE cart.customer_id = ?";  // Thêm điều kiện WHERE để lọc ngay từ CSDL
+        WHERE cart.customer_id = ?";
 
 // Chuẩn bị và thực thi câu truy vấn
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('i', $current_customer_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$carts = $result->fetch_all(MYSQLI_ASSOC); //
+if ($stmt) {
+    $stmt->bind_param('i', $current_customer_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Kiểm tra nếu có kết quả trả về
+    if ($result) {
+        $carts = $result->fetch_all(MYSQLI_ASSOC);
+    }
+    $stmt->close();
+}
 
 // Lọc chỉ hiển thị sản phẩm có customer_id trùng với người dùng hiện tại
-$carts = array_filter($carts, function ($cart) use ($current_customer_id) {
-    return $cart['customer_id'] == $current_customer_id;
+$filtered_carts = array_filter($carts, function ($cart) use ($current_customer_id) {
+    return isset($cart['customer_id']) && $cart['customer_id'] == $current_customer_id;
 });
 
+
+unset($cart);
+// Gán lại giá trị đã lọc
+$carts = $filtered_carts;
+
 // Kiểm tra nếu có sản phẩm không thuộc về khách hàng này
-$has_foreign_items = count($carts) > count($carts);
+$has_foreign_items = count($carts) > count($filtered_carts);
 if ($has_foreign_items) {
     echo "<script>alert('Có sản phẩm trong giỏ hàng không thuộc về bạn! Chúng tôi đã ẩn những sản phẩm đó.');</script>";
 }
+
+// Lưu giỏ hàng vào session để sử dụng ở trang checkout
+$_SESSION['cart_items'] = $carts;
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -177,12 +194,12 @@ if ($has_foreign_items) {
 
             <div class="summary-row">
                 <span>Tạm tính:</span>
-                <span>1.350.000đ</span>
+                <span></span>
             </div>
 
             <div class="summary-row">
                 <span>Giảm giá:</span>
-                <span>-50.000đ</span>
+                <span></span>
             </div>
 
             <div class="summary-row">
@@ -192,10 +209,12 @@ if ($has_foreign_items) {
 
             <div class="summary-row summary-total">
                 <span>Tổng cộng:</span>
-                <span>1.330.000đ</span>
+                <span></span>
             </div>
 
-            <button class="btn btn-primary">TIẾN HÀNH THANH TOÁN</button>
+            <form method="post" action="checkout.php">
+                <button type="submit" name="checkout" class="btn btn-primary">TIẾN HÀNH THANH TOÁN</button>
+            </form>
             <button class="btn btn-secondary">CẬP NHẬT GIỎ HÀNG</button>
 
             <div style="margin-top: 20px; font-size: 14px; color: #666; text-align: center;">
@@ -341,23 +360,25 @@ if ($has_foreign_items) {
         });
     });
 
-    document.querySelector('.btn-primary').addEventListener('click', function() {
-        // Lưu giỏ hàng vào session (nếu cần)
-        fetch('save_cart_session.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                cart: Array.from(document.querySelectorAll('.cart-table tbody tr')).map(row => ({
-                    id: row.getAttribute('data-product-id'),
-                    quantity: row.querySelector('.quantity-input').value
-                }))
-            })
-        }).then(() => {
-            window.location.href = 'checkout.php';
-        });
-    });
+    // document.querySelector('.btn-primary').addEventListener('click', function() {
+    //     // Lấy thông tin giỏ hàng
+    //     const cartItems = Array.from(document.querySelectorAll('.cart-table tbody tr')).map(row => ({
+    //         id: row.getAttribute('data-product-id'),
+    //         name: row.querySelector('h4').textContent,
+    //         price: row.querySelector('td[data-label="Giá"]').textContent,
+    //         quantity: row.querySelector('.quantity-input').value,
+    //         total: row.querySelector('td[data-label="Tổng"]').textContent,
+    //         image: row.querySelector('.product-image').src,
+    //         color: row.querySelector('.product-info p').textContent.split('|')[0].replace('Màu:', '').trim(),
+    //         size: row.querySelector('.product-info p').textContent.split('|')[1].replace('Size:', '').trim()
+    //     }));
+
+    //     // Lưu vào sessionStorage hoặc localStorage để truyền sang trang checkout
+    //     sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+    //     // Chuyển hướng sang trang checkout
+    //     window.location.href = 'checkout.php';
+    // });
 </script>
 
 </html>

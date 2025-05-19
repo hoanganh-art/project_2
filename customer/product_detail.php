@@ -174,10 +174,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
                         <?php echo $product['stock'] > 0 ? 'THÊM VÀO GIỎ' : 'HẾT HÀNG'; ?>
                     </button>
                     <button type="button" class="btn btn-secondary"
-                        <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>>
+                        <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>
+                        onclick="buyNow()">
                         MUA NGAY
                     </button>
                 </div>
+            </form>
+
+            <form id="buy-now-form" method="post" action="checkout.php" style="display:none;">
+                <input type="hidden" name="buy_now" value="1">
+                <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
+                <input type="hidden" name="color" id="buy-now-color" value="Đen">
+                <input type="hidden" name="size" id="buy-now-size" value="M">
+                <input type="hidden" name="quantity" id="buy-now-quantity" value="1">
             </form>
         </div>
     </div>
@@ -230,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
             while ($related_product = $result_related->fetch_assoc()): ?>
                 <div class="product-card">
                     <a href="product_detail.php?id=<?php echo $related_product['id']; ?>" class="product-link">
-                        <img src="../assets/image_products/<?php echo htmlspecialchars($related_product['image']); ?>"
+                        <img src="<?php echo htmlspecialchars($related_product['image']); ?>"
                             alt="<?php echo htmlspecialchars($related_product['name']); ?>"
                             class="product-image">
                     </a>
@@ -288,6 +297,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
             // Hiển thị tab được chọn
             document.getElementById(tabName).classList.add('active');
             event.currentTarget.classList.add('active');
+        }
+
+        function buyNow() {
+            // Lấy giá trị đã chọn từ form chính
+            document.getElementById('buy-now-color').value = document.getElementById('selected-color').value;
+            document.getElementById('buy-now-size').value = document.getElementById('selected-size').value;
+            document.getElementById('buy-now-quantity').value = document.getElementById('quantity-input').value;
+            document.getElementById('buy-now-form').submit();
         }
     </script>
 
