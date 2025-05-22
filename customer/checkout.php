@@ -18,16 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_now'])) {
     $product = $result->fetch_assoc();
 
     if ($product) {
+        // Khi thêm vào giỏ hàng
         $carts = [[
-            'id' => $product['id'],
+            'product_id' => $product['id'],
             'name' => $product['name'] . " ({$color}, {$size})",
             'price' => $product['price'],
             'quantity' => $quantity,
             'color' => $color,
             'size' => $size,
-            'image' => $product['image'] ?? '', // Lấy ảnh từ DB nếu có
+            'image' => $product['image'] ?? '',
         ]];
-        // Lưu vào session để sử dụng khi submit đặt hàng
         $_SESSION['cart_items'] = $carts;
     } else {
         $carts = [];
@@ -99,14 +99,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
             $size = $item['size'] ?? '';
             $image = $item['image'] ?? '';
             $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, product_name, price, quantity, color, size, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iisdisss", $order_id, $item['id'], $item['name'], $item['price'], $item['quantity'], $color, $size, $image);
+            $stmt->bind_param("iisdisss", $order_id, $item['product_id'], $item['name'], $item['price'], $item['quantity'], $color, $size, $image);
+            $stmt->execute();
+        }
+
+        // Xóa giỏ hàng trong database
+        if (!empty($customer_id)) {
+            $stmt = $conn->prepare("DELETE FROM cart WHERE customer_id = ?");
+            $stmt->bind_param("i", $customer_id);
             $stmt->execute();
         }
 
         // Xóa giỏ hàng sau khi đặt hàng thành công
         unset($_SESSION['cart_items']);
 
-        // Thông báo thành công và chuyển hướng
+        // Thông báo thành công và chuyển hướng về trang giỏ hàng
         echo "<script>alert('Đặt hàng thành công!'); window.location.href = 'cart1.php';</script>";
         exit;
     } catch (Exception $e) {

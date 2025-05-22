@@ -21,8 +21,19 @@ CREATE TABLE order_items (
     quantity INT,
     color VARCHAR(50),
     size VARCHAR(50),
-    image VARCHAR(255),
-    product_id INT
+    image VARCHAR(255)
 );
 
+DROP TABLE order_items;
+
 ALTER TABLE order_items ADD COLUMN product_id INT;
+
+ALTER TABLE order_items
+ADD CONSTRAINT fk_order
+    FOREIGN KEY (order_id) REFERENCES orders(id)
+    ON DELETE CASCADE;
+
+ALTER TABLE order_items
+ADD CONSTRAINT fk_product
+    FOREIGN KEY (product_id) REFERENCES product(id)
+    ON DELETE SET NULL;
