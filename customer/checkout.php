@@ -1,34 +1,9 @@
 <?php
 session_start();
 require_once('../includes/header.php');
-require_once('../includes/database.php');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_now'])) {
-    $product_id = intval($_POST['product_id']);
-    $color = $_POST['color'];
-    $size = $_POST['size'];
-    $quantity = intval($_POST['quantity']);
-
-    // Lấy thông tin sản phẩm từ DB
-    $stmt = $conn->prepare("SELECT * FROM product WHERE id = ?");
-    $stmt->bind_param("i", $product_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $product = $result->fetch_assoc();
-
-    // Tạo mảng sản phẩm cho checkout
-    $carts = [[
-        'name' => $product['name'],
-        'price' => $product['price'],
-        'quantity' => $quantity,
-        'color' => $color,
-        'size' => $size,
-        'image' => $product['image']
-    ]];
-} else {
-    // Lấy giỏ hàng từ session như cũ
-    $carts = $_SESSION['cart_items'] ?? [];
-}
+// Lấy giỏ hàng từ session
+$carts = $_SESSION['cart_items'] ?? [];
 ?>
 
 <!DOCTYPE html>
@@ -78,22 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_now'])) {
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="3">Giảm giá:</td>
-                                <td id="discount">-130.000đ</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">Phí vận chuyển:</td>
-                                <td id="ship">-30.000đ </td>
-                            </tr>
-                            <tr>
                                 <td colspan="3">Tổng cộng:</td>
-                                <td id="cartTotal">
-                                    <?php 
-                                        $discount = 130000;
-                                        
-                                        echo number_format(max($grandTotal - $discount , 0), 0, ',', '.') . 'đ'; 
-                                    ?>
-                                </td>
+                                <td id="cartTotal"><?php echo number_format($grandTotal, 0, ',', '.') . 'đ'; ?></td>
                             </tr>
                         </tfoot>
                     </table>
