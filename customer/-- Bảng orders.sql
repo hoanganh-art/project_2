@@ -21,5 +21,8 @@ CREATE TABLE order_items (
     quantity INT,
     color VARCHAR(50),
     size VARCHAR(50),
-    image VARCHAR(255)
+    image VARCHAR(255),
+    product_id INT
 );
+
+ALTER TABLE order_items ADD COLUMN product_id INT;

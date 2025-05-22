@@ -1,7 +1,7 @@
 <?php
 //=================================PHẦN XỬ LÝ PHP=================================
 // Update the path below to the correct location of database.php if needed
-include_once('../project_2/includes/database.php');
+include_once(__DIR__ . '/../includes/database.php');
 
 $sql = "SELECT * FROM product";
 $stmt = $conn->prepare($sql);
