@@ -18,22 +18,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_now'])) {
     $product = $result->fetch_assoc();
 
     if ($product) {
-        // Khi thêm sản phẩm vào giỏ hàng
-        $cart_item = [
+        // Khi thêm vào giỏ hàng
+        $carts = [[
             'product_id' => $product['id'],
-            'name' => $product['name'],
+            'name' => $product['name'] . " ({$color}, {$size})",
             'price' => $product['price'],
             'quantity' => $quantity,
             'color' => $color,
             'size' => $size,
             'image' => $product['image'] ?? '',
-        ];
-
-        // Lưu vào session
-        if (!isset($_SESSION['cart_items'])) {
-            $_SESSION['cart_items'] = [];
-        }
-        $_SESSION['cart_items'][] = $cart_item;
+        ]];
+        $_SESSION['cart_items'] = $carts;
     } else {
         $carts = [];
     }
@@ -119,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
         unset($_SESSION['cart_items']);
 
         // Thông báo thành công và chuyển hướng về trang giỏ hàng
-        echo "<script>alert('Đặt hàng thành công!'); window.location.href = 'order_history.php';</script>";
+        echo "<script>alert('Đặt hàng thành công!'); window.location.href = 'cart1.php';</script>";
         exit;
     } catch (Exception $e) {
         // Xử lý lỗi nếu có
@@ -193,6 +188,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
 
             <div class="checkout-form">
                 <h2>Thông tin giao hàng</h2>
+                <?php
+                $isCartEmpty = empty($carts);
+                ?>
                 <form id="checkoutForm" method="POST" action="checkout.php">
                     <div class="form-group">
                         <label for="name">Họ và tên</label>
@@ -228,8 +226,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
                         <textarea id="notes" name="notes" placeholder="Ghi chú về đơn hàng của bạn..."></textarea>
                     </div>
 
-                    <button type="submit" class="checkout-button">Đặt hàng</button>
+                    <button type="submit" class="checkout-button" <?php echo $isCartEmpty ? 'disabled style="background:#ccc;cursor:not-allowed;"' : ''; ?>>Đặt hàng</button>
                 </form>
+                <?php if ($isCartEmpty): ?>
+                    <div style="color:red;margin-top:10px;">Giỏ hàng của bạn đang trống, không thể đặt hàng!</div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
