@@ -1,10 +1,10 @@
 <?php
 session_start();
 require_once('../includes/header.php');
+require_once('../includes/database.php'); // Đảm bảo đã kết nối DB
 
 // Nếu là mua ngay (POST từ buy-now-form)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_now'])) {
-    require_once('../includes/database.php');
     $product_id = intval($_POST['product_id']);
     $color = $_POST['color'] ?? '';
     $size = $_POST['size'] ?? '';
@@ -30,6 +30,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_now'])) {
 } else {
     // Lấy giỏ hàng từ session (mua nhiều sản phẩm)
     $carts = $_SESSION['cart_items'] ?? [];
+}
+
+// Xử lý khi submit đặt hàng
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['address'], $_POST['phone'])) {
+    $name = $_POST['name'];
+    $address = $_POST['address'];
+    $phone = $_POST['phone'];
+    $payment_method = $_POST['payment_method'];
+    $notes = $_POST['notes'] ?? '';
+    $order_date = date('Y-m-d H:i:s');
+    $total = 0;
+
+    // Lấy giỏ hàng từ session
+    $cart_items = $_SESSION['cart_items'] ?? [];
+
+    // Tính tổng tiền
+    foreach ($cart_items as $item) {
+        $total += $item['price'] * $item['quantity'];
+    }
+    $shippingFee = ($total > 500000) ? 0 : 30000;
+    $discount = 130000;
+    $finalTotal = $total - $discount + $shippingFee;
+
+    // Lưu khách hàng (nếu chưa có)
+    $stmt = $conn->prepare("INSERT INTO customer (name, address, phone) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $name, $address, $phone);
+    $stmt->execute();
+    $customer_id = $conn->insert_id;
+
+    // Lưu đơn hàng
+    $stmt = $conn->prepare("INSERT INTO orders (customer_id, order_date, total, payment_method, notes) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("isdss", $customer_id, $order_date, $finalTotal, $payment_method, $notes);
+    $stmt->execute();
+    $order_id = $conn->insert_id;
+
+    // Lưu chi tiết đơn hàng
+    foreach ($cart_items as $item) {
+        $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, product_name, price, quantity) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("iisdi", $order_id, $item['id'], $item['name'], $item['price'], $item['quantity']);
+        $stmt->execute();
+    }
+
+    // Xóa giỏ hàng sau khi đặt hàng
+    unset($_SESSION['cart_items']);
+
+    // Thông báo thành công
+    echo "<script>alert('Đặt hàng thành công!');window.location='checkout.php';</script>";
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -97,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_now'])) {
 
                 <div class="checkout-form">
                     <h2>Thông tin giao hàng</h2>
-                    <form id="checkoutForm">
+                    <form id="checkoutForm" method="POST" action="checkout.php">
                         <div class="form-group">
                             <label for="name">Họ và tên</label>
                             <input type="text" id="name" name="name"
