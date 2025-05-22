@@ -333,7 +333,7 @@ $_SESSION['cart_items'] = $carts;
         // Example: discount and shipping
         let discount = 130000;
         let shipping = subtotal >= 500000 ? 0 : 30000;
-        document.querySelectorAll('.summary-row span')[3].textContent = '-' + discount.toLocaleString('vi-VN') + 'đ';
+        document.querySelectorAll('.summary-row span')[3].textContent = '' + discount.toLocaleString('vi-VN') + 'đ';
         document.querySelectorAll('.summary-row span')[5].textContent = shipping.toLocaleString('vi-VN') + 'đ';
 
         let total = subtotal - discount + shipping;

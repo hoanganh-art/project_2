@@ -90,7 +90,22 @@ $current_category_name = $category_names[$current_subcategory];
     </div>
 
     <!-- ==================== PHẦN JAVASCRIPT ==================== -->
-    <script src="../assets/js/products.js"></script>
+    <script>
+        // Khi nhấn vào nút "Thêm vào giỏ", chuyển hướng đến trang chi tiết sản phẩm
+        document.querySelectorAll('.add-to-cart').forEach(function(btn, idx) {
+            btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Lấy id sản phẩm từ thẻ cha .product-card
+            var productCard = btn.closest('.product-card');
+            var productLink = productCard.querySelector('.product-link');
+            if (productLink) {
+                window.location.href = productLink.getAttribute('href');
+            }
+            });
+        });
+       
+    </script>
+    
 </body>
 
 </html>

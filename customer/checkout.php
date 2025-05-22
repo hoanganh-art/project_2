@@ -2,10 +2,36 @@
 session_start();
 require_once('../includes/header.php');
 
-// Lấy giỏ hàng từ session
-$carts = $_SESSION['cart_items'] ?? [];
-?>
+// Nếu là mua ngay (POST từ buy-now-form)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_now'])) {
+    require_once('../includes/database.php');
+    $product_id = intval($_POST['product_id']);
+    $color = $_POST['color'] ?? '';
+    $size = $_POST['size'] ?? '';
+    $quantity = intval($_POST['quantity']);
 
+    // Lấy thông tin sản phẩm từ DB
+    $stmt = $conn->prepare("SELECT * FROM product WHERE id = ?");
+    $stmt->bind_param("i", $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $product = $result->fetch_assoc();
+
+    if ($product) {
+        $carts = [[
+            'id' => $product['id'],
+            'name' => $product['name'] . " ({$color}, {$size})",
+            'price' => $product['price'],
+            'quantity' => $quantity,
+        ]];
+    } else {
+        $carts = [];
+    }
+} else {
+    // Lấy giỏ hàng từ session (mua nhiều sản phẩm)
+    $carts = $_SESSION['cart_items'] ?? [];
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -52,6 +78,15 @@ $carts = $_SESSION['cart_items'] ?? [];
                             <?php endforeach; ?>
                         </tbody>
                         <tfoot>
+                            <tr>
+                                <td colspan="3">Phí vận chuyển:</td>
+                                <td id="shippingFee"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">Giảm giá:</td>
+                                <td id="discount"></td>
+                            </tr>
+
                             <tr>
                                 <td colspan="3">Tổng cộng:</td>
                                 <td id="cartTotal"><?php echo number_format($grandTotal, 0, ',', '.') . 'đ'; ?></td>
@@ -124,8 +159,24 @@ $carts = $_SESSION['cart_items'] ?? [];
         // Hiển thị thông báo (thay bằng AJAX call trong thực tế)
         alert(`Đặt hàng thành công!\nPhương thức thanh toán: ${formData.payment_method}\nĐơn hàng sẽ được giao đến: ${formData.address}`);
     });
-    //Tính thổng thanh toánDF
+    // Lấy tổng tiền hàng từ PHP đã render sẵn
+    const cartTotalElement = document.getElementById('cartTotal');
+    const cartTotalRaw = <?php echo $grandTotal; ?>;
 
+    // Tính tổng thanh toán khi có phí vận chuyển và giảm giá
+    let shippingFee = 30000;
+    if (cartTotalRaw > 500000) {
+        shippingFee = 0;
+    }
+    const discount = 130000;
+
+    // Hiển thị phí vận chuyển và giảm giá lên bảng
+    document.getElementById('shippingFee').textContent = shippingFee.toLocaleString('vi-VN') + 'đ';
+    document.getElementById('discount').textContent = '-' + discount.toLocaleString('vi-VN') + 'đ';
+
+    // Tính tổng cộng cuối cùng
+    const finalTotal = cartTotalRaw - discount + shippingFee;
+    cartTotalElement.textContent = finalTotal.toLocaleString('vi-VN') + 'đ';
 </script>
 
 </html>

@@ -72,6 +72,24 @@ if (isset($_SESSION['user']['id'])) {
         document.querySelector('.cart-icon').addEventListener('click', function() {
             window.location.href = '../customer/cart1.php';
         });
+
+
+        //Xử lý tìm kiếm theo tên sản phẩm
+        document.querySelector('.search-box button').addEventListener('click', function() {
+            const query = document.querySelector('.search-box input').value.trim();
+            if (query) {
+                window.location.href = '../products/product.php?search=' + encodeURIComponent(query);
+            }
+        });
+
+        document.querySelector('.search-box input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    window.location.href = '../products/product.php?search=' + encodeURIComponent(query);
+                }
+            }
+        });
     </script>
 </body>
 </html>
