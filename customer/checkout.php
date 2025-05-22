@@ -18,17 +18,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_now'])) {
     $product = $result->fetch_assoc();
 
     if ($product) {
-        // Khi thêm vào giỏ hàng
-        $carts = [[
+        // Khi thêm sản phẩm vào giỏ hàng
+        $cart_item = [
             'product_id' => $product['id'],
-            'name' => $product['name'] . " ({$color}, {$size})",
+            'name' => $product['name'],
             'price' => $product['price'],
             'quantity' => $quantity,
             'color' => $color,
             'size' => $size,
             'image' => $product['image'] ?? '',
-        ]];
-        $_SESSION['cart_items'] = $carts;
+        ];
+
+        // Lưu vào session
+        if (!isset($_SESSION['cart_items'])) {
+            $_SESSION['cart_items'] = [];
+        }
+        $_SESSION['cart_items'][] = $cart_item;
     } else {
         $carts = [];
     }
@@ -53,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
     foreach ($cart_items as $item) {
         $total += $item['price'] * $item['quantity'];
     }
-    
+
     $shippingFee = ($total > 500000) ? 0 : 30000;
     $discount = 130000;
     $finalTotal = $total - $discount + $shippingFee;
@@ -66,12 +71,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $result = $stmt->get_result();
-            
+
             if ($result->num_rows > 0) {
                 // Khách hàng đã tồn tại - lấy ID
                 $customer = $result->fetch_assoc();
                 $customer_id = $customer['id'];
-                
+
                 // Cập nhật thông tin khách hàng nếu cần
                 $stmt = $conn->prepare("UPDATE customer SET name = ?, address = ?, phone = ? WHERE id = ?");
                 $stmt->bind_param("sssi", $name, $address, $phone, $customer_id);
@@ -114,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
         unset($_SESSION['cart_items']);
 
         // Thông báo thành công và chuyển hướng về trang giỏ hàng
-        echo "<script>alert('Đặt hàng thành công!'); window.location.href = 'cart1.php';</script>";
+        echo "<script>alert('Đặt hàng thành công!'); window.location.href = 'order_history.php';</script>";
         exit;
     } catch (Exception $e) {
         // Xử lý lỗi nếu có
@@ -125,6 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
 
@@ -132,6 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
     <link rel="stylesheet" href="../assets/css/Custome/checkout.css">
     <title>Thanh toán</title>
 </head>
+
 <body>
     <div class="container">
         <h1 class="checkout-title">Thanh toán đơn hàng</h1>
@@ -239,6 +246,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
         document.getElementById('cartTotal').textContent = finalTotal.toLocaleString('vi-VN') + 'đ';
     </script>
 </body>
+
 </html>
 
 <?php

@@ -253,7 +253,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_to_cart'])) {
             <?php endwhile; ?>
         </div>
     </div>
-
     <script>
         // Hàm thay đổi hình ảnh chính
         function changeImage(thumbnail) {
