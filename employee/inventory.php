@@ -197,7 +197,7 @@ if (!isset($_SESSION['user'])) {
                                 data-original_price="<?php echo htmlspecialchars($product['original_price']); ?>"
                                 data-code="<?php echo htmlspecialchars($product['code']); ?>"
                                 data-description="<?php echo htmlspecialchars($product['description']); ?>">
-                                <td><img src="<?php echo htmlspecialchars('../../assets/image_products/' . $product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image"></td>
+                                <td><img src="<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" class="product-image"></td>
                                 <td><?php echo htmlspecialchars($product['name']); ?></td>
                                 <td><?php echo htmlspecialchars($product['subcategory']); ?></td>
                                 <td><?php echo number_format($product['original_price'], 0, ',', '.') . 'đ'; ?></td>

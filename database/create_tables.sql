@@ -1,5 +1,6 @@
--- Tạo database (giữ nguyên)
+
 CREATE DATABASE IF NOT EXISTS cuahang;
+
 USE cuahang;
 
 -- Bảng khách hàng (đã cải tiến)
@@ -17,7 +18,7 @@ CREATE TABLE `customer` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `email` (`email`),
     INDEX `phone` (`phone`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- Bảng nhân viên (đã cải tiến)
 CREATE TABLE `employees` (
@@ -36,7 +37,7 @@ CREATE TABLE `employees` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `email` (`email`),
     INDEX `phone` (`phone`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- Bảng admin (đã cải tiến)
 CREATE TABLE `admin` (
@@ -52,7 +53,7 @@ CREATE TABLE `admin` (
     `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
     PRIMARY KEY (`id`),
     UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- Bảng sản phẩm (đã cải tiến)
 CREATE TABLE `product` (
@@ -71,7 +72,7 @@ CREATE TABLE `product` (
     UNIQUE KEY `code` (`code`),
     INDEX `category` (`category`),
     INDEX `status` (`status`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- Bảng orders (đã cải tiến)
 CREATE TABLE orders (
@@ -83,7 +84,8 @@ CREATE TABLE orders (
     payment_method VARCHAR(50),
     notes TEXT,
     total INT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50) NOT NULL DEFAULT 'pending'
 );
 
 -- Bảng order_detail (đã cải tiến)
@@ -97,12 +99,10 @@ CREATE TABLE order_items (
     size VARCHAR(50),
     image VARCHAR(255),
     product_id INT,
-    FOREIGN KEY (order_id) REFERENCES orders(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES product(id)
-        ON DELETE SET NULL
-        ON UPDATE CASCADE
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE
+    SET
+        NULL ON UPDATE CASCADE
 );
 
 -- Bảng cart (đã cải tiến)
@@ -114,19 +114,13 @@ CREATE TABLE `cart` (
     `size` varchar(50) NOT NULL,
     `quantity` int(11) NOT NULL DEFAULT 1,
     `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-     `status` varchar(50) NOT NULL DEFAULT 'active',
+    `status` varchar(50) NOT NULL DEFAULT 'active',
     PRIMARY KEY (`id`),
-    FOREIGN KEY (`customer_id`) 
-        REFERENCES `customer` (`id`)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    FOREIGN KEY (`product_id`) 
-        REFERENCES `product` (`id`)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
+    FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE KEY `unique_cart_item` (`customer_id`, `product_id`, `color`, `size`),
     INDEX `customer_id` (`customer_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 -- Các bảng khác giữ nguyên như cũ
 CREATE TABLE `contact` (
@@ -138,7 +132,7 @@ CREATE TABLE `contact` (
     `message` longtext DEFAULT NULL,
     `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 CREATE TABLE `contact_settings` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -155,8 +149,76 @@ CREATE TABLE `contact_settings` (
     `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp() COMMENT 'Thời gian cập nhật',
     `updated_by` int(11) DEFAULT NULL COMMENT 'ID người cập nhật',
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 -- Thêm dữ liệu admin mẫu
-INSERT INTO `admin` (`name`, `email`, `password`, `status`) VALUES
-    ('Second Admin', 'secondadmin@example.com', '$2y$10$LjeOEope0BsHsrEClUxTG.e3BkEJWzZffVKW0ySuMk4IJx8iaoEia', 'active');
+INSERT INTO
+    `admin` (`name`, `email`, `password`, `status`)
+VALUES
+    (
+        'Second Admin',
+        'secondadmin@example.com',
+        '$2y$10$LjeOEope0BsHsrEClUxTG.e3BkEJWzZffVKW0ySuMk4IJx8iaoEia',
+        'active'
+    );
+
+-- Truy vấn tất cả đơn hàng cùng các sản phẩm trong từng đơn
+
+SELECT
+    o.id AS order_id,
+    o.customer_id,
+    o.name AS customer_name,
+    o.address,
+    o.phone,
+    o.payment_method,
+    o.notes,
+    o.status,
+    o.total,
+    o.created_at,
+    oi.id AS order_item_id,
+    oi.product_id,
+    p.name AS product_name,
+    p.code AS product_code,
+    p.price AS product_price,
+    p.original_price,
+    p.category,
+    p.subcategory,
+    p.stock,
+    p.status AS product_status,
+    p.description,
+    p.image AS product_image,
+    oi.price AS order_item_price,
+    oi.quantity,
+    oi.color,
+    oi.size,
+    oi.image AS order_item_image
+FROM
+    orders o
+    LEFT JOIN order_items oi ON o.id = oi.order_id
+    LEFT JOIN product p ON oi.product_id = p.id
+ORDER BY
+    o.id DESC,
+    oi.id ASC;
+
+
+
+ALTER TABLE orders
+ADD COLUMN status VARCHAR(50) NOT NULL DEFAULT 'pending';
+
+
+UPDATE orders SET status = 'pending';
+
+
+SELECT * FROM orders;
+SELECT * FROM order_items;
+
+-- truy vẫn hai bảng orders và order_items
+
+SELECT
+    o.*,
+    oi.*,
+    oi.id AS order_item_id
+FROM
+    orders o
+JOIN
+    order_items oi ON o.id = oi.order_id;

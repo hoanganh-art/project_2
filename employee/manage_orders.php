@@ -7,6 +7,27 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 ?>
+
+<?php
+require_once('../includes/database.php');
+
+$sql = "SELECT o.id AS order_id, o.customer_id, o.name AS customer_name, o.address, o.phone, o.payment_method, o.notes, o.total, o.created_at, o.status,
+        oi.id AS order_item_id, oi.product_id, p.name AS product_name, p.code AS product_code, p.price AS product_price, p.original_price, 
+        p.category, p.subcategory, p.stock, p.status AS product_status, p.description, p.image AS product_image, 
+        oi.price AS order_item_price, oi.quantity, oi.color, oi.size, oi.image AS order_item_image
+        FROM orders o
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        LEFT JOIN product p ON oi.product_id = p.id
+        ORDER BY o.id DESC, oi.id ASC;";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result();
+$orders = $result->fetch_all(MYSQLI_ASSOC);
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -19,6 +40,126 @@ if (!isset($_SESSION['user'])) {
     <link rel="stylesheet" href="../assets/css/employee/dashboard.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 900px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #777;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .order-info {
+            margin-bottom: 20px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            width: 120px;
+            color: #555;
+        }
+
+        .info-value {
+            flex: 1;
+        }
+
+        .order-items-table {
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .order-items-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-items-table th,
+        .order-items-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-items-table th {
+            background-color: #f5f5f5;
+        }
+
+        .order-total {
+            text-align: right;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .total-row {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .total-label {
+            font-weight: 600;
+            margin-right: 15px;
+            font-size: 1.1rem;
+        }
+
+        .total-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+    </style>
 </head>
 
 <body>
@@ -85,7 +226,7 @@ if (!isset($_SESSION['user'])) {
         <div class="header">
             <h1>Quản Lý Đơn Hàng</h1>
             <div class="user-profile">
-            <?php
+                <?php
                 $avatar = isset($_SESSION['user']['avatar']) ? $_SESSION['user']['avatar'] : 'https://randomuser.me/api/portraits/men/32.jpg';
                 // Kiểm tra nếu avatar đã là URL đầy đủ
                 ?>
@@ -110,7 +251,7 @@ if (!isset($_SESSION['user'])) {
                 </div>
                 <div class="filter-group">
                     <label>Trạng thái</label>
-                    <select>
+                    <select name="status">
                         <option value="">Tất cả</option>
                         <option value="pending">Chờ xác nhận</option>
                         <option value="processing">Đang xử lý</option>
@@ -153,66 +294,44 @@ if (!isset($_SESSION['user'])) {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>#SW20230015</td>
-                            <td>Trần Văn B</td>
-                            <td>15/05/2023</td>
-                            <td>1.850.000đ</td>
-                            <td>COD</td>
-                            <td><span class="status pending">Chờ xác nhận</span></td>
-                            <td>
-                                <button class="action-btn view"><i class="fas fa-eye"></i></button>
-                                <button class="action-btn process"><i class="fas fa-check"></i></button>
-                                <button class="action-btn cancel"><i class="fas fa-times"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#SW20230014</td>
-                            <td>Lê Thị C</td>
-                            <td>14/05/2023</td>
-                            <td>2.450.000đ</td>
-                            <td>Chuyển khoản</td>
-                            <td><span class="status processing">Đang xử lý</span></td>
-                            <td>
-                                <button class="action-btn view"><i class="fas fa-eye"></i></button>
-                                <button class="action-btn complete"><i class="fas fa-truck"></i></button>
-                                <button class="action-btn cancel"><i class="fas fa-times"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#SW20230013</td>
-                            <td>Phạm Văn D</td>
-                            <td>14/05/2023</td>
-                            <td>3.200.000đ</td>
-                            <td>Ví điện tử</td>
-                            <td><span class="status shipped">Đang giao</span></td>
-                            <td>
-                                <button class="action-btn view"><i class="fas fa-eye"></i></button>
-                                <button class="action-btn complete"><i class="fas fa-check-circle"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#SW20230012</td>
-                            <td>Nguyễn Thị E</td>
-                            <td>13/05/2023</td>
-                            <td>1.250.000đ</td>
-                            <td>COD</td>
-                            <td><span class="status completed">Hoàn thành</span></td>
-                            <td>
-                                <button class="action-btn view"><i class="fas fa-eye"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#SW20230011</td>
-                            <td>Hoàng Văn F</td>
-                            <td>12/05/2023</td>
-                            <td>1.890.000đ</td>
-                            <td>Chuyển khoản</td>
-                            <td><span class="status cancelled">Đã hủy</span></td>
-                            <td>
-                                <button class="action-btn view"><i class="fas fa-eye"></i></button>
-                            </td>
-                        </tr>
+                        <?php foreach ($orders as $order): ?>
+                            <tr>
+                                <td>#<?php echo htmlspecialchars($order['order_item_id']); ?></td>
+                                <td><?php echo htmlspecialchars($order['customer_name']); ?></td>
+                                <td><?php echo date('d/m/Y', strtotime($order['created_at'])); ?></td>
+                                <td><?php echo number_format($order['total'], 0, ',', '.') . 'đ'; ?></td>
+                                <td><?php echo htmlspecialchars($order['payment_method']); ?></td>
+                                <td>
+                                    <?php
+                                    $status = $order['status'];
+                                    if ($status == 'pending') {
+                                        echo '<span class="badge badge-warning">Chờ xác nhận</span>';
+                                    } elseif ($status == 'processing') {
+                                        echo '<span class="badge badge-info">Đang xử lý</span>';
+                                    } elseif ($status == 'shipped') {
+                                        echo '<span class="badge badge-primary">Đang giao</span>';
+                                    } elseif ($status == 'completed') {
+                                        echo '<span class="badge badge-success">Hoàn thành</span>';
+                                    } elseif ($status == 'cancelled') {
+                                        echo '<span class="badge badge-danger">Đã hủy</span>';
+                                    }
+
+                                    ?>
+                                </td>
+                                <td>
+                                    <button class="action-btn view"><i class="fas fa-eye"></i></button>
+                                    <?php if ($status == 'pending'): ?>
+                                        <button class="action-btn process" data-order-id="<?php echo $order['order_id']; ?>"><i class="fas fa-check"></i></button>
+                                        <button class="action-btn cancel" data-order-id="<?php echo $order['order_id']; ?>"><i class="fas fa-times"></i></button>
+                                    <?php elseif ($status == 'processing'): ?>
+                                        <button class="action-btn ship" data-order-id="<?php echo $order['order_id']; ?>"><i class="fas fa-truck"></i></button>
+                                        <button class="action-btn cancel" data-order-id="<?php echo $order['order_id']; ?>"><i class="fas fa-times"></i></button>
+                                    <?php elseif ($status == 'shipped'): ?>
+                                        <button class="action-btn complete" data-order-id="<?php echo $order['order_id']; ?>"><i class="fas fa-check-circle"></i></button>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
@@ -225,8 +344,341 @@ if (!isset($_SESSION['user'])) {
                 <div class="page-item">3</div>
                 <div class="page-item"><i class="fas fa-angle-right"></i></div>
             </div>
+
+        </div>
+
+        <!-- Modal chi tiết đơn hàng -->
+        <div class="modal" id="orderDetailModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Chi tiết đơn hàng #<span id="modalOrderId"></span></h2>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="order-info">
+                        <div class="info-row">
+                            <span class="info-label">Khách hàng:</span>
+                            <span class="info-value" id="customerName"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Địa chỉ:</span>
+                            <span class="info-value" id="customerAddress"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">SĐT:</span>
+                            <span class="info-value" id="customerPhone"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Ngày đặt:</span>
+                            <span class="info-value" id="orderDate"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">PTTT:</span>
+                            <span class="info-value" id="paymentMethod"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Ghi chú:</span>
+                            <span class="info-value" id="orderNotes"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Trạng thái:</span>
+                            <span class="info-value" id="orderStatus"></span>
+                        </div>
+                    </div>
+
+                    <h3>Sản phẩm</h3>
+                    <div class="order-items-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Sản phẩm</th>
+                                    <th>Mã SP</th>
+                                    <th>Đơn giá</th>
+                                    <th>Số lượng</th>
+                                    <th>Màu/Size</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orderItemsList">
+                                <!-- Nội dung sản phẩm sẽ được thêm bằng JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="order-total">
+                        <div class="total-row">
+                            <span class="total-label">Tổng cộng:</span>
+                            <span class="total-value" id="orderTotal"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+
+
+    <script>
+        //xử lý sự kiện cho các nút
+        const viewButtons = document.querySelectorAll('.action-btn.view');
+        const processButtons = document.querySelectorAll('.action-btn.process');
+        const completeButtons = document.querySelectorAll('.action-btn.complete');
+        const cancelButtons = document.querySelectorAll('.action-btn.cancel');
+        const orderItems = document.querySelectorAll('.order-item');
+        const orderDetails = document.querySelectorAll('.order-details');
+        const closeButtons = document.querySelectorAll('.close-btn');
+
+        viewButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                orderItems[index].style.display = 'block';
+            });
+        });
+        processButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                // Xử lý logic cho nút "Xử lý"
+                alert('Đơn hàng đã được xử lý!');
+            });
+        });
+        completeButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                // Xử lý logic cho nút "Hoàn thành"
+                alert('Đơn hàng đã được hoàn thành!');
+            });
+        });
+        // Xử lý nút hủy đơn hàng
+        cancelButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation(); // Ngăn sự kiện lan truyền
+                const orderId = button.getAttribute('data-order-id');
+                if (confirm('Bạn có chắc chắn muốn hủy đơn hàng #' + orderId + ' không?')) {
+                    fetch('update_order_status.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: `order_id=${orderId}&status=cancelled`
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Đã hủy đơn hàng #' + orderId + ' thành công!');
+                                location.reload();
+                            } else {
+                                alert('Có lỗi xảy ra khi hủy đơn hàng!');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Lỗi kết nối máy chủ!');
+                        });
+                }
+            });
+        });
+
+        // Xử lý các nút khác (xử lý, hoàn thành...)
+        processButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const orderId = button.getAttribute('data-order-id');
+                // Gửi request để chuyển sang trạng thái processing
+                updateOrderStatus(orderId, 'processing');
+            });
+        });
+
+        completeButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const orderId = button.getAttribute('data-order-id');
+                // Gửi request để chuyển sang trạng thái completed
+                updateOrderStatus(orderId, 'completed');
+            });
+        });
+
+        // Hàm chung để cập nhật trạng thái đơn hàng
+        function updateOrderStatus(orderId, newStatus) {
+            fetch('update_order_status.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `order_id=${orderId}&status=${newStatus}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`Đã cập nhật trạng thái đơn hàng #${orderId} thành ${getStatusName(newStatus)}!`);
+                        location.reload();
+                    } else {
+                        alert('Có lỗi xảy ra khi cập nhật trạng thái đơn hàng!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Lỗi kết nối máy chủ!');
+                });
+        }
+
+        // Hàm chuyển đổi status code thành tên trạng thái
+        function getStatusName(status) {
+            const statusMap = {
+                'pending': 'Chờ xác nhận',
+                'processing': 'Đang xử lý',
+                'shipped': 'Đang giao',
+                'completed': 'Hoàn thành',
+                'cancelled': 'Đã hủy'
+            };
+            return statusMap[status] || status;
+        }
+        closeButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                orderItems[index].style.display = 'none';
+            });
+        });
+
+
+        // Xử lý lọc theo ngày
+        document.querySelector('.filter-section input[type="date"]').addEventListener('change', function() {
+            const selectedDate = this.value;
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const orderDate = row.cells[2].textContent;
+                if (orderDate.includes(selectedDate)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        // Xử lý lọc theo trạng thái
+        document.querySelector('.filter-section select[name="status"]').addEventListener('change', function() {
+            const selectedStatus = this.value;
+            const rows = document.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const statusBadge = row.querySelector('td:nth-child(6) .badge');
+                if (!statusBadge) return;
+
+                const rowStatus = statusBadge.className.includes('badge-warning') ? 'pending' :
+                    statusBadge.className.includes('badge-info') ? 'processing' :
+                    statusBadge.className.includes('badge-primary') ? 'shipped' :
+                    statusBadge.className.includes('badge-success') ? 'completed' :
+                    statusBadge.className.includes('badge-danger') ? 'cancelled' : '';
+
+                if (selectedStatus === '' || rowStatus === selectedStatus) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        //Xử lý tìm kiếm theo mã đơn hàng
+        document.querySelector('.filter-section input[type="text"]').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const orderId = row.cells[0].textContent.toLowerCase();
+                if (orderId.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        // Xử lý lọc theo tên khách hàng
+        document.querySelector('.filter-section input[type="text"]').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const customerName = row.cells[1].textContent.toLowerCase();
+                if (customerName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        // Xử lý làm mới
+        document.querySelector('.filter-actions .btn-secondary').addEventListener('click', function() {
+            document.querySelector('.filter-section input[type="date"]').value = '';
+            document.querySelector('.filter-section select').value = '';
+            document.querySelector('.filter-section input[type="text"]').value = '';
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.style.display = '';
+            });
+        });
+
+        // Xử lý nút xem chi tiết đơn hàng
+        viewButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const row = button.closest('tr');
+                const orderId = row.cells[0].textContent.replace('#', '');
+                const customerName = row.cells[1].textContent;
+                const orderDate = row.cells[2].textContent;
+                const orderTotal = row.cells[3].textContent;
+                const paymentMethod = row.cells[4].textContent;
+                const orderStatus = row.cells[5].querySelector('.badge').textContent;
+
+                // Lấy thông tin đầy đủ từ mảng orders (PHP)
+                const fullOrder = orders.find(o => o.order_item_id == orderId);
+
+                // Hiển thị thông tin trong modal
+                document.getElementById('modalOrderId').textContent = orderId;
+                document.getElementById('customerName').textContent = fullOrder.customer_name;
+                document.getElementById('customerAddress').textContent = fullOrder.address || 'Không có';
+                document.getElementById('customerPhone').textContent = fullOrder.phone;
+                document.getElementById('orderDate').textContent = orderDate;
+                document.getElementById('paymentMethod').textContent = fullOrder.payment_method;
+                document.getElementById('orderNotes').textContent = fullOrder.notes || 'Không có';
+                document.getElementById('orderStatus').textContent = orderStatus;
+                document.getElementById('orderTotal').textContent = orderTotal;
+
+                // Hiển thị danh sách sản phẩm
+                const itemsList = document.getElementById('orderItemsList');
+                itemsList.innerHTML = '';
+
+                // Lấy tất cả sản phẩm cùng order_id
+                const orderItems = orders.filter(o => o.order_id == fullOrder.order_id);
+
+                orderItems.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${item.product_name}</td>
+                <td>${item.product_code}</td>
+                <td>${numberFormat(item.order_item_price)}đ</td>
+                <td>${item.quantity}</td>
+                <td>${item.color || 'N/A'} / ${item.size || 'N/A'}</td>
+                <td>${numberFormat(item.order_item_price * item.quantity)}đ</td>
+            `;
+                    itemsList.appendChild(row);
+                });
+
+                // Hiển thị modal
+                document.getElementById('orderDetailModal').style.display = 'block';
+            });
+        });
+
+        // Hàm định dạng số
+        function numberFormat(num) {
+            return new Intl.NumberFormat('vi-VN').format(num);
+        }
+
+        // Đóng modal khi click nút đóng
+        document.querySelector('.modal .close-btn').addEventListener('click', () => {
+            document.getElementById('orderDetailModal').style.display = 'none';
+        });
+
+        // Đóng modal khi click bên ngoài
+        window.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('orderDetailModal')) {
+                document.getElementById('orderDetailModal').style.display = 'none';
+            }
+        });
+    </script>
+
 </body>
 
 </html>
