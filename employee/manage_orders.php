@@ -302,21 +302,37 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                                 <td><?php echo number_format($order['total'], 0, ',', '.') . 'đ'; ?></td>
                                 <td><?php echo htmlspecialchars($order['payment_method']); ?></td>
                                 <td>
-                                    <?php
-                                    $status = $order['status'];
-                                    if ($status == 'pending') {
-                                        echo '<span class="badge badge-warning">Chờ xác nhận</span>';
-                                    } elseif ($status == 'processing') {
-                                        echo '<span class="badge badge-info">Đang xử lý</span>';
-                                    } elseif ($status == 'shipped') {
-                                        echo '<span class="badge badge-primary">Đang giao</span>';
-                                    } elseif ($status == 'completed') {
-                                        echo '<span class="badge badge-success">Hoàn thành</span>';
-                                    } elseif ($status == 'cancelled') {
-                                        echo '<span class="badge badge-danger">Đã hủy</span>';
-                                    }
-
-                                    ?>
+                                <?php
+                                $status = $order['status'];
+                                $statusText = '';
+                                $badgeClass = '';
+                                switch ($status) {
+                                    case 'pending':
+                                        $statusText = 'Chờ xác nhận';
+                                        $badgeClass = 'badge badge-warning';
+                                        break;
+                                    case 'processing':
+                                        $statusText = 'Đang xử lý';
+                                        $badgeClass = 'badge badge-info';
+                                        break;
+                                    case 'shipped':
+                                        $statusText = 'Đang giao';
+                                        $badgeClass = 'badge badge-primary';
+                                        break;
+                                    case 'completed':
+                                        $statusText = 'Hoàn thành';
+                                        $badgeClass = 'badge badge-success';
+                                        break;
+                                    case 'cancelled':
+                                        $statusText = 'Đã hủy';
+                                        $badgeClass = 'badge badge-danger';
+                                        break;
+                                    default:
+                                        $statusText = ucfirst($status);
+                                        $badgeClass = 'badge badge-secondary';
+                                }
+                                ?>
+                                <span class="<?php echo $badgeClass; ?>"><?php echo $statusText; ?></span>
                                 </td>
                                 <td>
                                     <button class="action-btn view"><i class="fas fa-eye"></i></button>
@@ -828,13 +844,13 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
         function groupOrdersById(orders) {
             const grouped = {};
             orders.forEach(item => {
-            if (!grouped[item.order_id]) {
-                grouped[item.order_id] = {
-                ...item,
-                items: []
-                };
-            }
-            grouped[item.order_id].items.push(item);
+                if (!grouped[item.order_id]) {
+                    grouped[item.order_id] = {
+                        ...item,
+                        items: []
+                    };
+                }
+                grouped[item.order_id].items.push(item);
             });
             return grouped;
         }
@@ -842,40 +858,40 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
 
         // Gán sự kiện cho nút "Xem chi tiết"
         document.querySelectorAll('.action-btn.view').forEach((btn, idx) => {
-            btn.addEventListener('click', function () {
-            // Lấy order_id từ hàng hiện tại
-            const row = btn.closest('tr');
-            const orderIdCell = row.cells[0].textContent.replace('#', '').trim();
-            let orderId = null;
-            // Tìm order_id thực sự (vì cell[0] là order_item_id, cần lấy order_id)
-            if (ordersData[idx]) {
-                orderId = ordersData[idx].order_id;
-            } else {
-                // fallback: lấy order_id từ data-order-id nếu có
-                orderId = btn.getAttribute('data-order-id');
-            }
-            if (!orderId) return;
+            btn.addEventListener('click', function() {
+                // Lấy order_id từ hàng hiện tại
+                const row = btn.closest('tr');
+                const orderIdCell = row.cells[0].textContent.replace('#', '').trim();
+                let orderId = null;
+                // Tìm order_id thực sự (vì cell[0] là order_item_id, cần lấy order_id)
+                if (ordersData[idx]) {
+                    orderId = ordersData[idx].order_id;
+                } else {
+                    // fallback: lấy order_id từ data-order-id nếu có
+                    orderId = btn.getAttribute('data-order-id');
+                }
+                if (!orderId) return;
 
-            const order = groupedOrders[orderId];
-            if (!order) return;
+                const order = groupedOrders[orderId];
+                if (!order) return;
 
-            // Hiển thị thông tin đơn hàng
-            modalOrderId.forEach(el => el.textContent = orderId);
-            modalCustomerName.textContent = order.customer_name || '';
-            modalAddress.textContent = order.address || '';
-            modalPhone.textContent = order.phone || '';
-            modalOrderDate.textContent = order.created_at ? (new Date(order.created_at)).toLocaleDateString('vi-VN') : '';
-            modalPaymentMethod.textContent = order.payment_method || '';
-            modalStatus.textContent = getStatusName(order.status);
-            modalNotes.textContent = order.notes || '';
+                // Hiển thị thông tin đơn hàng
+                modalOrderId.forEach(el => el.textContent = orderId);
+                modalCustomerName.textContent = order.customer_name || '';
+                modalAddress.textContent = order.address || '';
+                modalPhone.textContent = order.phone || '';
+                modalOrderDate.textContent = order.created_at ? (new Date(order.created_at)).toLocaleDateString('vi-VN') : '';
+                modalPaymentMethod.textContent = order.payment_method || '';
+                modalStatus.textContent = getStatusName(order.status);
+                modalNotes.textContent = order.notes || '';
 
-            // Hiển thị danh sách sản phẩm
-            modalOrderItems.innerHTML = '';
-            let total = 0;
-            order.items.forEach(item => {
-                const itemTotal = (item.order_item_price || 0) * (item.quantity || 0);
-                total += itemTotal;
-                modalOrderItems.innerHTML += `
+                // Hiển thị danh sách sản phẩm
+                modalOrderItems.innerHTML = '';
+                let total = 0;
+                order.items.forEach(item => {
+                    const itemTotal = (item.order_item_price || 0) * (item.quantity || 0);
+                    total += itemTotal;
+                    modalOrderItems.innerHTML += `
                 <tr>
                     <td><img src="${item.order_item_image || item.product_image || ''}" class="product-image" alt=""></td>
                     <td>${item.product_name || ''}</td>
@@ -887,25 +903,25 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                     <td>${itemTotal.toLocaleString('vi-VN')}đ</td>
                 </tr>
                 `;
-            });
-            modalOrderTotal.textContent = total.toLocaleString('vi-VN') + 'đ';
+                });
+                modalOrderTotal.textContent = total.toLocaleString('vi-VN') + 'đ';
 
-            // Hiển thị modal
-            orderModal.style.display = 'flex';
+                // Hiển thị modal
+                orderModal.style.display = 'flex';
             });
         });
 
         // Đóng modal khi bấm nút đóng
         [closeModalBtn, closeFooterBtn].forEach(btn => {
-            btn.addEventListener('click', function () {
-            orderModal.style.display = 'none';
+            btn.addEventListener('click', function() {
+                orderModal.style.display = 'none';
             });
         });
 
         // Đóng modal khi click ra ngoài nội dung modal
-        orderModal.addEventListener('click', function (e) {
+        orderModal.addEventListener('click', function(e) {
             if (e.target === orderModal) {
-            orderModal.style.display = 'none';
+                orderModal.style.display = 'none';
             }
         });
     </script>

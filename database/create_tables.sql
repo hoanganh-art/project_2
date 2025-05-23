@@ -225,4 +225,12 @@ JOIN
 
 
 
+
+ALTER TABLE orders
+ADD CONSTRAINT fk_orders_customer
+FOREIGN KEY (customer_id) REFERENCES customer(id)
+ON DELETE SET NULL
+ON UPDATE CASCADE;
+
+
 -- Thêm dữ liệu mẫu cho bảng orders và order_items 
