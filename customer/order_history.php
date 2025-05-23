@@ -206,8 +206,11 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                         return ['Đã giao hàng', 'status-delivered'];
                     case 'processing':
                         return ['Đang giao hàng', 'status-processing'];
+                    case 'completed':
+                        return ['Hoàn tất', 'status-completed'];
                     case 'cancelled':
                         return ['Đã hủy', 'status-cancelled'];
+
                     default:
                         return [$status, ''];
                 }
