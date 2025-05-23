@@ -54,21 +54,27 @@ function checkEmployee($email, $password, $conn) {
     if ($result->num_rows > 0) {
         $employee = $result->fetch_assoc();
         if (password_verify($password, $employee['password'])) {
-            $_SESSION['user'] = [
-                'id' => $employee['id'],
-                'name' => $employee['name'],
-                'email' => $employee['email'],
-                'phone' => $employee['phone'],
-                'address' => $employee['address'],
-                'position' => $employee['position'],
-                'status' => $employee['status'],
-                'created_at' => $employee['created_at'],
-                'date_of_birth' => $employee['date_of_birth'],
-                'avatar' => $employee['avatar'],
-                'role' => 'employees'
-            ];
-            header("Location: ../employee/dashboard.php");
-            exit();
+            if ($employee['status'] === 'inactive') {
+                // Nếu trạng thái là inactive thì bị khóa
+                header("Location: index.php?error=locked&message=" . urlencode("Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên."));
+                exit();
+            } else {
+                $_SESSION['user'] = [
+                    'id' => $employee['id'],
+                    'name' => $employee['name'],
+                    'email' => $employee['email'],
+                    'phone' => $employee['phone'],
+                    'address' => $employee['address'],
+                    'position' => $employee['position'],
+                    'status' => $employee['status'],
+                    'created_at' => $employee['created_at'],
+                    'date_of_birth' => $employee['date_of_birth'],
+                    'avatar' => $employee['avatar'],
+                    'role' => 'employees'
+                ];
+                header("Location: ../employee/dashboard.php");
+                exit();
+            }
         }
     }
 }
