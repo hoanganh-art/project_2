@@ -262,7 +262,7 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                 </div>
                 <div class="filter-group">
                     <label>Tìm kiếm</label>
-                    <input type="text" placeholder="Mã đơn, tên khách...">
+                    <input type="text" placeholder="Tên khách...">
                 </div>
             </div>
             <div class="filter-actions">

@@ -110,20 +110,8 @@ $sql_1 = "SELECT * FROM ";
         </div>
 
         <!-- Ticket List -->
-        <?php foreach ($contacts as $contact): ?>
-            <div class="ticket-card">
-                <div class="ticket-header">
-                    <div class="ticket-info">
-                        <div class="ticket-avatar"><img src="<?php ?>" alt=""></div>
-                        <div class="ticket-meta">
-                            <h3>Trần Văn B - #SW20230015</h3>
-                            <p>Vấn đề: Đổi trả sản phẩm</p>
-                        </div>
-                    </div>
-                    <span class="ticket-status status-new">Mới</span>
-                </div>
-            <?php endforeach; ?>
 
+        <div class="ticket-card">
             <div class="ticket-card">
                 <div class="ticket-header">
                     <div class="ticket-info">
@@ -236,24 +224,24 @@ $sql_1 = "SELECT * FROM ";
                     <button class="btn btn-primary">Gửi phản hồi</button>
                 </div>
             </div>
-            </div>
+        </div>
 
-            <script>
-                // Simple JavaScript to show/hide response form
-                document.querySelectorAll('.btn-primary').forEach(button => {
-                    button.addEventListener('click', function() {
-                        document.querySelector('.response-form').style.display = 'block';
-                        window.scrollTo({
-                            top: document.body.scrollHeight,
-                            behavior: 'smooth'
-                        });
+        <script>
+            // Simple JavaScript to show/hide response form
+            document.querySelectorAll('.btn-primary').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelector('.response-form').style.display = 'block';
+                    window.scrollTo({
+                        top: document.body.scrollHeight,
+                        behavior: 'smooth'
                     });
                 });
+            });
 
-                document.querySelector('.btn-secondary').addEventListener('click', function() {
-                    document.querySelector('.response-form').style.display = 'none';
-                });
-            </script>
+            document.querySelector('.btn-secondary').addEventListener('click', function() {
+                document.querySelector('.response-form').style.display = 'none';
+            });
+        </script>
 </body>
 
 </html>
