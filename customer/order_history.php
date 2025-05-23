@@ -2,6 +2,41 @@
 session_start();
 ?>
 
+<?php
+require_once('../includes/database.php');
+
+
+// Kiểm tra xem người dùng đã đăng nhập chưa
+if (!isset($_SESSION['user'])) {
+    // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+    header('Location: ../login/index.php');
+    exit();
+}
+// Lấy thông tin người dùng từ session
+$user_id = $_SESSION['user']['id'];
+// Kiểm tra xem người dùng có quyền truy cập vào trang này không
+if ($_SESSION['user']['role'] !== 'customer') {
+    // Nếu không có quyền, chuyển hướng đến trang chính
+    header('Location: ../index.php');
+    exit();
+}
+// truy vấn dữ liệu đơn hàng từ cơ sở dữ liệu 
+
+$sql = "SELECT o.id AS order_id, o.customer_id, o.name AS customer_name, o.address, o.phone, o.payment_method, o.notes, o.total, o.created_at, o.status,
+        oi.id AS order_item_id, oi.product_id, p.name AS product_name, p.code AS product_code, p.price AS product_price, p.original_price, 
+        p.category, p.subcategory, p.stock, p.status AS product_status, p.description, p.image AS product_image, 
+        oi.price AS order_item_price, oi.quantity, oi.color, oi.size, oi.image AS order_item_image
+        FROM orders o
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        LEFT JOIN product p ON oi.product_id = p.id
+        ORDER BY o.id DESC, oi.id ASC;";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result();
+$orders = $result->fetch_all(MYSQLI_ASSOC);
+
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -116,177 +151,128 @@ session_start();
         </div>
 
         <div class="order-list">
-            <!-- Đơn hàng 1 -->
-            <div class="order-card">
-                <div class="order-header">
-                    <div>
-                        <span class="order-id">Đơn hàng #DH20230001</span>
-                        <span class="order-date"> - 15/10/2023</span>
-                    </div>
-                    <span class="order-status status-delivered">Đã giao
-                        hàng</span>
-                </div>
 
-                <div class="order-details">
-                    <div class="order-products">
-                        <div class="product-item">
-                            <img src="../assets/image/ao/hoodie.png"
-                                alt="Áo thun" class="product-image">
-                            <div class="product-info">
-                                <div class="product-name">Áo thun nam trắng
-                                    cổ tròn</div>
-                                <div class="product-price">250,000đ</div>
-                                <div class="product-quantity">Số lượng:
-                                    1</div>
-                            </div>
-                        </div>
+            <?php
+            // Gom các sản phẩm theo từng đơn hàng
+            $orderGroups = [];
+            foreach ($orders as $row) {
+                $oid = $row['order_id'];
+                if (!isset($orderGroups[$oid])) {
+                    $orderGroups[$oid] = [
+                        'order_id' => $oid,
+                        'customer_name' => $row['customer_name'],
+                        'address' => $row['address'],
+                        'phone' => $row['phone'],
+                        'payment_method' => $row['payment_method'],
+                        'notes' => $row['notes'],
+                        'total' => $row['total'],
+                        'created_at' => $row['created_at'],
+                        'status' => $row['status'],
+                        'items' => []
+                    ];
+                }
+                if ($row['order_item_id']) {
+                    $orderGroups[$oid]['items'][] = [
+                        'product_name' => $row['product_name'],
+                        'product_code' => $row['product_code'],
+                        'product_price' => $row['order_item_price'],
+                        'quantity' => $row['quantity'],
+                        'color' => $row['color'],
+                        'size' => $row['size'],
+                        'image' => $row['order_item_image'] ?: $row['product_image']
+                    ];
+                }
+            }
 
-                        <div class="product-item">
-                            <img src="../assets/image/quan/quan_jeans.png"
-                                alt="Quần jeans" class="product-image">
-                            <div class="product-info">
-                                <div class="product-name">Quần jeans nam đen
-                                    slim fit</div>
-                                <div class="product-price">450,000đ</div>
-                                <div class="product-quantity">Số lượng:
-                                    1</div>
-                            </div>
-                        </div>
-                    </div>
+            // Hàm định dạng tiền tệ
+            function format_currency($number)
+            {
+                return number_format($number, 0, ',', '.') . 'đ';
+            }
 
-                    <div class="order-summary">
-                        <div class="summary-row">
-                            <span class="summary-label">Tạm tính:</span>
-                            <span class="summary-value">700,000đ</span>
-                        </div>
-                        <div class="summary-row">
-                            <span class="summary-label">Phí vận
-                                chuyển:</span>
-                            <span class="summary-value">30,000đ</span>
-                        </div>
-                        <div class="summary-row">
-                            <span class="summary-label">Giảm giá:</span>
-                            <span class="summary-value">-50,000đ</span>
-                        </div>
-                        <div class="summary-row total-row">
-                            <span class="summary-label">Tổng cộng:</span>
-                            <span class="summary-value">680,000đ</span>
-                        </div>
-                    </div>
-                </div>
+            // Hàm định dạng ngày
+            function format_date($datetime)
+            {
+                return date('d/m/Y', strtotime($datetime));
+            }
 
-                <div class="order-actions">
-                    <button class="action-btn reorder-btn">Mua lại</button>
-                    <button class="action-btn review-btn">Đánh giá</button>
-                    <button class="action-btn view-detail-btn">Xem chi
-                        tiết</button>
-                </div>
-            </div>
+            // Hàm chuyển trạng thái sang tiếng Việt và class
+            function get_status_label($status)
+            {
+                switch ($status) {
+                    case 'pending':
+                        return ['Chờ xác nhận', 'status-pending'];
+                    case 'delivered':
+                        return ['Đã giao hàng', 'status-delivered'];
+                    case 'processing':
+                        return ['Đang giao hàng', 'status-processing'];
+                    case 'cancelled':
+                        return ['Đã hủy', 'status-cancelled'];
+                    default:
+                        return [$status, ''];
+                }
+            }
 
-            <!-- Đơn hàng 2 -->
-            <div class="order-card">
-                <div class="order-header">
-                    <div>
-                        <span class="order-id">Đơn hàng #DH20230002</span>
-                        <span class="order-date"> - 05/10/2023</span>
-                    </div>
-                    <span class="order-status status-processing">Đang giao
-                        hàng</span>
-                </div>
+            // Hiển thị từng đơn hàng
+            foreach ($orderGroups as $order) {
+                list($statusText, $statusClass) = get_status_label($order['status']);
+                echo '<div class="order-card">';
+                echo '<div class="order-header">';
+                echo '<div>';
+                echo '<span class="order-id">Đơn hàng #DH' . htmlspecialchars($order['order_id']) . '</span>';
+                echo '<span class="order-date"> - ' . format_date($order['created_at']) . '</span>';
+                echo '</div>';
+                echo '<span class="order-status ' . $statusClass . '">' . $statusText . '</span>';
+                echo '</div>';
 
-                <div class="order-details">
-                    <div class="order-products">
-                        <div class="product-item">
-                            <img src="https://via.placeholder.com/80"
-                                alt="Áo khoác" class="product-image">
-                            <div class="product-info">
-                                <div class="product-name">Áo khoác nam dù
-                                    đen</div>
-                                <div class="product-price">550,000đ</div>
-                                <div class="product-quantity">Số lượng:
-                                    1</div>
-                            </div>
-                        </div>
-                    </div>
+                echo '<div class="order-details">';
+                echo '<div class="order-products">';
+                foreach ($order['items'] as $item) {
+                    echo '<div class="product-item">';
+                    $img = $item['image'] ? htmlspecialchars($item['image']) : '../assets/image/no-image.png';
+                    echo '<img src="' . $img . '" alt="' . htmlspecialchars($item['product_name']) . '" class="product-image">';
+                    echo '<div class="product-info">';
+                    echo '<div class="product-name">' . htmlspecialchars($item['product_name']) . '</div>';
+                    echo '<div class="product-price">' . format_currency($item['product_price']) . '</div>';
+                    echo '<div class="product-quantity">Số lượng: ' . htmlspecialchars($item['quantity']) . '</div>';
+                    if ($item['color']) echo '<div class="product-color">Màu: ' . htmlspecialchars($item['color']) . '</div>';
+                    if ($item['size']) echo '<div class="product-size">Size: ' . htmlspecialchars($item['size']) . '</div>';
+                    echo '</div></div>';
+                }
+                echo '</div>';
 
-                    <div class="order-summary">
-                        <div class="summary-row">
-                            <span class="summary-label">Tạm tính:</span>
-                            <span class="summary-value">550,000đ</span>
-                        </div>
-                        <div class="summary-row">
-                            <span class="summary-label">Phí vận
-                                chuyển:</span>
-                            <span class="summary-value">30,000đ</span>
-                        </div>
-                        <div class="summary-row">
-                            <span class="summary-label">Giảm giá:</span>
-                            <span class="summary-value">-0đ</span>
-                        </div>
-                        <div class="summary-row total-row">
-                            <span class="summary-label">Tổng cộng:</span>
-                            <span class="summary-value">580,000đ</span>
-                        </div>
-                    </div>
-                </div>
+                // Tạm tính là tổng giá sản phẩm
+                $subtotal = 0;
+                foreach ($order['items'] as $item) {
+                    $subtotal += $item['product_price'] * $item['quantity'];
+                }
+                // Giả sử phí vận chuyển và giảm giá là 0 (có thể sửa lại nếu có cột riêng)
+                $shipping = 0;
+                $discount = 0;
+                echo '<div class="order-summary">';
+                echo '<div class="summary-row"><span class="summary-label">Tạm tính:</span><span class="summary-value">' . format_currency($subtotal) . '</span></div>';
+                echo '<div class="summary-row"><span class="summary-label">Phí vận chuyển:</span><span class="summary-value">' . format_currency($shipping) . '</span></div>';
+                echo '<div class="summary-row"><span class="summary-label">Giảm giá:</span><span class="summary-value">-' . format_currency($discount) . '</span></div>';
+                echo '<div class="summary-row total-row"><span class="summary-label">Tổng cộng:</span><span class="summary-value">' . format_currency($order['total']) . '</span></div>';
+                echo '</div>'; // order-summary
+                echo '</div>'; // order-details
 
-                <div class="order-actions">
-                    <button class="action-btn view-detail-btn">Theo dõi đơn
-                        hàng</button>
-                </div>
-            </div>
+                // Nút thao tác
+                echo '<div class="order-actions">';
+                if ($order['status'] === 'delivered') {
+                    echo '<button class="action-btn reorder-btn">Mua lại</button>';
+                    echo '<button class="action-btn review-btn">Đánh giá</button>';
+                    echo '<button class="action-btn view-detail-btn">Xem chi tiết</button>';
+                } elseif ($order['status'] === 'processing') {
+                    echo '<button class="action-btn view-detail-btn">Theo dõi đơn hàng</button>';
+                } elseif ($order['status'] === 'cancelled') {
+                    echo '<button class="action-btn reorder-btn">Mua lại</button>';
+                }
+                echo '</div>'; // order-actions
 
-            <!-- Đơn hàng 3 -->
-            <div class="order-card">
-                <div class="order-header">
-                    <div>
-                        <span class="order-id">Đơn hàng #DH20230003</span>
-                        <span class="order-date"> - 20/09/2023</span>
-                    </div>
-                    <span class="order-status status-cancelled">Đã
-                        hủy</span>
-                </div>
-
-                <div class="order-details">
-                    <div class="order-products">
-                        <div class="product-item">
-                            <img src="https://via.placeholder.com/80"
-                                alt="Váy" class="product-image">
-                            <div class="product-info">
-                                <div class="product-name">Váy liền nữ đen
-                                    dáng dài</div>
-                                <div class="product-price">380,000đ</div>
-                                <div class="product-quantity">Số lượng:
-                                    1</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="order-summary">
-                        <div class="summary-row">
-                            <span class="summary-label">Tạm tính:</span>
-                            <span class="summary-value">380,000đ</span>
-                        </div>
-                        <div class="summary-row">
-                            <span class="summary-label">Phí vận
-                                chuyển:</span>
-                            <span class="summary-value">30,000đ</span>
-                        </div>
-                        <div class="summary-row">
-                            <span class="summary-label">Giảm giá:</span>
-                            <span class="summary-value">-0đ</span>
-                        </div>
-                        <div class="summary-row total-row">
-                            <span class="summary-label">Tổng cộng:</span>
-                            <span class="summary-value">410,000đ</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="order-actions">
-                    <button class="action-btn reorder-btn">Mua lại</button>
-                </div>
-            </div>
+                echo '</div>'; // order-card
+            }
+            ?>
         </div>
     </div>
 </body>

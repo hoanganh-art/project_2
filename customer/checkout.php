@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
         unset($_SESSION['cart_items']);
 
         // Thông báo thành công và chuyển hướng
-        echo "<script>alert('Đặt hàng thành công!'); window.location.href = 'cart1.php';</script>";
+        echo "<script>alert('Đặt hàng thành công!'); window.location.href = 'order_history.php';</script>";
         exit;
     } catch (Exception $e) {
         // Xử lý lỗi nếu có

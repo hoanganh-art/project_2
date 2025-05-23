@@ -14,7 +14,26 @@ $stmt = $conn->prepare($sql);
 $stmt->execute();
 $result = $stmt->get_result(); // Lấy kết quả truy vấn
 $customer = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến 
+
 // Tạo biến hiển thị email
+?>
+
+<?php
+
+require_once('../includes/database.php');
+$sql = "SELECT o.id AS order_id, o.customer_id, o.name AS customer_name, o.address, o.phone, o.payment_method, o.notes, o.total, o.created_at, o.status,
+        oi.id AS order_item_id, oi.product_id, p.name AS product_name, p.code AS product_code, p.price AS product_price, p.original_price, 
+        p.category, p.subcategory, p.stock, p.status AS product_status, p.description, p.image AS product_image, 
+        oi.price AS order_item_price, oi.quantity, oi.color, oi.size, oi.image AS order_item_image
+        FROM orders o
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        LEFT JOIN product p ON oi.product_id = p.id
+        ORDER BY o.id DESC, oi.id ASC;";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result();
+$orders = $result->fetch_all(MYSQLI_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -78,7 +97,8 @@ $customer = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến
                         $statusClass = ($status == 'active') ? 'status-active' : 'status-inactive';
                         $statusText = ($status == 'active') ? 'Đang hoạt động' : 'Ngừng hoạt động';
                         ?>
-                        <tr data-email="<?php echo htmlspecialchars($customer['email']); ?>"
+                        <tr data-id="<?php echo htmlspecialchars($customer['id']); ?>"
+                            data-email="<?php echo htmlspecialchars($customer['email']); ?>"
                             data-avatar="<?php echo htmlspecialchars($customer['avatar'] ?: '../../assets/avatar/default-avatar.png'); ?>"
                             data-gender="<?php echo htmlspecialchars($customer['gender']) ? ($customer['gender'] == 1 ? 'Nam' : 'Nữ') : 'Không xác định'; ?>">
                             <td><?php echo htmlspecialchars($customer['name']); ?></td>
@@ -207,6 +227,7 @@ $customer = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến
         document.querySelectorAll('.btn-view').forEach(btn => {
             btn.addEventListener('click', function() {
                 const customerRow = this.closest('tr');
+                const customerId = customerRow.getAttribute('data-id'); // Thêm data-id vào <tr>
                 const customerName = customerRow.querySelector('td:nth-child(1)').textContent;
                 const customerPhone = customerRow.querySelector('td:nth-child(2)').textContent;
                 const customerAddress = customerRow.querySelector('td:nth-child(3)').textContent;
@@ -216,6 +237,45 @@ $customer = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến
                 const customerEmail = customerRow.getAttribute('data-email');
                 const customerAvatar = customerRow.getAttribute('data-avatar');
                 const customerGender = customerRow.getAttribute('data-gender');
+
+                // Lọc đơn hàng của khách hàng này
+                const customerOrdersData = orders.filter(order => order.customer_id == customerId);
+
+                // Hiển thị đơn hàng vào bảng trong modal
+                const tbody = document.querySelector('#customerModal table tbody');
+                tbody.innerHTML = '';
+                customerOrdersData.slice(0, 3).forEach(order => {
+                    // Đổi trạng thái sang tiếng Việt
+                    let statusVN = '';
+                    switch (order.status) {
+                        case 'pending':
+                            statusVN = 'Chờ xử lý';
+                            break;
+                        case 'delivered':
+                            statusVN = 'Đã giao';
+                            break;
+                        
+                        case 'cancelled':
+                            statusVN = 'Đã hủy';
+                            break;
+                        case 'processing':
+                            statusVN = 'Đang xử lý';
+                            break;
+                        case 'shipping':
+                            statusVN = 'Đang giao';
+                            break;
+                        default:
+                            statusVN = order.status;
+                    }
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">#${order.order_id}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${order.created_at}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${Number(order.total).toLocaleString()}đ</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${statusVN}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
 
                 // Cập nhật thông tin vào modal
                 document.querySelector('.customer-avatar-large').src = customerAvatar || '../../assets/avatar/default-avatar.png';
@@ -397,12 +457,12 @@ $customer = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến
             const rows = document.querySelectorAll('.customers-table tbody tr');
 
             rows.forEach(row => {
-            const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
-            if (name.includes(searchTerm)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+                const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                if (name.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
             });
         });
         // Xử lý tìm kiếm theo trạng thái (kết hợp với tìm kiếm tên/số điện thoại/email)
@@ -412,24 +472,27 @@ $customer = $result->fetch_all(MYSQLI_ASSOC); // Gán kết quả vào biến
             const rows = document.querySelectorAll('.customers-table tbody tr');
 
             rows.forEach(row => {
-            const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
-            const phone = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-            const email = row.getAttribute('data-email') ? row.getAttribute('data-email').toLowerCase() : '';
-            const rowStatus = row.querySelector('td:nth-child(6)').textContent.trim() === 'Đang hoạt động' ? 'active' : 'inactive';
+                const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                const phone = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const email = row.getAttribute('data-email') ? row.getAttribute('data-email').toLowerCase() : '';
+                const rowStatus = row.querySelector('td:nth-child(6)').textContent.trim() === 'Đang hoạt động' ? 'active' : 'inactive';
 
-            const matchesSearch = name.includes(searchTerm) || phone.includes(searchTerm) || email.includes(searchTerm);
-            const matchesStatus = (status === 'all' || status === rowStatus);
+                const matchesSearch = name.includes(searchTerm) || phone.includes(searchTerm) || email.includes(searchTerm);
+                const matchesStatus = (status === 'all' || status === rowStatus);
 
-            if (matchesSearch && matchesStatus) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+                if (matchesSearch && matchesStatus) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
             });
         }
 
         searchBox.addEventListener('input', filterCustomers);
         statusFilter.addEventListener('change', filterCustomers);
+    </script>
+    <script>
+        const orders = <?php echo json_encode($orders); ?>;
     </script>
 </body>
 
