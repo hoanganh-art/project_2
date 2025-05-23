@@ -302,37 +302,24 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                                 <td><?php echo number_format($order['total'], 0, ',', '.') . 'đ'; ?></td>
                                 <td><?php echo htmlspecialchars($order['payment_method']); ?></td>
                                 <td>
-                                <?php
-                                $status = $order['status'];
-                                $statusText = '';
-                                $badgeClass = '';
-                                switch ($status) {
-                                    case 'pending':
-                                        $statusText = 'Chờ xác nhận';
-                                        $badgeClass = 'badge badge-warning';
-                                        break;
-                                    case 'processing':
-                                        $statusText = 'Đang xử lý';
-                                        $badgeClass = 'badge badge-info';
-                                        break;
-                                    case 'shipped':
-                                        $statusText = 'Đang giao';
-                                        $badgeClass = 'badge badge-primary';
-                                        break;
-                                    case 'completed':
-                                        $statusText = 'Hoàn thành';
-                                        $badgeClass = 'badge badge-success';
-                                        break;
-                                    case 'cancelled':
-                                        $statusText = 'Đã hủy';
-                                        $badgeClass = 'badge badge-danger';
-                                        break;
-                                    default:
-                                        $statusText = ucfirst($status);
-                                        $badgeClass = 'badge badge-secondary';
-                                }
-                                ?>
-                                <span class="<?php echo $badgeClass; ?>"><?php echo $statusText; ?></span>
+                                    <?php
+                                    $status = $order['status'];
+
+                                    //echo $status;
+                                    if ($status == 'pending') {
+                                        echo '<span class="badge badge-warning" style="background-color:rgb(12, 214, 250); color: #fff;padding:5px; border-radius: 5px;">Chờ xác nhận</span>';
+                                    } elseif ($status == 'processing') {
+                                        echo '<span class="badge badge-info" style="background-color:rgb(0, 247, 12); color: #fff;padding:5px; border-radius: 5px;">Đang xử lý</span>';
+                                    } elseif ($status == 'shipped') {
+                                        echo '<span class="badge badge-primary" style="background-color:rgb(247, 231, 0); color: #fff;padding:5px; border-radius: 5px;">Đang giao</span>';
+                                    } elseif ($status == 'completed') {
+                                        echo '<span class="badge badge-success" style="background-color:rgb(4, 0, 247); color: #fff;padding:5px; border-radius: 5px;">Hoàn thành</span>';
+                                    } elseif ($status == 'cancelled') {
+                                        echo '<span class="badge badge-danger" style="background-color:rgb(247, 0, 0); color: #fff;padding:5px; border-radius: 5px;">Đã hủy</span>';
+                                    } elseif ($status == 'delivered') {
+                                        echo '<span class="badge" style="background-color: #28a745; color: #fff;padding:5px; border-radius: 5px;">Đã giao hàng</span>';
+                                    }
+                                    ?>
                                 </td>
                                 <td>
                                     <button class="action-btn view"><i class="fas fa-eye"></i></button>
@@ -441,6 +428,7 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
     <style>
         /* Modal styles */
         .order-modal {
+        
             display: none;
             position: fixed;
             top: 0;
@@ -737,7 +725,8 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                 'processing': 'Đang xử lý',
                 'shipped': 'Đang giao',
                 'completed': 'Hoàn thành',
-                'cancelled': 'Đã hủy'
+                'cancelled': 'Đã hủy',
+                'delivered': 'Đã giao hàng'
             };
             return statusMap[status] || status;
         }

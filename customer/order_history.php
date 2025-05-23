@@ -53,11 +53,11 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
         href="../assets/css/Custome/account_customet.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <style>
-            #view{
-                text-decoration: none;
-            }
-        </style>
+    <style>
+        #view {
+            text-decoration: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -210,11 +210,13 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                     case 'delivered':
                         return ['Đã giao hàng', 'status-delivered'];
                     case 'processing':
-                        return ['Đang giao hàng', 'status-processing'];
-                    case 'cancelled':
-                        return ['Đã hủy', 'status-cancelled'];
+                        return ['Đang sử lý', 'status-processing'];
+                    case 'shipped':
+                        return ['Đang giao hàng', 'status-shipping'];
                     case 'completed':
                         return ['Hoàn tất', 'status-completed'];
+                    case 'cancelled':
+                        return ['Đã hủy', 'status-cancelled'];
 
 
                     default:
@@ -286,60 +288,60 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
     </div>
     <script>
         // Xử lý tìm kiếm theo trạng thái, thời gian và ô tìm kiếm
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const statusFilter = document.getElementById('status-filter');
             const timeFilter = document.getElementById('time-filter');
             const searchBox = document.querySelector('.search-boxs');
             const orderCards = document.querySelectorAll('.order-card');
 
             function filterOrders() {
-            const status = statusFilter.value;
-            const time = timeFilter.value;
-            const search = searchBox.value.trim().toLowerCase();
+                const status = statusFilter.value;
+                const time = timeFilter.value;
+                const search = searchBox.value.trim().toLowerCase();
 
-            orderCards.forEach(card => {
-                let show = true;
+                orderCards.forEach(card => {
+                    let show = true;
 
-                // Lọc theo trạng thái
-                if (status !== 'all') {
-                const statusSpan = card.querySelector('.order-status');
-                if (!statusSpan || !statusSpan.classList.contains('status-' + status)) {
-                    show = false;
-                }
-                }
-
-                // Lọc theo thời gian
-                if (show && time !== 'all') {
-                const dateSpan = card.querySelector('.order-date');
-                if (dateSpan) {
-                    const dateText = dateSpan.textContent.replace(/[^0-9\/]/g, '').trim();
-                    const [day, month, year] = dateText.split('/').map(Number);
-                    const orderDate = new Date(year, month - 1, day);
-                    const now = new Date();
-
-                    if (time === '30days') {
-                    const diff = (now - orderDate) / (1000 * 60 * 60 * 24);
-                    if (diff > 30) show = false;
-                    } else if (time === '3months') {
-                    const diff = (now - orderDate) / (1000 * 60 * 60 * 24);
-                    if (diff > 90) show = false;
-                    } else if (time === '2023') {
-                    if (orderDate.getFullYear() !== 2023) show = false;
+                    // Lọc theo trạng thái
+                    if (status !== 'all') {
+                        const statusSpan = card.querySelector('.order-status');
+                        if (!statusSpan || !statusSpan.classList.contains('status-' + status)) {
+                            show = false;
+                        }
                     }
-                }
-                }
 
-                // Lọc theo ô tìm kiếm (tìm theo mã đơn hàng hoặc tên sản phẩm)
-                if (show && search) {
-                const orderId = card.querySelector('.order-id')?.textContent.toLowerCase() || '';
-                const productNames = Array.from(card.querySelectorAll('.product-name')).map(e => e.textContent.toLowerCase()).join(' ');
-                if (!orderId.includes(search) && !productNames.includes(search)) {
-                    show = false;
-                }
-                }
+                    // Lọc theo thời gian
+                    if (show && time !== 'all') {
+                        const dateSpan = card.querySelector('.order-date');
+                        if (dateSpan) {
+                            const dateText = dateSpan.textContent.replace(/[^0-9\/]/g, '').trim();
+                            const [day, month, year] = dateText.split('/').map(Number);
+                            const orderDate = new Date(year, month - 1, day);
+                            const now = new Date();
 
-                card.style.display = show ? '' : 'none';
-            });
+                            if (time === '30days') {
+                                const diff = (now - orderDate) / (1000 * 60 * 60 * 24);
+                                if (diff > 30) show = false;
+                            } else if (time === '3months') {
+                                const diff = (now - orderDate) / (1000 * 60 * 60 * 24);
+                                if (diff > 90) show = false;
+                            } else if (time === '2023') {
+                                if (orderDate.getFullYear() !== 2023) show = false;
+                            }
+                        }
+                    }
+
+                    // Lọc theo ô tìm kiếm (tìm theo mã đơn hàng hoặc tên sản phẩm)
+                    if (show && search) {
+                        const orderId = card.querySelector('.order-id')?.textContent.toLowerCase() || '';
+                        const productNames = Array.from(card.querySelectorAll('.product-name')).map(e => e.textContent.toLowerCase()).join(' ');
+                        if (!orderId.includes(search) && !productNames.includes(search)) {
+                            show = false;
+                        }
+                    }
+
+                    card.style.display = show ? '' : 'none';
+                });
             }
 
             statusFilter.addEventListener('change', filterOrders);
