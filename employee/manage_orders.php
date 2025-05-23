@@ -345,80 +345,275 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                 <div class="page-item"><i class="fas fa-angle-right"></i></div>
             </div>
 
-        </div>
-
-        <!-- Modal chi tiết đơn hàng -->
-        <div class="modal" id="orderDetailModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Chi tiết đơn hàng #<span id="modalOrderId"></span></h2>
-                    <button class="close-btn">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="order-info">
-                        <div class="info-row">
-                            <span class="info-label">Khách hàng:</span>
-                            <span class="info-value" id="customerName"></span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Địa chỉ:</span>
-                            <span class="info-value" id="customerAddress"></span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">SĐT:</span>
-                            <span class="info-value" id="customerPhone"></span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Ngày đặt:</span>
-                            <span class="info-value" id="orderDate"></span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">PTTT:</span>
-                            <span class="info-value" id="paymentMethod"></span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Ghi chú:</span>
-                            <span class="info-value" id="orderNotes"></span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Trạng thái:</span>
-                            <span class="info-value" id="orderStatus"></span>
-                        </div>
+            <!-- Modal chi tiết đơn hàng -->
+            <div class="modal" id="orderDetailModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Chi tiết đơn hàng #<span id="modalOrderId"></span></h2>
+                        <button class="close-btn">&times;</button>
                     </div>
+                    <div class="modal-body">
+                        <div class="order-info">
+                            <div class="info-row">
+                                <span class="info-label">Khách hàng:</span>
+                                <span class="info-value" id="customerName"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Địa chỉ:</span>
+                                <span class="info-value" id="customerAddress"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">SĐT:</span>
+                                <span class="info-value" id="customerPhone"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Ngày đặt:</span>
+                                <span class="info-value" id="orderDate"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">PTTT:</span>
+                                <span class="info-value" id="paymentMethod"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Ghi chú:</span>
+                                <span class="info-value" id="orderNotes"></span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Trạng thái:</span>
+                                <span class="info-value" id="orderStatus"></span>
+                            </div>
+                        </div>
 
-                    <h3>Sản phẩm</h3>
-                    <div class="order-items-table">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Sản phẩm</th>
-                                    <th>Mã SP</th>
-                                    <th>Đơn giá</th>
-                                    <th>Số lượng</th>
-                                    <th>Màu/Size</th>
-                                    <th>Thành tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody id="orderItemsList">
-                                <!-- Nội dung sản phẩm sẽ được thêm bằng JS -->
-                            </tbody>
-                        </table>
-                    </div>
+                        <h3>Sản phẩm</h3>
+                        <div class="order-items-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Mã SP</th>
+                                        <th>Đơn giá</th>
+                                        <th>Số lượng</th>
+                                        <th>Màu/Size</th>
+                                        <th>Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orderItemsList">
+                                    <!-- Nội dung sản phẩm sẽ được thêm bằng JS -->
+                                </tbody>
+                            </table>
+                        </div>
 
-                    <div class="order-total">
-                        <div class="total-row">
-                            <span class="total-label">Tổng cộng:</span>
-                            <span class="total-value" id="orderTotal"></span>
+                        <div class="order-total">
+                            <div class="total-row">
+                                <span class="total-label">Tổng cộng:</span>
+                                <span class="total-value" id="orderTotal"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+
         </div>
+
+
+
     </div>
 
 
+    <style>
+        /* Modal styles */
+        .order-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
 
+        .modal-content {
+            background-color: white;
+            width: 80%;
+            max-width: 900px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .order-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .order-info-item {
+            margin-bottom: 10px;
+        }
+
+        .order-info-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .order-info-value {
+            color: #333;
+        }
+
+        .order-items {
+            margin-top: 20px;
+        }
+
+        .order-items table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-items th,
+        .order-items td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-items th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-close {
+            padding: 8px 16px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+
+    <!-- Order Detail Modal -->
+    <div class="order-modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Chi tiết đơn hàng #<span id="modalOrderId"></span></h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="order-info">
+                    <div>
+                        <div class="order-info-item">
+                            <div class="order-info-label">Khách hàng</div>
+                            <div class="order-info-value" id="modalCustomerName"></div>
+                        </div>
+                        <div class="order-info-item">
+                            <div class="order-info-label">Địa chỉ</div>
+                            <div class="order-info-value" id="modalAddress"></div>
+                        </div>
+                        <div class="order-info-item">
+                            <div class="order-info-label">Số điện thoại</div>
+                            <div class="order-info-value" id="modalPhone"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="order-info-item">
+                            <div class="order-info-label">Ngày đặt hàng</div>
+                            <div class="order-info-value" id="modalOrderDate"></div>
+                        </div>
+                        <div class="order-info-item">
+                            <div class="order-info-label">Phương thức thanh toán</div>
+                            <div class="order-info-value" id="modalPaymentMethod"></div>
+                        </div>
+                        <div class="order-info-item">
+                            <div class="order-info-label">Trạng thái</div>
+                            <div class="order-info-value" id="modalStatus"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-info-item">
+                    <div class="order-info-label">Ghi chú</div>
+                    <div class="order-info-value" id="modalNotes"></div>
+                </div>
+
+                <div class="order-items">
+                    <h4>Sản phẩm</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Hình ảnh</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Mã SP</th>
+                                <th>Giá</th>
+                                <th>Số lượng</th>
+                                <th>Màu sắc</th>
+                                <th>Kích thước</th>
+                                <th>Tổng</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalOrderItems">
+                            <!-- Items will be inserted here by JavaScript -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7" style="text-align: right; font-weight: 600;">Tổng cộng:</td>
+                                <td id="modalOrderTotal" style="font-weight: 600;"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-close">Đóng</button>
+            </div>
+        </div>
+    </div>
     <script>
         //xử lý sự kiện cho các nút
         const viewButtons = document.querySelectorAll('.action-btn.view');
@@ -609,76 +804,111 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
             });
         });
 
-        // Xử lý nút xem chi tiết đơn hàng
-        viewButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const row = button.closest('tr');
-                const orderId = row.cells[0].textContent.replace('#', '');
-                const customerName = row.cells[1].textContent;
-                const orderDate = row.cells[2].textContent;
-                const orderTotal = row.cells[3].textContent;
-                const paymentMethod = row.cells[4].textContent;
-                const orderStatus = row.cells[5].querySelector('.badge').textContent;
 
-                // Lấy thông tin đầy đủ từ mảng orders (PHP)
-                const fullOrder = orders.find(o => o.order_item_id == orderId);
+        // Xử lý sự kiện cho nút "Xem chi tiết"
+        // Lấy dữ liệu đơn hàng từ PHP sang JS
+        const ordersData = <?php echo json_encode($orders); ?>;
 
-                // Hiển thị thông tin trong modal
-                document.getElementById('modalOrderId').textContent = orderId;
-                document.getElementById('customerName').textContent = fullOrder.customer_name;
-                document.getElementById('customerAddress').textContent = fullOrder.address || 'Không có';
-                document.getElementById('customerPhone').textContent = fullOrder.phone;
-                document.getElementById('orderDate').textContent = orderDate;
-                document.getElementById('paymentMethod').textContent = fullOrder.payment_method;
-                document.getElementById('orderNotes').textContent = fullOrder.notes || 'Không có';
-                document.getElementById('orderStatus').textContent = orderStatus;
-                document.getElementById('orderTotal').textContent = orderTotal;
+        // Lấy modal và các thành phần trong modal
+        const orderModal = document.getElementById('orderModal');
+        const closeModalBtn = document.querySelector('.close-modal');
+        const closeFooterBtn = document.querySelector('.btn-close');
+        const modalOrderId = document.querySelectorAll('#modalOrderId');
+        const modalCustomerName = document.getElementById('modalCustomerName');
+        const modalAddress = document.getElementById('modalAddress');
+        const modalPhone = document.getElementById('modalPhone');
+        const modalOrderDate = document.getElementById('modalOrderDate');
+        const modalPaymentMethod = document.getElementById('modalPaymentMethod');
+        const modalStatus = document.getElementById('modalStatus');
+        const modalNotes = document.getElementById('modalNotes');
+        const modalOrderItems = document.getElementById('modalOrderItems');
+        const modalOrderTotal = document.getElementById('modalOrderTotal');
 
-                // Hiển thị danh sách sản phẩm
-                const itemsList = document.getElementById('orderItemsList');
-                itemsList.innerHTML = '';
+        // Gộp các order_items theo order_id
+        function groupOrdersById(orders) {
+            const grouped = {};
+            orders.forEach(item => {
+            if (!grouped[item.order_id]) {
+                grouped[item.order_id] = {
+                ...item,
+                items: []
+                };
+            }
+            grouped[item.order_id].items.push(item);
+            });
+            return grouped;
+        }
+        const groupedOrders = groupOrdersById(ordersData);
 
-                // Lấy tất cả sản phẩm cùng order_id
-                const orderItems = orders.filter(o => o.order_id == fullOrder.order_id);
+        // Gán sự kiện cho nút "Xem chi tiết"
+        document.querySelectorAll('.action-btn.view').forEach((btn, idx) => {
+            btn.addEventListener('click', function () {
+            // Lấy order_id từ hàng hiện tại
+            const row = btn.closest('tr');
+            const orderIdCell = row.cells[0].textContent.replace('#', '').trim();
+            let orderId = null;
+            // Tìm order_id thực sự (vì cell[0] là order_item_id, cần lấy order_id)
+            if (ordersData[idx]) {
+                orderId = ordersData[idx].order_id;
+            } else {
+                // fallback: lấy order_id từ data-order-id nếu có
+                orderId = btn.getAttribute('data-order-id');
+            }
+            if (!orderId) return;
 
-                orderItems.forEach((item, index) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${item.product_name}</td>
-                <td>${item.product_code}</td>
-                <td>${numberFormat(item.order_item_price)}đ</td>
-                <td>${item.quantity}</td>
-                <td>${item.color || 'N/A'} / ${item.size || 'N/A'}</td>
-                <td>${numberFormat(item.order_item_price * item.quantity)}đ</td>
-            `;
-                    itemsList.appendChild(row);
-                });
+            const order = groupedOrders[orderId];
+            if (!order) return;
 
-                // Hiển thị modal
-                document.getElementById('orderDetailModal').style.display = 'block';
+            // Hiển thị thông tin đơn hàng
+            modalOrderId.forEach(el => el.textContent = orderId);
+            modalCustomerName.textContent = order.customer_name || '';
+            modalAddress.textContent = order.address || '';
+            modalPhone.textContent = order.phone || '';
+            modalOrderDate.textContent = order.created_at ? (new Date(order.created_at)).toLocaleDateString('vi-VN') : '';
+            modalPaymentMethod.textContent = order.payment_method || '';
+            modalStatus.textContent = getStatusName(order.status);
+            modalNotes.textContent = order.notes || '';
+
+            // Hiển thị danh sách sản phẩm
+            modalOrderItems.innerHTML = '';
+            let total = 0;
+            order.items.forEach(item => {
+                const itemTotal = (item.order_item_price || 0) * (item.quantity || 0);
+                total += itemTotal;
+                modalOrderItems.innerHTML += `
+                <tr>
+                    <td><img src="${item.order_item_image || item.product_image || ''}" class="product-image" alt=""></td>
+                    <td>${item.product_name || ''}</td>
+                    <td>${item.product_code || ''}</td>
+                    <td>${Number(item.order_item_price || 0).toLocaleString('vi-VN')}đ</td>
+                    <td>${item.quantity || ''}</td>
+                    <td>${item.color || ''}</td>
+                    <td>${item.size || ''}</td>
+                    <td>${itemTotal.toLocaleString('vi-VN')}đ</td>
+                </tr>
+                `;
+            });
+            modalOrderTotal.textContent = total.toLocaleString('vi-VN') + 'đ';
+
+            // Hiển thị modal
+            orderModal.style.display = 'flex';
             });
         });
 
-        // Hàm định dạng số
-        function numberFormat(num) {
-            return new Intl.NumberFormat('vi-VN').format(num);
-        }
-
-        // Đóng modal khi click nút đóng
-        document.querySelector('.modal .close-btn').addEventListener('click', () => {
-            document.getElementById('orderDetailModal').style.display = 'none';
+        // Đóng modal khi bấm nút đóng
+        [closeModalBtn, closeFooterBtn].forEach(btn => {
+            btn.addEventListener('click', function () {
+            orderModal.style.display = 'none';
+            });
         });
 
-        // Đóng modal khi click bên ngoài
-        window.addEventListener('click', (e) => {
-            if (e.target === document.getElementById('orderDetailModal')) {
-                document.getElementById('orderDetailModal').style.display = 'none';
+        // Đóng modal khi click ra ngoài nội dung modal
+        orderModal.addEventListener('click', function (e) {
+            if (e.target === orderModal) {
+            orderModal.style.display = 'none';
             }
         });
     </script>
-
 </body>
 
 </html>
