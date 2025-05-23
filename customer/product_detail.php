@@ -3,7 +3,7 @@ session_start();
 require_once '../includes/header.php';
 require_once '../includes/database.php';
 
-$customer_id = $_SESSION['user']['id'];
+// $customer_id = $_SESSION['user']['id'];
 // Kiểm tra và lấy ID sản phẩm từ URL
 $product_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 if ($product_id <= 0) {

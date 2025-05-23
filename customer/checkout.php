@@ -18,16 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_now'])) {
     $product = $result->fetch_assoc();
 
     if ($product) {
-        // Khi thêm vào giỏ hàng
         $carts = [[
-            'product_id' => $product['id'],
+            'id' => $product['id'],
             'name' => $product['name'] . " ({$color}, {$size})",
             'price' => $product['price'],
             'quantity' => $quantity,
             'color' => $color,
             'size' => $size,
-            'image' => $product['image'] ?? '',
+            'image' => $product['image'] ?? '', // Lấy ảnh từ DB nếu có
         ]];
+        // Lưu vào session để sử dụng khi submit đặt hàng
         $_SESSION['cart_items'] = $carts;
     } else {
         $carts = [];
@@ -99,21 +99,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
             $size = $item['size'] ?? '';
             $image = $item['image'] ?? '';
             $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, product_name, price, quantity, color, size, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iisdisss", $order_id, $item['product_id'], $item['name'], $item['price'], $item['quantity'], $color, $size, $image);
-            $stmt->execute();
-        }
-
-        // Xóa giỏ hàng trong database
-        if (!empty($customer_id)) {
-            $stmt = $conn->prepare("DELETE FROM cart WHERE customer_id = ?");
-            $stmt->bind_param("i", $customer_id);
+            $stmt->bind_param("iisdisss", $order_id, $item['id'], $item['name'], $item['price'], $item['quantity'], $color, $size, $image);
             $stmt->execute();
         }
 
         // Xóa giỏ hàng sau khi đặt hàng thành công
         unset($_SESSION['cart_items']);
 
-        // Thông báo thành công và chuyển hướng về trang giỏ hàng
+        // Thông báo thành công và chuyển hướng
         echo "<script>alert('Đặt hàng thành công!'); window.location.href = 'cart1.php';</script>";
         exit;
     } catch (Exception $e) {
@@ -188,9 +181,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
 
             <div class="checkout-form">
                 <h2>Thông tin giao hàng</h2>
-                <?php
-                $isCartEmpty = empty($carts);
-                ?>
                 <form id="checkoutForm" method="POST" action="checkout.php">
                     <div class="form-group">
                         <label for="name">Họ và tên</label>
@@ -226,11 +216,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
                         <textarea id="notes" name="notes" placeholder="Ghi chú về đơn hàng của bạn..."></textarea>
                     </div>
 
-                    <button type="submit" class="checkout-button" <?php echo $isCartEmpty ? 'disabled style="background:#ccc;cursor:not-allowed;"' : ''; ?>>Đặt hàng</button>
+                    <button type="submit" class="checkout-button">Đặt hàng</button>
                 </form>
-                <?php if ($isCartEmpty): ?>
-                    <div style="color:red;margin-top:10px;">Giỏ hàng của bạn đang trống, không thể đặt hàng!</div>
-                <?php endif; ?>
             </div>
         </div>
     </div>
