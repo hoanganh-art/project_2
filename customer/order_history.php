@@ -53,6 +53,11 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
         href="../assets/css/Custome/account_customet.css">
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <style>
+            #view{
+                text-decoration: none;
+            }
+        </style>
 </head>
 
 <body>
@@ -206,10 +211,11 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                         return ['Đã giao hàng', 'status-delivered'];
                     case 'processing':
                         return ['Đang giao hàng', 'status-processing'];
-                    case 'completed':
-                        return ['Hoàn tất', 'status-completed'];
                     case 'cancelled':
                         return ['Đã hủy', 'status-cancelled'];
+                    case 'completed':
+                        return ['Hoàn tất', 'status-completed'];
+
 
                     default:
                         return [$status, ''];
@@ -265,9 +271,9 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                 if ($order['status'] === 'delivered') {
                     echo '<button class="action-btn reorder-btn">Mua lại</button>';
                     echo '<button class="action-btn review-btn">Đánh giá</button>';
-                    echo '<button class="action-btn view-detail-btn">Xem chi tiết</button>';
+                    echo '<a href="order_detail.php?order_id=' . htmlspecialchars($order['order_id']) . '" class="action-btn view-detail-btn" id = "view">Xem chi tiết</a>';
                 } elseif ($order['status'] === 'processing') {
-                    echo '<button class="action-btn view-detail-btn">Theo dõi đơn hàng</button>';
+                    echo '<a href="order_detail.php?order_id=' . htmlspecialchars($order['order_id']) . '" class="action-btn view-detail-btn">Theo dõi đơn hàng</a>';
                 } elseif ($order['status'] === 'cancelled') {
                     echo '<button class="action-btn reorder-btn">Mua lại</button>';
                 }
@@ -278,56 +284,69 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
             ?>
         </div>
     </div>
+    <script>
+        // Xử lý tìm kiếm theo trạng thái, thời gian và ô tìm kiếm
+        document.addEventListener('DOMContentLoaded', function () {
+            const statusFilter = document.getElementById('status-filter');
+            const timeFilter = document.getElementById('time-filter');
+            const searchBox = document.querySelector('.search-boxs');
+            const orderCards = document.querySelectorAll('.order-card');
+
+            function filterOrders() {
+            const status = statusFilter.value;
+            const time = timeFilter.value;
+            const search = searchBox.value.trim().toLowerCase();
+
+            orderCards.forEach(card => {
+                let show = true;
+
+                // Lọc theo trạng thái
+                if (status !== 'all') {
+                const statusSpan = card.querySelector('.order-status');
+                if (!statusSpan || !statusSpan.classList.contains('status-' + status)) {
+                    show = false;
+                }
+                }
+
+                // Lọc theo thời gian
+                if (show && time !== 'all') {
+                const dateSpan = card.querySelector('.order-date');
+                if (dateSpan) {
+                    const dateText = dateSpan.textContent.replace(/[^0-9\/]/g, '').trim();
+                    const [day, month, year] = dateText.split('/').map(Number);
+                    const orderDate = new Date(year, month - 1, day);
+                    const now = new Date();
+
+                    if (time === '30days') {
+                    const diff = (now - orderDate) / (1000 * 60 * 60 * 24);
+                    if (diff > 30) show = false;
+                    } else if (time === '3months') {
+                    const diff = (now - orderDate) / (1000 * 60 * 60 * 24);
+                    if (diff > 90) show = false;
+                    } else if (time === '2023') {
+                    if (orderDate.getFullYear() !== 2023) show = false;
+                    }
+                }
+                }
+
+                // Lọc theo ô tìm kiếm (tìm theo mã đơn hàng hoặc tên sản phẩm)
+                if (show && search) {
+                const orderId = card.querySelector('.order-id')?.textContent.toLowerCase() || '';
+                const productNames = Array.from(card.querySelectorAll('.product-name')).map(e => e.textContent.toLowerCase()).join(' ');
+                if (!orderId.includes(search) && !productNames.includes(search)) {
+                    show = false;
+                }
+                }
+
+                card.style.display = show ? '' : 'none';
+            });
+            }
+
+            statusFilter.addEventListener('change', filterOrders);
+            timeFilter.addEventListener('change', filterOrders);
+            searchBox.addEventListener('input', filterOrders);
+        });
+    </script>
 </body>
-<script>
-    // Hiển thị/ẩn mật khẩu
-    document.getElementById('status-filter').addEventListener('change', function() {
-        const status = this.value;
-        const orders = document.querySelectorAll('.order-card');
-
-        orders.forEach(order => {
-            const orderStatus = order.querySelector('.order-status').classList;
-            const shouldShow = status === 'all' ||
-                (status === 'delivered' && orderStatus.contains('status-delivered')) ||
-                (status === 'processing' && orderStatus.contains('status-processing')) ||
-                (status === 'cancelled' && orderStatus.contains('status-cancelled'));
-
-            order.style.display = shouldShow ? 'block' : 'none';
-        });
-    });
-
-    // Tìm kiếm đơn hàng
-    document.querySelector('.search-box').addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
-        const orders = document.querySelectorAll('.order-card');
-
-        orders.forEach(order => {
-            const orderId = order.querySelector('.order-id').textContent.toLowerCase();
-            const orderVisible = orderId.includes(searchTerm);
-            order.style.display = orderVisible ? 'block' : 'none';
-        });
-    });
-
-    // Xử lý nút mua lại
-    document.querySelectorAll('.reorder-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            alert('Các sản phẩm từ đơn hàng này đã được thêm vào giỏ hàng!');
-        });
-    });
-
-    // Xử lý nút đánh giá
-    document.querySelectorAll('.review-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            alert('Chuyển hướng đến trang đánh giá sản phẩm...');
-        });
-    });
-
-    // Xử lý nút xem chi tiết
-    document.querySelectorAll('.view-detail-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            alert('Chuyển hướng đến trang chi tiết đơn hàng...');
-        });
-    });
-</script>
 
 </html>
