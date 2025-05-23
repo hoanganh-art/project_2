@@ -1,0 +1,74 @@
+clothing-store/
+│
+├── 📁 assets/                         # Thư mục chứa tài nguyên tĩnh
+│   ├── 📁 css/                        # File CSS giao diện
+│   │   └── style.css                 # File chính để định dạng giao diện
+│   ├── 📁 js/                         # File JavaScript xử lý phía client
+│   │   └── main.js                   # File JS chính
+│   └── 📁 images/                    # Lưu hình ảnh sản phẩm, logo, v.v.
+│
+├── 📁 includes/                      # Các thành phần được dùng chung
+│   ├── header.php                    # Phần đầu trang (menu, logo,...) (đã xong)
+│   ├── footer.php                    # Phần chân trang (footer) (đã xong)
+│   └── database.php                  # Kết nối đến cơ sở dữ liệu MySQL (đã xong)
+│
+│
+|
+├── 📁 Login/
+│   ├── index.php  #Giao diện đăng nhập chung (nhân viên;admin) (đã xong)
+│   ├── suly.php #sử lý đăng nhập 
+│
+|
+|
+├── 📁 customer/                      # Giao diện & chức năng cho KHÁCH HÀNG
+│   ├── index.php                     # Trang chủ - hiển thị sản phẩm (Đã Xong)
+│   ├── search.php                    # Chức năng tìm kiếm sản phẩm
+│   ├── product_detail.php            # Chi tiết sản phẩm (đã xong)
+│   ├── cart.php                      # Giỏ hàng (Đã xong)
+│   ├── checkout.php                  # Thanh toán đơn hàng (Đã xong)
+│   ├── order_history.php             # Lịch sử mua hàng (đã xong)
+│   └── account_customer.php          # Tài khoản khách hàng (Đã xong)
+│
+├── 📁 employee/                      # Giao diện & chức năng cho NHÂN VIÊN
+│   ├── dashboard.php                 # Trang tổng quan của nhân viên (đã xong giao diện)
+│   ├── manage_orders.php             # Quản lý đơn hàng của khách (đã xong diện)
+│   ├── customer_support.php          # Hỗ trợ, trả lời khách hàng (Bỏ)
+│   ├── inventory.php                 # Quản lý & kiểm kê kho hàng (đã xong diện)
+│   └── sales_report.php              # Xem báo cáo doanh số bán hàng (bỏ)
+│
+├── 📁 admin/                         # Giao diện & chức năng cho ADMIN
+│   ├── dashboard.php                 # Trang tổng quan admin (doanh thu, đơn hàng,...) (đã xong)
+│   ├── manage_employees.php          # Quản lý tài khoản nhân viên (đã xong)
+│   ├── manage_roles.php              # Phân quyền (Admin, Nhân viên,...) 
+│   ├── manage_products.php           # Thêm/sửa/xoá sản phẩm
+│   ├── manege_customer.php            # Quản lý khách hàng
+│   └── revenue_stats.php             # Thống kê doanh thu theo ngày/tháng/năm
+│
+├── 📁 sql/                           # Thư mục chứa tệp SQL
+│   └── database.sql                  # Cấu trúc và dữ liệu mẫu cho MySQL
+│
+└── index.php                         # Trang chuyển hướng (tùy phân quyền đăng nhập)
+
+
+1. Bảng Màu Chủ Đạo
+    Màu sắc	Mã HEX	Công dụng
+    Đen tuyền	#000000	Màu nền chính (header/footer)
+    Xám than	#2D3436	Màu phụ, tạo chiều sâu
+    Trắng	#FFFFFF	Chữ, icon, nút bấm
+    Đỏ rực	#FF0000	Điểm nhấn (nút Call-to-Action, sale)
+    Vàng neon	#FFF44F	Highlight menu, giỏ hàng
+    Xanh điện	#00FFFF	Hiệu ứng hover, viền
+
+
+Header (Thanh điều hướng)
+Nền: #000000 (đen) hoặc #2D3436 (xám than)
+    Chữ menu: #FFFFFF (trắng) hoặc #FFF44F (vàng neon)
+    Viền dưới: #FF0000 (đỏ) hoặc #00FFFF (xanh điện)
+    Nút giỏ hàng/đăng nhập: #FFF44F (vàng neon) hoặc #FF0000 (đỏ)
+    Hiệu ứng hover: #00FFFF (xanh điện) hoặc #FF0000 (đỏ)
+Footer (Chân trang)
+    Nền: #000000 (đen) hoặc #1A1A1A (đen nhạt)
+    Tiêu đề: #FFFFFF (trắng)
+    Nội dung: #CCCCCC (xám nhạt)
+    Icon MXH (Facebook, Instagram): #FF0000 (đỏ) hoặc #FFF44F (vàng neon)
+    Border top: #FF0000 (đỏ) hoặc #00FFFF (xanh điện)
