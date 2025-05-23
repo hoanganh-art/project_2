@@ -2,54 +2,43 @@
 session_start();
 require_once('../includes/database.php');
 
-// Kiểm tra đăng nhập
 if (!isset($_SESSION['user']['id'])) {
     echo "<script>alert('Vui lòng đăng nhập để xem giỏ hàng!'); window.location.href='../login/index.php';</script>";
     exit();
 }
 
-$current_customer_id = $_SESSION['user']['id']; // ID khách hàng hiện tại
+$current_customer_id = $_SESSION['user']['id'];
 
-// Khởi tạo biến $carts với mảng rỗng
-$carts = [];
-
-// Lấy tất cả sản phẩm trong giỏ hàng
-$sql = "SELECT cart.id as cart_id, cart.*, product.* FROM cart 
+// Lấy giỏ hàng từ database
+$sql = "SELECT cart.id as cart_id, cart.product_id, cart.quantity, cart.color, cart.size, 
+               product.id as product_id, product.name, product.price, product.image 
+        FROM cart 
         INNER JOIN product ON cart.product_id = product.id
         WHERE cart.customer_id = ?";
 
-// Chuẩn bị và thực thi câu truy vấn
 $stmt = $conn->prepare($sql);
 if ($stmt) {
     $stmt->bind_param('i', $current_customer_id);
     $stmt->execute();
     $result = $stmt->get_result();
-
-    // Kiểm tra nếu có kết quả trả về
-    if ($result) {
-        $carts = $result->fetch_all(MYSQLI_ASSOC);
-    }
+    $carts = $result->fetch_all(MYSQLI_ASSOC);
     $stmt->close();
 }
 
-// Lọc chỉ hiển thị sản phẩm có customer_id trùng với người dùng hiện tại
-$filtered_carts = array_filter($carts, function ($cart) use ($current_customer_id) {
-    return isset($cart['customer_id']) && $cart['customer_id'] == $current_customer_id;
-});
-
-
-unset($cart);
-// Gán lại giá trị đã lọc
-$carts = $filtered_carts;
-
-// Kiểm tra nếu có sản phẩm không thuộc về khách hàng này
-$has_foreign_items = count($carts) > count($filtered_carts);
-if ($has_foreign_items) {
-    echo "<script>alert('Có sản phẩm trong giỏ hàng không thuộc về bạn! Chúng tôi đã ẩn những sản phẩm đó.');</script>";
-}
-
-// Lưu giỏ hàng vào session để sử dụng ở trang checkout
-$_SESSION['cart_items'] = $carts;
+// Lưu giỏ hàng vào session với cấu trúc rõ ràng
+$_SESSION['cart_items'] = array_map(function ($cart) {
+    return [
+        'id' => $cart['product_id'], // Đảm bảo dùng product_id thay vì cart_id
+        'product_id' => $cart['product_id'],
+        'name' => $cart['name'],
+        'price' => $cart['price'],
+        'quantity' => $cart['quantity'],
+        'color' => $cart['color'],
+        'size' => $cart['size'],
+        'image' => $cart['image'],
+        'cart_id' => $cart['cart_id'] // Giữ lại cart_id nếu cần
+    ];
+}, $carts);
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -151,22 +140,23 @@ $_SESSION['cart_items'] = $carts;
                 <tbody>
                     <!-- Product 1 -->
 
-                    <?php foreach ($carts as $cart): ?>
-                        <tr data-product-id="<?php echo htmlspecialchars($cart['cart_id']); ?>">
+                    <?php foreach ($_SESSION['cart_items'] as $item): ?>
+                        <tr data-product-id="<?= htmlspecialchars($item['product_id']) ?>"
+                            data-cart-id="<?= htmlspecialchars($item['cart_id']) ?>">
                             <td data-label="Sản phẩm">
                                 <div class="product-cell">
-                                    <img src="<?php echo htmlspecialchars($cart['image']); ?>" alt="<?php echo htmlspecialchars($cart['name']); ?>" class="product-image">
+                                    <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" class="product-image">
                                     <div class="product-info">
-                                        <h4><?php echo htmlspecialchars($cart['name']); ?></h4>
-                                        <p>Màu: <?php echo htmlspecialchars($cart['color']) ?> | Size: <?php echo htmlspecialchars($cart['size']) ?></p>
+                                        <h4><?php echo htmlspecialchars($item['name']); ?></h4>
+                                        <p>Màu: <?php echo htmlspecialchars($item['color']) ?> | Size: <?php echo htmlspecialchars($item['size']) ?></p>
                                     </div>
                                 </div>
                             </td>
-                            <td data-label="Giá"><?php echo number_format($cart['price'], 0, ',', '.'); ?>đ</td>
+                            <td data-label="Giá"><?php echo number_format($item['price'], 0, ',', '.'); ?>đ</td>
                             <td data-label="Số lượng">
                                 <div class="quantity-selector">
                                     <button class="quantity-btn">-</button>
-                                    <input type="number" value="<?php echo htmlspecialchars($cart['quantity']) ?>" min="1" class="quantity-input">
+                                    <input type="number" value="<?php echo htmlspecialchars($item['quantity']) ?>" min="1" class="quantity-input">
                                     <button class="quantity-btn">+</button>
                                 </div>
                             </td>
@@ -387,55 +377,71 @@ $_SESSION['cart_items'] = $carts;
     });
 
     document.querySelector('form[action="checkout.php"]').addEventListener('submit', function(e) {
-    e.preventDefault();
+        e.preventDefault();
 
-    // Lấy thông tin giỏ hàng hiện tại trên giao diện
-    const cartItems = Array.from(document.querySelectorAll('.cart-table tbody tr')).map(row => ({
-        cart_id: row.getAttribute('data-product-id'),
-        name: row.querySelector('h4').textContent,
-        price: parseInt(row.querySelector('td[data-label="Giá"]').textContent.replace(/\D/g, '')),
-        quantity: parseInt(row.querySelector('.quantity-input').value),
-        color: row.querySelector('.product-info p').textContent.split('|')[0].replace('Màu:', '').trim(),
-        size: row.querySelector('.product-info p').textContent.split('|')[1].replace('Size:', '').trim(),
-        image: row.querySelector('.product-image').src
-    }));
+        // Lấy thông tin giỏ hàng hiện tại trên giao diện
+        const cartItems = Array.from(document.querySelectorAll('.cart-table tbody tr')).map(row => ({
+            cart_id: row.getAttribute('data-product-id'),
+            name: row.querySelector('h4').textContent,
+            price: parseInt(row.querySelector('td[data-label="Giá"]').textContent.replace(/\D/g, '')),
+            quantity: parseInt(row.querySelector('.quantity-input').value),
+            color: row.querySelector('.product-info p').textContent.split('|')[0].replace('Màu:', '').trim(),
+            size: row.querySelector('.product-info p').textContent.split('|')[1].replace('Size:', '').trim(),
+            image: row.querySelector('.product-image').src
+        }));
 
-    // Gửi AJAX cập nhật session
-    fetch('update_cart_session.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(cartItems)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            // Chuyển sang trang checkout
-            window.location.href = 'checkout.php';
-        } else {
-            alert('Cập nhật giỏ hàng thất bại!');
-        }
-    })
-    .catch(() => alert('Có lỗi xảy ra!'));
-});
-    // document.querySelector('.btn-primary').addEventListener('click', function() {
-    //     // Lấy thông tin giỏ hàng
-    //     const cartItems = Array.from(document.querySelectorAll('.cart-table tbody tr')).map(row => ({
-    //         id: row.getAttribute('data-product-id'),
-    //         name: row.querySelector('h4').textContent,
-    //         price: row.querySelector('td[data-label="Giá"]').textContent,
-    //         quantity: row.querySelector('.quantity-input').value,
-    //         total: row.querySelector('td[data-label="Tổng"]').textContent,
-    //         image: row.querySelector('.product-image').src,
-    //         color: row.querySelector('.product-info p').textContent.split('|')[0].replace('Màu:', '').trim(),
-    //         size: row.querySelector('.product-info p').textContent.split('|')[1].replace('Size:', '').trim()
-    //     }));
+        // Gửi AJAX cập nhật session
+        fetch('update_cart_session.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cartItems)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Chuyển sang trang checkout
+                    window.location.href = 'checkout.php';
+                } else {
+                    alert('Cập nhật giỏ hàng thất bại!');
+                }
+            })
+            .catch(() => alert('Có lỗi xảy ra!'));
+    });
+    // Khi click thanh toán
+    document.querySelector('form[action="checkout.php"]').addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    //     // Lưu vào sessionStorage hoặc localStorage để truyền sang trang checkout
-    //     sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
+        const cartItems = Array.from(document.querySelectorAll('.cart-table tbody tr')).map(row => ({
+            cart_id: row.getAttribute('data-cart-id'),
+            product_id: row.getAttribute('data-product-id'),
+            name: row.querySelector('h4').textContent,
+            price: parseInt(row.querySelector('td[data-label="Giá"]').textContent.replace(/\D/g, '')),
+            quantity: parseInt(row.querySelector('.quantity-input').value),
+            color: row.querySelector('.product-info p').textContent.split('|')[0].replace('Màu:', '').trim(),
+            size: row.querySelector('.product-info p').textContent.split('|')[1].replace('Size:', '').trim(),
+            image: row.querySelector('.product-image').src
+        }));
 
-    //     // Chuyển hướng sang trang checkout
-    //     window.location.href = 'checkout.php';
-    // });
+        // Gửi AJAX cập nhật session
+        fetch('update_cart_session.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cartItems)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Chuyển hướng sau khi cập nhật session thành công
+                    window.location.href = 'checkout.php';
+                } else {
+                    alert('Cập nhật giỏ hàng thất bại!');
+                }
+            });
+    });
 </script>
 
 </html>

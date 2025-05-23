@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['buy_now'])) {
 
     if ($product) {
         $carts = [[
-            'id' => $product['id'],
+            'product_id' => $product['id'], // Sửa lại key này
             'name' => $product['name'] . " ({$color}, {$size})",
             'price' => $product['price'],
             'quantity' => $quantity,
@@ -94,15 +94,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['addre
         $order_id = $conn->insert_id;
 
         // Lưu chi tiết đơn hàng
-        foreach ($cart_items as $item) {
-            $color = $item['color'] ?? '';
-            $size = $item['size'] ?? '';
-            $image = $item['image'] ?? '';
-            $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, product_name, price, quantity, color, size, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("iisdisss", $order_id, $item['id'], $item['name'], $item['price'], $item['quantity'], $color, $size, $image);
+        foreach ($_SESSION['cart_items'] as $item) {
+        $stmt = $conn->prepare("INSERT INTO order_items 
+            (order_id, product_id, product_name, price, quantity, color, size, image) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param(
+            "iisdisss", 
+            $order_id, 
+            $item['product_id'],
+            $item['name'],
+            $item['price'],
+            $item['quantity'],
+            $item['color'],
+            $item['size'],
+            $item['image']
+        );
+        $stmt->execute();
+    }
+
+        // Xóa giỏ hàng trong database
+        if (!empty($customer_id)) {
+            $stmt = $conn->prepare("DELETE FROM cart WHERE customer_id = ?");
+            $stmt->bind_param("i", $customer_id);
             $stmt->execute();
         }
-
         // Xóa giỏ hàng sau khi đặt hàng thành công
         unset($_SESSION['cart_items']);
 

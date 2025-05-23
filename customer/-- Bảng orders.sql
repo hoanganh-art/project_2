@@ -35,5 +35,5 @@ ADD CONSTRAINT fk_order
 
 ALTER TABLE order_items
 ADD CONSTRAINT fk_product
-    FOREIGN KEY (product_id) REFERENCES product(id)
+    FOREIGN KEY (product_id) REFERENCES products(id)
     ON DELETE SET NULL;

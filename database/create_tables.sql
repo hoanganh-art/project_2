@@ -74,51 +74,36 @@ CREATE TABLE `product` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Bảng orders (đã cải tiến)
-CREATE TABLE `orders` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `customer_id` int(11) NOT NULL,
-    `employee_id` int(11) DEFAULT NULL,
-    `total_amount` float NOT NULL,
-    `payment_method` varchar(50) NOT NULL,
-    `shipping_address` text NOT NULL,
-    `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
-    `status` varchar(50) NOT NULL DEFAULT 'pending',
-    `notes` text DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (`customer_id`) 
-        REFERENCES `customer` (`id`)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE,
-    FOREIGN KEY (`employee_id`) 
-        REFERENCES `employees` (`id`)
-        ON DELETE SET NULL
-        ON UPDATE CASCADE,
-    INDEX `customer_id` (`customer_id`),
-    INDEX `status` (`status`),
-    INDEX `order_date` (`order_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    name VARCHAR(255),
+    address TEXT,
+    phone VARCHAR(20),
+    payment_method VARCHAR(50),
+    notes TEXT,
+    total INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
 
 -- Bảng order_detail (đã cải tiến)
-CREATE TABLE `order_detail` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `order_id` int(11) NOT NULL,
-    `product_id` int(11) NOT NULL,
-    `quantity` int(11) NOT NULL,
-    `price` float NOT NULL,
-    `color` varchar(50) DEFAULT NULL,
-    `size` varchar(50) DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (`order_id`) 
-        REFERENCES `orders` (`id`)
+CREATE TABLE order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT,
+    product_name VARCHAR(255),
+    price INT,
+    quantity INT,
+    color VARCHAR(50),
+    size VARCHAR(50),
+    image VARCHAR(255),
+    product_id INT,
+    FOREIGN KEY (order_id) REFERENCES orders(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    FOREIGN KEY (`product_id`) 
-        REFERENCES `product` (`id`)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE,
-    INDEX `order_id` (`order_id`),
-    INDEX `product_id` (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    FOREIGN KEY (product_id) REFERENCES product(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
 
 -- Bảng cart (đã cải tiến)
 CREATE TABLE `cart` (
