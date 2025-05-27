@@ -12,7 +12,7 @@
         $current_page = basename($_SERVER['PHP_SELF']);
         ?>
         <li><a href="dashboard.php" class="<?php echo $current_page == 'dashboard.php' ? 'active' : ''; ?>"><i>📊</i> Tổng quan</a></li>
-        <li><a href="#" class="<?php echo $current_page == '#' ? 'active' : ''; ?>"><i>📦</i> Đơn hàng</a></li>
+        <li><a href="../admin/manege_oder.php" class="<?php echo $current_page == '#' ? 'active' : ''; ?>"><i>📦</i> Đơn hàng</a></li>
         <li><a href="../admin/manage_products.php" class="<?php echo $current_page == 'manage_products.php' ? 'active' : ''; ?>"><i>👕</i> Sản phẩm</a></li>
         <li><a href="../admin/manege_customer.php" class="<?php echo $current_page == 'manege_customer.php' ? 'active' : ''; ?>"><i>👥</i> Khách hàng</a></li>
         <li><a href="../admin/manage_employees.php" class="<?php echo $current_page == 'manage_employees.php' ? 'active' : ''; ?>"><i>👨‍💼</i> Nhân viên</a></li>
