@@ -521,6 +521,10 @@ foreach ($orders as $order) {
             }
         }
 
+        //Xuất file Excel
+        document.querySelector('.btn-export').addEventListener('click', function() {
+            window.location.href = 'export_orders_excel.php';
+        });
 
     </script>
 </body>
