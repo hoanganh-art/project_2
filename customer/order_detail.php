@@ -252,8 +252,6 @@ function format_date($datetime)
                 return 'Hoàn thành';
             case 'cancelled':
                 return 'Đã hủy';
-            case 'delivered':
-                return 'Đã giao hàng';
             default:
                 return ucfirst($status);
         }

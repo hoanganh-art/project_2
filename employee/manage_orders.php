@@ -726,7 +726,6 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                 'shipped': 'Đang giao',
                 'completed': 'Hoàn thành',
                 'cancelled': 'Đã hủy',
-                'delivered': 'Đã giao hàng'
             };
             return statusMap[status] || status;
         }

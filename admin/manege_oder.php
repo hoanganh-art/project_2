@@ -454,14 +454,31 @@ foreach ($orders as $order) {
                 const action = this.getAttribute('data-action');
                 const orderId = this.closest('tr').getAttribute('data-order-id');
 
-                // Xác nhận với người dùng trước khi thực hiện hành động
                 if (confirm(`Bạn có chắc muốn ${getActionText(action)} đơn hàng #${orderId}?`)) {
-                    // Gửi yêu cầu đến server để cập nhật trạng thái
-                    console.log(`Thực hiện hành động ${action} cho đơn hàng ${orderId}`);
-                    // Trong thực tế, bạn cần gửi AJAX request đến server
+                    // Gửi AJAX request đến server để cập nhật trạng thái
+                    const statusMap = {
+                        'process': 'processing',
+                        'ship': 'shipped',
+                        'complete': 'completed',
+                        'cancel': 'cancelled'
+                    };
+                    const newStatus = statusMap[action];
+                    if (!newStatus) return;
 
-                    // Cập nhật giao diện tạm thời
-                    updateOrderStatus(orderId, action);
+                    fetch('update_status.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `order_id=${orderId}&status=${newStatus}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateOrderStatus(orderId, action); // Cập nhật giao diện nếu thành công
+                        } else {
+                            alert('Cập nhật trạng thái thất bại!');
+                        }
+                    })
+                    .catch(() => alert('Có lỗi khi kết nối server!'));
                 }
             });
         });
@@ -503,6 +520,8 @@ foreach ($orders as $order) {
                 }
             }
         }
+
+
     </script>
 </body>
 
