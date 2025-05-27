@@ -246,16 +246,14 @@ function format_date($datetime)
                 return 'Chờ xác nhận';
             case 'processing':
                 return 'Đang xử lý';
-            case 'shipping':
-                return 'Đang giao hàng';
+            case 'shipped':
+                return 'Đang giao ';
             case 'completed':
                 return 'Hoàn thành';
             case 'cancelled':
                 return 'Đã hủy';
             case 'delivered':
                 return 'Đã giao hàng';
-            case 'confirmed':
-                return 'Đã xác nhận';
             default:
                 return ucfirst($status);
         }

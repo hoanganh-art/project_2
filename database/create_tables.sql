@@ -232,5 +232,14 @@ FOREIGN KEY (customer_id) REFERENCES customer(id)
 ON DELETE SET NULL
 ON UPDATE CASCADE;
 
+-- Cập nhật trạng thái status ở orders ngẫu nhiên
+UPDATE orders
+SET status = (CASE FLOOR(RAND() * 3)
+    WHEN 0 THEN 'pending'
+    WHEN 1 THEN 'delivered'
+    ELSE 'completed'
+END);
+UPDATE orders SET status  = 'completed';
+
 
 -- Thêm dữ liệu mẫu cho bảng orders và order_items 

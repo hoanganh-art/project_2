@@ -428,7 +428,7 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
     <style>
         /* Modal styles */
         .order-modal {
-        
+
             display: none;
             position: fixed;
             top: 0;
