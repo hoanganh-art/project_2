@@ -249,7 +249,7 @@ SELECT * FROM contact;
 ALTER TABLE contact
 ADD COLUMN status VARCHAR(50) NOT NULL DEFAULT 'active';
 
-
+ALTER TABLE contact ADD COLUMN created_at_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
 /*
 trạng thái status của bảng contact có thể là:
 'active', 'inactive', 'archived', 'deleted'
