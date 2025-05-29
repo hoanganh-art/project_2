@@ -300,3 +300,12 @@ SELECT * FROM cart;
 
 SELECT COUNT(*) AS total_cart_items FROM cart;
 
+
+
+USE cuahang;
+
+
+UPDATE product SET status = 'active';
+
+UPDATE product
+SET status = (CASE FLOOR(RAND() * 2) WHEN 0 THEN 'active' ELSE 'inactive' END);

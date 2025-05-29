@@ -13,7 +13,7 @@ if (!in_array($current_subcategory, $valid_subcategories)) {
     $current_subcategory = 'thun';
 }
 
-$sql = "SELECT * FROM product WHERE subcategory = ?";
+$sql = "SELECT * FROM product WHERE subcategory = ? AND status = 'active'";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $current_subcategory);
 $stmt->execute();

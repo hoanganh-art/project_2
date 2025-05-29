@@ -3,8 +3,12 @@
 // Update the path below to the correct location of database.php if needed
 include_once(__DIR__ . '/../includes/database.php');
 
-$sql = "SELECT * FROM product";
+$sql = "SELECT * FROM product WHERE subcategory = ? AND status = 'active'";
 $stmt = $conn->prepare($sql);
+
+$subcategory = 'thun';
+
+$stmt->bind_param("s", $subcategory);
 $stmt->execute();
 $result = $stmt->get_result();
 $products = $result->fetch_all(MYSQLI_ASSOC);
