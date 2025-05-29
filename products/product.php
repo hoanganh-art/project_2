@@ -103,7 +103,24 @@ $current_category_name = $category_names[$current_subcategory];
             }
             });
         });
-       
+    // Tính phần trăm hiển thị giảm giá và hiển thị tooltip khi hover badge "-30%"
+    document.querySelectorAll('.product-card').forEach(function(card) {
+        var badge = card.querySelector('.product-badge');
+        if (badge && badge.textContent.trim() === '-30%') {
+        var price = card.querySelector('.current-price');
+        var oldPrice = card.querySelector('.old-price');
+        if (price && oldPrice) {
+            var current = parseInt(price.textContent.replace(/[^\d]/g, ''));
+            var original = parseInt(oldPrice.textContent.replace(/[^\d]/g, ''));
+            if (original > 0 && current < original) {
+            var percent = Math.round((original - current) / original * 100);
+            badge.textContent = '-' + percent + '%';
+            badge.title = 'Giảm ' + percent + '% so với giá gốc';
+            }
+        }
+        }
+    });
+
     </script>
     
 </body>

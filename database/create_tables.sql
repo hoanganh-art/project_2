@@ -1,5 +1,5 @@
 
-CREATE DATABASE IF NOT EXISTS cuahang;
+CREATE DATABASE  cuahang;
 
 USE cuahang;
 
@@ -243,3 +243,18 @@ UPDATE orders SET status  = 'completed';
 
 
 -- Thêm dữ liệu mẫu cho bảng orders và order_items 
+
+SELECT * FROM contact;
+-- Thêm cột trạng thái status vào bảng contact
+ALTER TABLE contact
+ADD COLUMN status VARCHAR(50) NOT NULL DEFAULT 'active';
+
+
+/*
+trạng thái status của bảng contact có thể là:
+'active', 'inactive', 'archived', 'deleted'
+'active' - Mới
+'inactive' - Xử lý thành công
+'archived' - Đang sử lý
+'deleted' - Đã xóa
+ */
