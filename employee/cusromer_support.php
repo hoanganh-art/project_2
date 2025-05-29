@@ -8,7 +8,8 @@ $result = $stmt_1->get_result(); // Lấy kết quả truy vấn
 $contacts = $result->fetch_all(MYSQLI_ASSOC);
 
 
-function getContactStatusVN($status) {
+function getContactStatusVN($status)
+{
     switch ($status) {
         case 'active':
             return 'Mới';
@@ -19,7 +20,7 @@ function getContactStatusVN($status) {
         case 'deleted':
             return 'Đã xóa';
         default:
-            return 'Không xác định';    
+            return 'Không xác định';
     }
 }
 ?>
@@ -152,108 +153,10 @@ function getContactStatusVN($status) {
                 </div>
 
                 <div class="ticket-actions">
-                <span class="ticket-date">Gửi lúc: <?php echo htmlspecialchars($contact['created_at']); ?></span>
-                <button class="btn btn-primary">Phản hồi</button>
-            </div>
+                    <span class="ticket-date">Gửi lúc: <?php echo htmlspecialchars($contact['created_at']); ?></span>
+                    <button class="btn btn-primary">Phản hồi</button>
+                </div>
             <?php endforeach; ?>
-        </div>
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <div class="ticket-info">
-                    <div class="ticket-avatar">TV</div>
-                    <div class="ticket-meta">
-                        <h3>Trần Văn B - #SW20230015</h3>
-                        <p>Vấn đề: Đổi trả sản phẩm</p>
-                    </div>
-                </div>
-                <span class="ticket-status status-new">Mới</span>
-            </div>
-
-            <div class="ticket-content">
-                <p><strong>Nội dung:</strong></p>
-                <p>Xin chào, tôi đã nhận được áo hoodie đặt hàng nhưng bị
-                    lỗi đường may. Tôi muốn đổi sang sản phẩm khác hoặc hoàn
-                    tiền. Đơn hàng của tôi là #SW20230015.</p>
-            </div>
-
-            <div class="ticket-actions">
-                <span class="ticket-date">Gửi lúc: 15/05/2023 14:30</span>
-                <button class="btn btn-primary">Phản hồi</button>
-            </div>
-        </div>
-
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <div class="ticket-info">
-                    <div class="ticket-avatar">LC</div>
-                    <div class="ticket-meta">
-                        <h3>Lê Thị C - #SW20230014</h3>
-                        <p>Vấn đề: Theo dõi đơn hàng</p>
-                    </div>
-                </div>
-                <span class="ticket-status status-pending">Đang xử lý</span>
-            </div>
-
-            <div class="ticket-content">
-                <p><strong>Nội dung:</strong></p>
-                <p>Tôi đã đặt hàng từ 3 ngày trước nhưng chưa thấy cập nhật
-                    tình trạng vận chuyển. Shop có thể kiểm tra giúp đơn
-                    hàng #SW20230014 được không?</p>
-
-                <p
-                    style="margin-top: 15px; padding: 10px; background-color: #F8F9FA; border-radius: 4px;">
-                    <strong>Phản hồi của bạn:</strong> (15/05/2023
-                    10:15)<br>
-                    Chào chị, đơn hàng đã được đóng gói và sẽ được bên vận
-                    chuyển lấy hàng trong ngày hôm nay ạ.
-                </p>
-            </div>
-
-            <div class="ticket-actions">
-                <span class="ticket-date">Cập nhật lần cuối: 15/05/2023
-                    10:15</span>
-                <button class="btn btn-primary">Tiếp tục phản hồi</button>
-            </div>
-        </div>
-
-        <div class="ticket-card">
-            <div class="ticket-header">
-                <div class="ticket-info">
-                    <div class="ticket-avatar">ND</div>
-                    <div class="ticket-meta">
-                        <h3>Nguyễn Văn D - #SW20230010</h3>
-                        <p>Vấn đề: Hỏi về size đồ</p>
-                    </div>
-                </div>
-                <span class="ticket-status status-resolved">Đã giải
-                    quyết</span>
-            </div>
-
-            <div class="ticket-content">
-                <p><strong>Nội dung:</strong></p>
-                <p>Tôi cao 1m75, nặng 68kg thì nên mua size nào với áo
-                    hoodie của shop?</p>
-
-                <p
-                    style="margin-top: 15px; padding: 10px; background-color: #F8F9FA; border-radius: 4px;">
-                    <strong>Phản hồi của bạn:</strong> (14/05/2023
-                    16:45)<br>
-                    Chào anh, với chiều cao và cân nặng của anh thì nên chọn
-                    size L là vừa đẹp ạ. Size này sẽ ôm vừa người nhưng
-                    không quá chật.
-                </p>
-
-                <p
-                    style="margin-top: 10px; padding: 10px; background-color: #E8F4FD; border-radius: 4px;">
-                    <strong>Khách hàng:</strong> (14/05/2023 17:30)<br>
-                    Cảm ơn shop đã tư vấn, tôi sẽ đặt size L.
-                </p>
-            </div>
-
-            <div class="ticket-actions">
-                <span class="ticket-date">Đóng lúc: 14/05/2023 17:45</span>
-                <button class="btn btn-secondary">Mở lại</button>
-            </div>
         </div>
 
         <!-- Response Form (hidden by default, shows when clicking "Phản hồi") -->
