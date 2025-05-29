@@ -117,15 +117,46 @@ function getContactStatusVN($status)
         <div class="support-dashboard">
             <div class="support-card">
                 <h3>Yêu cầu mới</h3>
-                <p>8</p>
+                <p>
+                    <?php
+                    $newCount = 0;
+                    foreach ($contacts as $contact) {
+                        if ($contact['status'] === 'active') {
+                            $newCount++;
+                        }
+                    }
+                    echo $newCount;
+                    ?>
+                </p>
             </div>
             <div class="support-card">
                 <h3>Đang chờ phản hồi</h3>
-                <p>12</p>
+                <p>
+                    <?php
+                    $pendingCount = 0;
+                    foreach ($contacts as $contact) {
+                        if ($contact['status'] === 'archived') {
+                            $pendingCount++;
+                        }
+                    }
+                    echo $pendingCount;
+                    ?>
+                </p>
             </div>
             <div class="support-card">
                 <h3>Đã giải quyết hôm nay</h3>
-                <p>5</p>
+                <p>
+                    <?php
+                    $resolvedTodayCount = 0;
+                    $today = date('Y-m-d');
+                    foreach ($contacts as $contact) {
+                        if ($contact['status'] === 'inactive' && strpos($contact['updated_at'], $today) === 0) {
+                            $resolvedTodayCount++;
+                        }
+                    }
+                    echo $resolvedTodayCount;
+                    ?>
+                </p>
             </div>
         </div>
 
