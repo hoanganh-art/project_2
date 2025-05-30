@@ -29,8 +29,10 @@ $sql = "SELECT o.id AS order_id, o.customer_id, o.name AS customer_name, o.addre
         FROM orders o
         LEFT JOIN order_items oi ON o.id = oi.order_id
         LEFT JOIN product p ON oi.product_id = p.id
+        WHERE o.customer_id = ?
         ORDER BY o.id DESC, oi.id ASC;";
 $stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $orders = $result->fetch_all(MYSQLI_ASSOC);
@@ -56,6 +58,15 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
     <style>
         #view {
             text-decoration: none;
+        }
+
+        .status-completed {
+            color: #fff;
+            background: #28a745;
+            /* xanh lá cây */
+            border-radius: 4px;
+            padding: 2px 10px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -273,7 +284,7 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
 
                 // Nút thao tác
                 echo '<div class="order-actions">';
-                if ($order['status'] === 'delivered') {
+                if ($order['status'] === 'completed') {
                     echo '<button class="action-btn reorder-btn">Mua lại</button>';
                     echo '<button class="action-btn review-btn">Đánh giá</button>';
                     echo '<a href="order_detail.php?order_id=' . htmlspecialchars($order['order_id']) . '" class="action-btn view-detail-btn" id = "view">Xem chi tiết</a>';
