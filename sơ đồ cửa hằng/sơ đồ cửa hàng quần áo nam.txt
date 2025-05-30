@@ -16,12 +16,12 @@
 │ - Hiển thị sản  │          │ - Xem danh sách   │        │ - Thêm/Xóa/Sửa      │
 │   phẩm mới,     │          │   đơn hàng        │        │   nhân viên         │
 │   bán chạy      │          │ - Cập nhật trạng  │        │ - Phân quyền truy   │
-│ - Lọc theo danh │          │   thái đơn hàng   │        │   cập (Admin/NV)    │
-│   mục, giá, size│          │ - Hủy đơn hàng    │        ├─────────────────────┤
+│                 │          │   thái đơn hàng   │        │   cập (Admin/NV)    │
+│                 │          │ - Hủy đơn hàng    │        ├─────────────────────┤
 └────────┬────────┘          └────────┬──────────┘        │   QUẢN LÝ SẢN PHẨM  │
-         │                             │                  ├─────────────────────┤
-         │                             │                  │ - Thêm/Xóa/Sửa      │
-         ▼                             ▼                  │   sản phẩm          │
+         │                            │                   ├─────────────────────┤
+         │                            │                   │ - Thêm/Xóa/Sửa      │
+         ▼                            ▼                   │   sản phẩm          │
 ┌─────────────────┐          ┌───────────────────┐        │ - Nhập hàng, kiểm   │
 │   TÌM KIẾM      │          │  HỖ TRỢ KHÁCH HÀNG│        │   kho               │
 ├─────────────────┤          ├───────────────────┤        │ - Áp dụng khuyến    │
@@ -49,4 +49,13 @@
 │   chuyển khoản) │
 │ - Nhập thông tin│
 │   giao hàng     │
+└─────────────────┘
+         │
+         ▼
+┌─────────────────┐
+│   Đơn Hàng      │
+├─────────────────┤
+│ - Kiểm tra đơn  │
+│   hàng đã đặt   │
+│                 │
 └─────────────────┘
