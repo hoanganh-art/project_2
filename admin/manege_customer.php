@@ -140,11 +140,11 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                         <div class="customer-join-date">Thành viên từ: 15/08/2023</div>
                         <div class="customer-stats">
                             <div class="stat-item">
-                                <div class="stat-value">12</div>
+                                <div class="stat-value"></div>
                                 <div class="stat-label">Đơn hàng</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">8,450,000đ</div>
+                                <div class="stat-value"></div>
                                 <div class="stat-label">Tổng chi tiêu</div>
                             </div>
                             <div class="stat-item">
@@ -157,19 +157,19 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
 
                 <div class="detail-row">
                     <div class="detail-label">Email:</div>
-                    <div class="detail-value">nguyenthi.a@example.com</div>
+                    <div class="detail-value"></div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Số điện thoại:</div>
-                    <div class="detail-value">0912345678</div>
+                    <div class="detail-value"></div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Địa chỉ:</div>
-                    <div class="detail-value">123 Đường ABC, Phường 1, Quận 1, TP.Hồ Chí Minh</div>
+                    <div class="detail-value"></div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Ngày sinh:</div>
-                    <div class="detail-value">15/05/1990</div>
+                    <div class="detail-value"></div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Giới tính:</div>
@@ -177,7 +177,7 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">Trạng thái:</div>
-                    <div class="detail-value"><span class="customer-status status-active">Hoạt động</span></div>
+                    <div class="detail-value"><span class="customer-status status-active"></span></div>
                 </div>
 
                 <h3 style="margin: 20px 0 10px; color: #2D3436;">Đơn hàng gần đây</h3>
@@ -251,8 +251,8 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                         case 'pending':
                             statusVN = 'Chờ xử lý';
                             break;
-                        case 'delivered':
-                            statusVN = 'Đã giao';
+                        case 'completed':
+                            statusVN = 'Hoàn tất';
                             break;
                         
                         case 'cancelled':
@@ -285,9 +285,21 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                 document.querySelector('.detail-row:nth-child(3) .detail-value').textContent = customerPhone;
                 document.querySelector('.detail-row:nth-child(4) .detail-value').textContent = customerAddress;
                 document.querySelector('.detail-row:nth-child(6) .detail-value').textContent = customerGender || 'Không xác định'; // Hiển thị giới tính
-                document.querySelector('.stat-item:nth-child(1) .stat-value').textContent = customerOrders;
+                // Đếm số lượng đơn hàng của khách hàng 
+                document.querySelector('.stat-item:nth-child(1) .stat-value').textContent = customerOrdersData.length;
+                // Tính tổng chi tiêu của khách hàng 
+                const totalSpent = customerOrdersData.reduce((sum, order) => sum + parseFloat(order.total), 0);
+                document.querySelector('.stat-item:nth-child(2) .stat-value').textContent = `${totalSpent.toLocaleString()}đ`;
                 document.querySelector('.detail-row:nth-child(7) .detail-value .customer-status').textContent = customerStatus;
-                document.querySelector('.detail-row:nth-child(7) .detail-value .customer-status').className = `customer-status ${customerStatus === 'Hoạt động' ? 'status-active' : 'status-inactive'}`;
+                // Đổi màu trạng thái: xanh cho hoạt động, đỏ cho ngừng hoạt động
+                const statusSpan = document.querySelector('.detail-row:nth-child(7) .detail-value .customer-status');
+                if (customerStatus === 'Đang hoạt động') {
+                    statusSpan.className = 'customer-status status-active';
+                    statusSpan.style.color = '#27ae60'; // xanh lá
+                } else {
+                    statusSpan.className = 'customer-status status-inactive';
+                    statusSpan.style.color = '#e74c3c'; // đỏ
+                }
 
                 // Hiển thị modal
                 customerModal.style.display = 'flex';
