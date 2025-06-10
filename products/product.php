@@ -4,29 +4,54 @@ session_start();
 require_once('../includes/header.php');
 include_once('../includes/database.php');
 
-// Xác định subcategory từ URL (nếu có)
-$current_subcategory = isset($_GET['subcategory']) ? $_GET['subcategory'] : 'thun';
-
-// Truy vấn sản phẩm theo subcategory
-$valid_subcategories = ['thun', 'hoodie', 'jeans'];
-if (!in_array($current_subcategory, $valid_subcategories)) {
-    $current_subcategory = 'thun';
-}
-
-$sql = "SELECT * FROM product WHERE subcategory = ? AND status = 'active'";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $current_subcategory);
-$stmt->execute();
-$result = $stmt->get_result();
-$products = $result->fetch_all(MYSQLI_ASSOC);
-
-// Lấy tên danh mục để hiển thị
+// Khai báo tên danh mục ở đầu file để luôn dùng được
 $category_names = [
     'thun' => 'Áo Thun',
     'hoodie' => 'Hoodie',
     'jeans' => 'Quần Jeans'
 ];
-$current_category_name = $category_names[$current_subcategory];
+
+// Xác định subcategory từ URL (nếu có)
+$current_subcategory = isset($_GET['subcategory']) ? $_GET['subcategory'] : 'thun';
+
+// Lấy từ khóa tìm kiếm nếu có
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+// Truy vấn sản phẩm
+$valid_subcategories = ['thun', 'hoodie', 'jeans'];
+if (!in_array($current_subcategory, $valid_subcategories)) {
+    $current_subcategory = 'thun';
+}
+
+if ($search !== '') {
+    // Nếu có tìm kiếm, ưu tiên tìm kiếm theo tên sản phẩm
+    $sql = "SELECT * FROM product WHERE name LIKE ? AND status = 'active'";
+    $stmt = $conn->prepare($sql);
+    $like_search = '%' . $search . '%';
+    $stmt->bind_param("s", $like_search);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $products = $result->fetch_all(MYSQLI_ASSOC);
+
+    // Nếu có sản phẩm, lấy subcategory của sản phẩm đầu tiên để active tab
+    if (!empty($products)) {
+        $current_subcategory = $products[0]['subcategory'];
+    }
+
+    // Hiển thị tên danh mục là "Kết quả tìm kiếm"
+    $current_category_name = "Kết quả tìm kiếm cho: " . htmlspecialchars($search);
+} else {
+    // Truy vấn theo subcategory như cũ
+    $sql = "SELECT * FROM product WHERE subcategory = ? AND status = 'active'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $current_subcategory);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $products = $result->fetch_all(MYSQLI_ASSOC);
+
+    // Lấy tên danh mục để hiển thị
+    $current_category_name = $category_names[$current_subcategory];
+}
 ?>
 
 <!DOCTYPE html>
