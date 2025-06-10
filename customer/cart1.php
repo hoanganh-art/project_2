@@ -351,6 +351,7 @@ $_SESSION['cart_items'] = array_map(function ($cart) {
         button.addEventListener('click', function() {
             const row = this.closest('tr');
             const productId = row.getAttribute('data-product-id');
+            const cartId = row.getAttribute('data-cart-id');
 
             // Gửi AJAX xóa sản phẩm khỏi cart
             fetch('remove_cart.php', {
@@ -358,7 +359,7 @@ $_SESSION['cart_items'] = array_map(function ($cart) {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
-                    body: `id=${productId}`
+                    body: `id=${cartId}`
                 })
                 .then(res => res.json())
                 .then(data => {

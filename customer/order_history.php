@@ -68,6 +68,9 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
             padding: 2px 10px;
             font-weight: bold;
         }
+        a{
+            text-decoration: none;
+        }
     </style>
 </head>
 
@@ -285,13 +288,13 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                 // Nút thao tác
                 echo '<div class="order-actions">';
                 if ($order['status'] === 'completed') {
-                    echo '<button class="action-btn reorder-btn">Mua lại</button>';
+                    echo '<a href="reorder.php?order_id=' . htmlspecialchars($order['order_id']) . '" class="action-btn reorder-btn" style="text-d">Mua lại</a>';
                     echo '<button class="action-btn review-btn">Đánh giá</button>';
                     echo '<a href="order_detail.php?order_id=' . htmlspecialchars($order['order_id']) . '" class="action-btn view-detail-btn" id = "view">Xem chi tiết</a>';
                 } elseif ($order['status'] === 'processing') {
                     echo '<a href="order_detail.php?order_id=' . htmlspecialchars($order['order_id']) . '" class="action-btn view-detail-btn">Theo dõi đơn hàng</a>';
                 } elseif ($order['status'] === 'cancelled') {
-                    echo '<button class="action-btn reorder-btn">Mua lại</button>';
+                    echo '<a href="reorder.php?order_id=' . htmlspecialchars($order['order_id']) . '" class="action-btn reorder-btn">Mua lại</a>';
                 }
                 echo '</div>'; // order-actions
 

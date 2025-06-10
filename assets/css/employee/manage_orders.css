@@ -1,0 +1,252 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Urbanist:wght@400;500;600;700&display=swap');
+
+:root {
+    --black: #000000;
+    --dark: #1A1A1A;
+    --white: #FFFFFF;
+    --neon: #FFF44F;
+    --red: #FF0000;
+    --cyan: #00FFFF;
+    --gray: #CCCCCC;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Urbanist', sans-serif;
+    background-color: #F5F5F5;
+    color: var(--black);
+}
+
+/* Sidebar (giữ nguyên từ dashboard) */
+.sidebar {
+    width: 250px;
+    background-color: var(--black);
+    height: 100vh;
+    position: fixed;
+    border-right: 3px solid var(--red);
+    padding: 20px 0;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #EEE;
+}
+
+.header h1 {
+    font-size: 24px;
+    color: var(--black);
+}
+
+/* Filter Section */
+.filter-section {
+    background-color: var(--white);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.filter-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #666;
+}
+
+.filter-group select,
+.filter-group input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #DDD;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn {
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+}
+
+.btn-primary {
+    background-color: var(--red);
+    color: var(--white);
+}
+
+.btn-secondary {
+    background-color: #EEE;
+    color: #333;
+}
+
+/* Orders Table */
+.card {
+    background-color: var(--white);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+table th {
+    text-align: left;
+    padding: 12px 10px;
+    background-color: #FAFAFA;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+}
+
+table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #EEE;
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+.status {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 100px;
+    text-align: center;
+}
+
+.status.pending {
+    background-color: #FFF3CD;
+    color: #856404;
+}
+
+.status.processing {
+    background-color: #CCE5FF;
+    color: #004085;
+}
+
+.status.shipped {
+    background-color: #D1ECF1;
+    color: #0C5460;
+}
+
+.status.completed {
+    background-color: #D4EDDA;
+    color: #155724;
+}
+
+.status.cancelled {
+    background-color: #F8D7DA;
+    color: #721C24;
+}
+
+.action-btn {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    border: none;
+    margin-right: 5px;
+}
+
+.action-btn.view {
+    background-color: #E9ECEF;
+    color: #333;
+}
+
+.action-btn.process {
+    background-color: #CCE5FF;
+    color: #004085;
+}
+
+.action-btn.complete {
+    background-color: #D4EDDA;
+    color: #155724;
+}
+
+.action-btn.cancel {
+    background-color: #F8D7DA;
+    color: #721C24;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 5px;
+}
+
+.page-item {
+    padding: 8px 12px;
+    border: 1px solid #DDD;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.page-item.active {
+    background-color: var(--red);
+    color: white;
+    border-color: var(--red);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .filter-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
