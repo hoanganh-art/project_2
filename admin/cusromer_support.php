@@ -36,7 +36,7 @@ function getContactStatusVN($status)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hỗ Trợ Khách Hàng | SOÁI PHONG</title>
     <link rel="stylesheet" href="../assets/css/employee/dashboard.css">
-    <link rel="stylesheet" href="../assets/css/employee/cusromer_support.css">
+    <link rel="stylesheet" href="../assets/css/admin/cusromer_support.css">
     <link rel="shortcut icon" href="../assets/image/logo.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -48,6 +48,7 @@ function getContactStatusVN($status)
         <div class="main-content">
             <div class="header">
                 <h1>Hỗ Trợ Khách Hàng</h1>
+
             </div>
 
             <!-- Support Dashboard -->
@@ -141,6 +142,7 @@ function getContactStatusVN($status)
                 </div>
             </div>
         </div>
+
     </div>
     <?php include_once("../admin/footer/admin-footer.php"); ?>
     <script>
