@@ -8,8 +8,6 @@ Chi tiết các chức năng:
 
     Theo dõi đơn hàng (trạng thái đơn hàng).
 
-    
-
 2. Nhân viên (Staff)
     Quản lý đơn hàng (xác nhận, hủy, cập nhật trạng thái).
 
