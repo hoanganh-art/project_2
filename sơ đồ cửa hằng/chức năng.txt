@@ -8,7 +8,7 @@ Chi tiết các chức năng:
 
     Theo dõi đơn hàng (trạng thái đơn hàng).
 
-    Đánh giá sản phẩm (rating, bình luận).
+    
 
 2. Nhân viên (Staff)
     Quản lý đơn hàng (xác nhận, hủy, cập nhật trạng thái).
@@ -17,15 +17,9 @@ Chi tiết các chức năng:
 
     Kiểm tra tồn kho (xem số lượng, thông báo hết hàng).
 
-    Báo cáo bán hàng (doanh thu theo ngày/tuần).
-
 3. Admin (Quản trị viên)
     Quản lý nhân viên (thêm/xóa/sửa, phân quyền).
 
     Quản lý sản phẩm (thêm/xóa/sửa, danh mục).
 
-    Quản lý khuyến mãi (tạo mã giảm giá, flash sale).
-
-    Thống kê doanh thu (theo thời gian, sản phẩm bán chạy).
-
-    Cấu hình hệ thống (giao diện, cài đặt thanh toán).
+    Quản lý khuyến mãi (tạo mã giảm giá, flash sale)
