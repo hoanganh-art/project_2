@@ -23,18 +23,14 @@ body {
 }
 
 /* Sidebar (giống các trang trước) */
-.sidebar {
-    width: 250px;
-    background-color: var(--black);
-    height: 100vh;
-    position: fixed;
-    border-right: 3px solid var(--red);
-    padding: 20px 0;
+.container {
+    display: flex;
+    width: 100%;
 }
-
 /* Main Content */
 .main-content {
-    margin-left: 250px;
+    width: calc(100% - 250px);
+    margin-left: 30px;
     padding: 20px;
 }
 
