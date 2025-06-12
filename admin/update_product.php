@@ -59,21 +59,44 @@ try {
         }
 
         // Cập nhật sản phẩm
-        $sql = "UPDATE product SET 
-                name = ?, 
-                price = ?, 
-                original_price = ?, 
-                stock = ?, 
-                category = ?, 
-                subcategory = ?, 
-                code = ?, 
-                status = ?, 
-                description = ?, 
-                image = ? 
-                WHERE id = ?";
+        if (!empty($_FILES['image']['name'])) {
+            // Xử lý upload ảnh mới như hiện tại
+            // $image = $newFileName hoặc $destPath;
+            $updateImage = true;
+        } else {
+            $updateImage = false;
+        }
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sddsssssssi", $name, $price, $original_price, $stock, $category, $subcategory, $code, $status, $description, $image, $id);
+        if ($updateImage) {
+            $sql = "UPDATE product SET 
+                    name = ?, 
+                    price = ?, 
+                    original_price = ?, 
+                    stock = ?, 
+                    category = ?, 
+                    subcategory = ?, 
+                    code = ?, 
+                    status = ?, 
+                    description = ?, 
+                    image = ? 
+                    WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sddsssssssi", $name, $price, $original_price, $stock, $category, $subcategory, $code, $status, $description, $image, $id);
+        } else {
+            $sql = "UPDATE product SET 
+                    name = ?, 
+                    price = ?, 
+                    original_price = ?, 
+                    stock = ?, 
+                    category = ?, 
+                    subcategory = ?, 
+                    code = ?, 
+                    status = ?, 
+                    description = ?
+                    WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sddssssssi", $name, $price, $original_price, $stock, $category, $subcategory, $code, $status, $description, $id);
+        }
 
         if ($stmt->execute()) {
             $response = ['status' => 'success', 'message' => 'Product updated successfully'];

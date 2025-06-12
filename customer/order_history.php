@@ -275,12 +275,12 @@ $orders = $result->fetch_all(MYSQLI_ASSOC);
                     $subtotal += $item['product_price'] * $item['quantity'];
                 }
                 // Giả sử phí vận chuyển và giảm giá là 0 (có thể sửa lại nếu có cột riêng)
-                $shipping = 0;
-                $discount = 0;
+                $shipping = 30000;
+                $discount = 130000;
                 echo '<div class="order-summary">';
                 echo '<div class="summary-row"><span class="summary-label">Tạm tính:</span><span class="summary-value">' . format_currency($subtotal) . '</span></div>';
                 echo '<div class="summary-row"><span class="summary-label">Phí vận chuyển:</span><span class="summary-value">' . format_currency($shipping) . '</span></div>';
-                echo '<div class="summary-row"><span class="summary-label">Giảm giá:</span><span class="summary-value">-' . format_currency($discount) . '</span></div>';
+                echo '<div class="summary-row"><span class="summary-label">Giảm giá:</span><span class="summary-value">' . format_currency($discount) . '</span></div>';
                 echo '<div class="summary-row total-row"><span class="summary-label">Tổng cộng:</span><span class="summary-value">' . format_currency($order['total']) . '</span></div>';
                 echo '</div>'; // order-summary
                 echo '</div>'; // order-details

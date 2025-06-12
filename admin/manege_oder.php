@@ -525,7 +525,128 @@ foreach ($orders as $order) {
         document.querySelector('.btn-export').addEventListener('click', function() {
             window.location.href = 'export_orders_excel.php';
         });
+        // Xử lý phân trang 
+        const rowsPerPage = 5;
+        let currentPage = 1;
 
+        function showPage(page) {
+            const rows = document.querySelectorAll('tbody tr');
+            const totalRows = rows.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+            // Ẩn tất cả các dòng
+            rows.forEach(row => row.style.display = 'none');
+
+            // Hiển thị các dòng cho trang hiện tại
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            rows.forEach((row, idx) => {
+            if (idx >= start && idx < end) {
+                row.style.display = '';
+            }
+            });
+
+            // Cập nhật phân trang
+            updatePagination(page, totalPages);
+        }
+
+        function updatePagination(page, totalPages) {
+            const pagination = document.querySelector('.pagination');
+            if (!pagination) return;
+            pagination.innerHTML = '';
+
+            // Nút trước
+            const prev = document.createElement('li');
+            prev.className = 'page-item' + (page === 1 ? ' disabled' : '');
+            prev.innerHTML = `<a class="page-link" href="#">Trước</a>`;
+            prev.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (page > 1) showPage(page - 1);
+            });
+            pagination.appendChild(prev);
+
+            // Các nút số trang
+            for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            li.className = 'page-item' + (i === page ? ' active' : '');
+            li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            li.addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage(i);
+            });
+            pagination.appendChild(li);
+            }
+
+            // Nút sau
+            const next = document.createElement('li');
+            next.className = 'page-item' + (page === totalPages ? ' disabled' : '');
+            next.innerHTML = `<a class="page-link" href="#">Sau</a>`;
+            next.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (page < totalPages) showPage(page + 1);
+            });
+            pagination.appendChild(next);
+        }
+
+        // Khởi tạo phân trang khi trang tải xong
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage(1);
+        });
+
+        // Khi tìm kiếm, lọc trạng thái hoặc sắp xếp, reset về trang 1
+        document.querySelector('.search-box').addEventListener('input', function() {
+            showPage(1);
+        });
+        document.getElementById('status-filter').addEventListener('change', function() {
+            showPage(1);
+        });
+        document.getElementById('sort-by').addEventListener('change', function() {
+            showPage(1);
+        });
+
+        // Bộ lọc mới nhất, cũ nhất, tổng tiền tăng dần, giảm dần
+        // Sắp xếp lại các dòng trong bảng theo lựa chọn sort-by
+        function sortTable(sortType) {
+            const tbody = document.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => row.style.display !== 'none');
+            rows.sort((a, b) => {
+            let valA, valB;
+            switch (sortType) {
+                case 'newest':
+                valA = parseInt(a.getAttribute('data-order-id'));
+                valB = parseInt(b.getAttribute('data-order-id'));
+                return valB - valA;
+                case 'oldest':
+                valA = parseInt(a.getAttribute('data-order-id'));
+                valB = parseInt(b.getAttribute('data-order-id'));
+                return valA - valB;
+                case 'total_asc':
+                valA = parseInt(a.cells[4].textContent.replace(/\D/g, ''));
+                valB = parseInt(b.cells[4].textContent.replace(/\D/g, ''));
+                return valA - valB;
+                case 'total_desc':
+                valA = parseInt(a.cells[4].textContent.replace(/\D/g, ''));
+                valB = parseInt(b.cells[4].textContent.replace(/\D/g, ''));
+                return valB - valA;
+                default:
+                return 0;
+            }
+            });
+            // Xóa các dòng cũ và thêm lại theo thứ tự mới
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        document.getElementById('sort-by').addEventListener('change', function(e) {
+            const sortType = e.target.value;
+            sortTable(sortType);
+            showPage(1);
+        });
+
+        // Sắp xếp mặc định khi load trang (mới nhất)
+        document.addEventListener('DOMContentLoaded', function() {
+            sortTable(document.getElementById('sort-by').value);
+        });
+        
     </script>
 </body>
 
