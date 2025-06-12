@@ -236,7 +236,6 @@ $_SESSION['cart_items'] = array_map(function ($cart) {
     // Update cart button
     document.querySelector('.btn-secondary').addEventListener('click', function() {
         alert('Giỏ hàng đã được cập nhật!');
-        // Here you would normally send the updated quantities to your backend
     });
 
 
@@ -346,7 +345,6 @@ $_SESSION['cart_items'] = array_map(function ($cart) {
 
 
     //Xóa sản phầm trong giỏ hàng 
-    // ...existing code...
     document.querySelectorAll('.remove-btn').forEach(button => {
         button.addEventListener('click', function() {
             const row = this.closest('tr');
@@ -443,6 +441,27 @@ $_SESSION['cart_items'] = array_map(function ($cart) {
                 }
             });
     });
+    //Kiểm tra giỏ hàng có rỗng không nếu có thì không cho thanh toán
+    function updateCheckoutButton() {
+        const cartRows = document.querySelectorAll('.cart-table tbody tr');
+        const checkoutBtn = document.querySelector('.btn.btn-primary[name="checkout"]') || document.querySelector('.btn.btn-primary[disabled]');
+        if (cartRows.length === 0) {
+            if (checkoutBtn) {
+                checkoutBtn.disabled = true;
+                checkoutBtn.style.opacity = 0.5;
+                checkoutBtn.style.pointerEvents = 'none';
+            }
+        } else {
+            if (checkoutBtn) {
+                checkoutBtn.disabled = false;
+                checkoutBtn.style.opacity = 1;
+                checkoutBtn.style.pointerEvents = 'auto';
+            }
+        }
+    }
+
+    // Gọi hàm này sau khi xóa/cập nhật giỏ hàng
+    updateCheckoutButton();
 </script>
 
 </html>
